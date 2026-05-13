@@ -1,0 +1,9 @@
+{
+  "hosting": {
+    "site": "finnut-webshop",
+    "public": "dist",
+    "ignore": [
+      "firebase.json"
+    ]
+  }
+}
