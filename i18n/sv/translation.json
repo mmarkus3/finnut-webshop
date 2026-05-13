@@ -25,5 +25,12 @@
     "availabilityLabel": "Tillgänglighet: {{amount}}",
     "descriptionUnavailable": "Ingen beskrivning tillgänglig.",
     "productCardA11yLabel": "Produktkort för {{product}}"
+  },
+  "product": {
+    "loading": "Laddar produkt...",
+    "notFoundTitle": "Produkten hittades inte",
+    "notFoundDescription": "Den här produkten kunde inte hittas.",
+    "imageA11yLabel": "Produktbild för {{product}}",
+    "eanLabel": "EAN: {{ean}}"
   }
 }

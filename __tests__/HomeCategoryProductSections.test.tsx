@@ -5,6 +5,14 @@ import { getFirstUsableProductImage, getProductDescription, getProductPrice } fr
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 
+const mockPush = jest.fn();
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}));
+
 jest.mock('expo-asset', () => ({
   Asset: {
     fromModule: () => ({ uri: 'placeholder://image' }),
@@ -14,43 +22,17 @@ jest.mock('expo-asset', () => ({
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string | number>) => {
-      if (key === 'home.noCategoryProducts') {
-        return 'No products found for categories yet.';
-      }
-
-      if (key === 'home.categoryCarouselA11yLabel') {
-        return `Product carousel for ${options?.category ?? ''}`;
-      }
-
-      if (key === 'home.productCardA11yLabel') {
-        return `View product ${options?.product ?? ''}`;
-      }
-
-      if (key === 'category.priceLabel') {
-        return `Price: ${options?.price}`;
-      }
-
-      if (key === 'category.priceUnavailable') {
-        return 'N/A';
-      }
-
-      if (key === 'category.availabilityLabel') {
-        return `Availability: ${options?.amount}`;
-      }
-
-      if (key === 'category.descriptionUnavailable') {
-        return 'No description available.';
-      }
-
-      if (key.startsWith('categories.')) {
-        return options?.defaultValue ?? key;
-      }
-
+      if (key === 'home.noCategoryProducts') return 'No products found for categories yet.';
+      if (key === 'home.categoryCarouselA11yLabel') return `Product carousel for ${options?.category ?? ''}`;
+      if (key === 'home.productCardA11yLabel') return `View product ${options?.product ?? ''}`;
+      if (key === 'category.priceLabel') return `Price: ${options?.price}`;
+      if (key === 'category.priceUnavailable') return 'N/A';
+      if (key === 'category.availabilityLabel') return `Availability: ${options?.amount}`;
+      if (key === 'category.descriptionUnavailable') return 'No description available.';
+      if (key.startsWith('categories.')) return options?.defaultValue ?? key;
       return key;
     },
-    i18n: {
-      language: 'en',
-    },
+    i18n: { language: 'en' },
   }),
 }));
 
@@ -63,6 +45,7 @@ describe('HomeCategoryProductSections helpers', () => {
 
   const products: Product[] = [
     {
+      id: 'p-apple',
       name: 'Apple',
       amount: 1,
       ean: '1',
@@ -116,6 +99,7 @@ describe('HomeCategoryProductSections rendering', () => {
 
   const products: Product[] = [
     {
+      id: 'p-apple',
       name: 'Apple',
       amount: 1,
       ean: '1',
@@ -126,6 +110,10 @@ describe('HomeCategoryProductSections rendering', () => {
     },
     { name: 'Milk', amount: 3, ean: '2', images: [], category: 'dairy' },
   ];
+
+  beforeEach(() => {
+    mockPush.mockReset();
+  });
 
   it('renders no-data message when no category sections can be produced', () => {
     let tree: renderer.ReactTestRenderer | null = null;
@@ -145,8 +133,15 @@ describe('HomeCategoryProductSections rendering', () => {
       tree = renderer.create(<HomeCategoryProductSections categories={categories} products={products} />);
     });
 
-    const cards = tree!.root.findAll((node) => node.type === 'View' && node.props.accessibilityRole === 'button');
-    expect(cards).toHaveLength(2);
+    const cardLabels = Array.from(
+      new Set(
+        tree!.root
+          .findAll((node) => typeof node.props.accessibilityLabel === 'string')
+          .map((node) => node.props.accessibilityLabel as string)
+          .filter((label) => label.startsWith('View product '))
+      )
+    );
+    expect(cardLabels).toEqual(['View product Apple', 'View product Milk']);
 
     const imageUris = tree!.root
       .findAll((node) => node.props.source !== undefined)
@@ -168,5 +163,29 @@ describe('HomeCategoryProductSections rendering', () => {
       (node) => node.type === 'Text' && node.props.numberOfLines === 3
     );
     expect(truncatedDescriptionNodes.length).toBeGreaterThan(0);
+  });
+
+  it('navigates to product detail route when pressing card', () => {
+    let tree: renderer.ReactTestRenderer | null = null;
+
+    renderer.act(() => {
+      tree = renderer.create(<HomeCategoryProductSections categories={categories} products={products} />);
+    });
+
+    const cards = tree!.root.findAll(
+      (node) =>
+        typeof node.props.onPress === 'function' &&
+        typeof node.props.accessibilityLabel === 'string' &&
+        node.props.accessibilityLabel.startsWith('View product ')
+    );
+
+    renderer.act(() => {
+      cards[0].props.onPress();
+    });
+
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/product/[productId]',
+      params: { productId: 'p-apple' },
+    });
   });
 });

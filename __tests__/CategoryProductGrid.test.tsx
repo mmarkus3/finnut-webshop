@@ -1,5 +1,11 @@
 import { filterProductsByCategory, getCategoryGridColumns, getCategoryPageTitle } from '@/components/category/CategoryProductGrid';
-import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
+import {
+  getFirstUsableProductImage,
+  getProductDescription,
+  getProductIdentifier,
+  getProductPrice,
+  resolveProductByIdentifier,
+} from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 
@@ -10,7 +16,7 @@ describe('CategoryProductGrid helpers', () => {
   ];
 
   const products: Product[] = [
-    { name: 'Apple', amount: 2, ean: '1', images: ['https://img/apple.jpg'], category: 'fruits', retailPrice: 1.99 },
+    { id: 'p-apple', name: 'Apple', amount: 2, ean: '1', images: ['https://img/apple.jpg'], category: 'fruits', retailPrice: 1.99 },
     { name: 'Milk', amount: 5, ean: '2', images: [], category: 'dairy', unitPrice: 2.5 },
   ];
 
@@ -53,5 +59,12 @@ describe('CategoryProductGrid helpers', () => {
     expect(getFirstUsableProductImage(products[0])).toBe('https://img/apple.jpg');
     expect(getFirstUsableProductImage(products[1])).toBeNull();
     expect(getFirstUsableProductImage({ ...products[0], images: ['   '] })).toBeNull();
+  });
+
+  it('resolves product identifiers for navigation', () => {
+    expect(getProductIdentifier(products[0])).toBe('p-apple');
+    expect(getProductIdentifier(products[1])).toBe('2');
+    expect(resolveProductByIdentifier(products, 'p-apple')?.name).toBe('Apple');
+    expect(resolveProductByIdentifier(products, 'missing')).toBeNull();
   });
 });

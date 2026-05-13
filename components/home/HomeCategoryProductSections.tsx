@@ -1,9 +1,15 @@
-import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
+import {
+  getFirstUsableProductImage,
+  getProductDescription,
+  getProductIdentifier,
+  getProductPrice,
+} from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Image, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 interface HomeCategoryProductSectionsProps {
   categories: Category[];
@@ -42,12 +48,21 @@ const groupProductsByCategory = (categories: Category[], products: Product[]): C
 
 function ProductCard({ product }: { product: Product }) {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const firstImage = getFirstUsableProductImage(product);
   const description = getProductDescription(product, i18n.language);
   const price = getProductPrice(product);
 
+  const openProduct = () => {
+    router.push({
+      pathname: '/product/[productId]',
+      params: { productId: getProductIdentifier(product) },
+    });
+  };
+
   return (
-    <View
+    <Pressable
+      onPress={openProduct}
       className="mr-3 w-48 rounded-xl border border-neutral-200 bg-white p-2"
       accessibilityRole="button"
       accessibilityLabel={t('home.productCardA11yLabel', { product: product.name })}
@@ -72,7 +87,7 @@ function ProductCard({ product }: { product: Product }) {
       <Text numberOfLines={3} className="mt-1 text-sm text-neutral-600">
         {description || t('category.descriptionUnavailable')}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 

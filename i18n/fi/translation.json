@@ -25,5 +25,12 @@
     "availabilityLabel": "Saatavuus: {{amount}}",
     "descriptionUnavailable": "Kuvausta ei ole saatavilla.",
     "productCardA11yLabel": "Tuotekortti tuotteelle {{product}}"
+  },
+  "product": {
+    "loading": "Ladataan tuotetta...",
+    "notFoundTitle": "Tuotetta ei löytynyt",
+    "notFoundDescription": "Tätä tuotetta ei löytynyt.",
+    "imageA11yLabel": "Tuotekuva tuotteelle {{product}}",
+    "eanLabel": "EAN: {{ean}}"
   }
 }

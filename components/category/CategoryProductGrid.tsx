@@ -1,10 +1,16 @@
-import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
+import {
+  getFirstUsableProductImage,
+  getProductDescription,
+  getProductIdentifier,
+  getProductPrice,
+} from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
+import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Image, Text, useWindowDimensions, View } from 'react-native';
+import { FlatList, Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
 
 const DESKTOP_MIN_WIDTH = 1024;
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
@@ -30,6 +36,7 @@ interface CategoryProductGridProps {
 
 export function CategoryProductGrid({ categories, categoryId, products, isLoading }: CategoryProductGridProps) {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const { width } = useWindowDimensions();
   const numColumns = getCategoryGridColumns(width);
 
@@ -63,11 +70,19 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
           const price = getProductPrice(item);
           const firstImage = getFirstUsableProductImage(item);
 
+          const openProduct = () => {
+            router.push({
+              pathname: '/product/[productId]',
+              params: { productId: getProductIdentifier(item) },
+            });
+          };
+
           return (
-            <View
+            <Pressable
+              onPress={openProduct}
               style={{ width: numColumns === 4 ? '24%' : '100%' }}
               className="rounded-xl border border-neutral-200 bg-white p-3"
-              accessibilityRole="summary"
+              accessibilityRole="button"
               accessibilityLabel={t('category.productCardA11yLabel', { product: item.name })}
             >
               <Image
@@ -87,7 +102,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
               <Text numberOfLines={3} className="mt-2 text-sm text-neutral-600">
                 {description || t('category.descriptionUnavailable')}
               </Text>
-            </View>
+            </Pressable>
           );
         }}
       />

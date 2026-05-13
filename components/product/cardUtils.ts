@@ -25,4 +25,18 @@ const getProductPrice = (product: Product): number | null => {
   return product.retailPrice ?? product.unitPrice ?? null;
 };
 
-export { getFirstUsableProductImage, getProductDescription, getProductPrice };
+const getProductIdentifier = (product: Product): string => {
+  return product.id ?? product.ean;
+};
+
+const resolveProductByIdentifier = (products: Product[], productId: string): Product | null => {
+  return products.find((product) => getProductIdentifier(product) === productId) ?? null;
+};
+
+export {
+  getFirstUsableProductImage,
+  getProductDescription,
+  getProductPrice,
+  getProductIdentifier,
+  resolveProductByIdentifier,
+};

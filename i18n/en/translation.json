@@ -25,5 +25,12 @@
     "availabilityLabel": "Availability: {{amount}}",
     "descriptionUnavailable": "No description available.",
     "productCardA11yLabel": "Product card for {{product}}"
+  },
+  "product": {
+    "loading": "Loading product...",
+    "notFoundTitle": "Product not found",
+    "notFoundDescription": "This product could not be found.",
+    "imageA11yLabel": "Product image for {{product}}",
+    "eanLabel": "EAN: {{ean}}"
   }
 }
