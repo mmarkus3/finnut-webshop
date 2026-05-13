@@ -10,7 +10,10 @@
     "categoryLinkA11yLabel": "Avaa kategoria {{category}}",
     "welcome": "Verkkokauppa",
     "stats": "{{products}} tuotetta {{categories}} kategoriassa",
-    "loadingCategories": "Ladataan kategorioita..."
+    "loadingCategories": "Ladataan kategorioita...",
+    "noCategoryProducts": "Kategorioille ei löytynyt vielä tuotteita.",
+    "categoryCarouselA11yLabel": "Tuotekaruselli kategorialle {{category}}",
+    "productCardA11yLabel": "Näytä tuote {{product}}"
   },
   "category": {
     "title": "Kategoria: {{category}}",

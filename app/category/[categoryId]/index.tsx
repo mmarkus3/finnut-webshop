@@ -1,3 +1,4 @@
+import { useCategories } from '@/hooks/categories';
 import { useProducts } from '@/hooks/products';
 import { useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
@@ -8,6 +9,7 @@ export default function CategoryListingScreen() {
   const { t } = useTranslation();
   const params = useLocalSearchParams<{ categoryId?: string }>();
   const categoryId = params.categoryId ?? '';
+  const { categories } = useCategories();
   const { products, isLoading } = useProducts();
 
   const filteredProducts = useMemo(
@@ -15,10 +17,12 @@ export default function CategoryListingScreen() {
     [categoryId, products]
   );
 
+  const categoryName = useMemo(() => categories.find((c) => c.id === categoryId)?.name, [categoryId, categories])
+
   return (
     <View className="flex-1 bg-white px-4 py-6">
       <Text className="text-lg font-semibold text-neutral-900">
-        {t('category.title', { category: categoryId })}
+        {categoryName}
       </Text>
       <Text className="mt-2 text-sm text-neutral-600">
         {isLoading

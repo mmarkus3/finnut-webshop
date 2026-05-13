@@ -8,13 +8,15 @@ import { View } from 'react-native';
 import '../i18n/config';
 import './global.css';
 
+const logoImageSource = { uri: Asset.fromModule(require('../assets/images/Finnut-Logo-white.webp')).uri };
+
 function LogoTitle() {
   return (
     <Image
       allowDownscaling={false}
       contentFit="cover"
       style={{ width: 110, height: 50, margin: 16 }}
-      source={Asset.fromModule(require('../assets/images/Finnut-Logo-white.webp'))} />
+      source={logoImageSource} />
   );
 }
 

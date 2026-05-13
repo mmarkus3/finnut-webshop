@@ -10,7 +10,10 @@
     "categoryLinkA11yLabel": "Öppna kategori {{category}}",
     "welcome": "Webbutik",
     "stats": "{{products}} produkter i {{categories}} kategorier",
-    "loadingCategories": "Laddar kategorier..."
+    "loadingCategories": "Laddar kategorier...",
+    "noCategoryProducts": "Inga produkter hittades för kategorier ännu.",
+    "categoryCarouselA11yLabel": "Produktkarusell för {{category}}",
+    "productCardA11yLabel": "Visa produkt {{product}}"
   },
   "category": {
     "title": "Kategori: {{category}}",

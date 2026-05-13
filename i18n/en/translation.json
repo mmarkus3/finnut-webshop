@@ -10,7 +10,10 @@
     "categoryLinkA11yLabel": "Open category {{category}}",
     "welcome": "Webshop",
     "stats": "{{products}} products across {{categories}} categories",
-    "loadingCategories": "Loading categories..."
+    "loadingCategories": "Loading categories...",
+    "noCategoryProducts": "No products found for categories yet.",
+    "categoryCarouselA11yLabel": "Product carousel for {{category}}",
+    "productCardA11yLabel": "View product {{product}}"
   },
   "category": {
     "title": "Category: {{category}}",

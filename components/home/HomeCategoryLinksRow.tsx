@@ -34,7 +34,7 @@ export function HomeCategoryLinksRow({ categories }: HomeCategoryLinksRowProps) 
             accessibilityLabel={t('home.categoryLinkA11yLabel', {
               category: t(getCategoryTranslationKey(category), { defaultValue: category.name }),
             })}
-            className="rounded-full border border-primary-500 px-4 py-2"
+            className="px-4 py-2"
           >
             <Text className="text-sm font-medium text-primary-600">
               {t(getCategoryTranslationKey(category), { defaultValue: category.name })}
