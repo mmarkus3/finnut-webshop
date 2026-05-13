@@ -18,6 +18,12 @@
   "category": {
     "title": "Kategori: {{category}}",
     "loading": "Laddar produkter...",
-    "productCount": "{{count}} produkter"
+    "productCount": "{{count}} produkter",
+    "noProducts": "Inga produkter hittades i denna kategori.",
+    "priceLabel": "Pris: {{price}}",
+    "priceUnavailable": "Ej tillgänglig",
+    "availabilityLabel": "Tillgänglighet: {{amount}}",
+    "descriptionUnavailable": "Ingen beskrivning tillgänglig.",
+    "productCardA11yLabel": "Produktkort för {{product}}"
   }
 }

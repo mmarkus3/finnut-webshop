@@ -18,6 +18,12 @@
   "category": {
     "title": "Kategoria: {{category}}",
     "loading": "Ladataan tuotteita...",
-    "productCount": "{{count}} tuotetta"
+    "productCount": "{{count}} tuotetta",
+    "noProducts": "Tässä kategoriassa ei ole tuotteita.",
+    "priceLabel": "Hinta: {{price}}",
+    "priceUnavailable": "Ei saatavilla",
+    "availabilityLabel": "Saatavuus: {{amount}}",
+    "descriptionUnavailable": "Kuvausta ei ole saatavilla.",
+    "productCardA11yLabel": "Tuotekortti tuotteelle {{product}}"
   }
 }
