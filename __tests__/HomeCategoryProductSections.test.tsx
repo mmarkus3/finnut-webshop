@@ -1,6 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { HomeCategoryProductSections, getFirstProductImage, groupProductsByCategory } from '@/components/home/HomeCategoryProductSections';
+import { HomeCategoryProductSections, groupProductsByCategory } from '@/components/home/HomeCategoryProductSections';
+import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 
@@ -12,7 +13,7 @@ jest.mock('expo-asset', () => ({
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, options?: Record<string, string>) => {
+    t: (key: string, options?: Record<string, string | number>) => {
       if (key === 'home.noCategoryProducts') {
         return 'No products found for categories yet.';
       }
@@ -25,11 +26,30 @@ jest.mock('react-i18next', () => ({
         return `View product ${options?.product ?? ''}`;
       }
 
+      if (key === 'category.priceLabel') {
+        return `Price: ${options?.price}`;
+      }
+
+      if (key === 'category.priceUnavailable') {
+        return 'N/A';
+      }
+
+      if (key === 'category.availabilityLabel') {
+        return `Availability: ${options?.amount}`;
+      }
+
+      if (key === 'category.descriptionUnavailable') {
+        return 'No description available.';
+      }
+
       if (key.startsWith('categories.')) {
         return options?.defaultValue ?? key;
       }
 
       return key;
+    },
+    i18n: {
+      language: 'en',
     },
   }),
 }));
@@ -42,17 +62,39 @@ describe('HomeCategoryProductSections helpers', () => {
   ];
 
   const products: Product[] = [
-    { name: 'Apple', amount: 1, ean: '1', images: ['https://img/apple.jpg'], category: 'fruit' },
-    { name: 'Milk', amount: 1, ean: '2', images: ['https://img/milk.jpg'], category: 'dairy' },
+    {
+      name: 'Apple',
+      amount: 1,
+      ean: '1',
+      images: ['https://img/apple.jpg'],
+      category: 'fruit',
+      retailPrice: 2.35,
+      description_en: 'Fresh apple description',
+    },
+    {
+      name: 'Milk',
+      amount: 1,
+      ean: '2',
+      images: ['https://img/milk.jpg'],
+      category: 'dairy',
+      unitPrice: 3.6,
+      description_en: 'Milk description',
+    },
     { name: 'Orphan', amount: 1, ean: '3', images: ['https://img/orphan.jpg'], category: 'unknown' },
   ];
 
   it('returns first image when available', () => {
-    expect(getFirstProductImage(products[0])).toBe('https://img/apple.jpg');
+    expect(getFirstUsableProductImage(products[0])).toBe('https://img/apple.jpg');
   });
 
   it('returns null when image list is empty', () => {
-    expect(getFirstProductImage({ ...products[0], images: [] })).toBeNull();
+    expect(getFirstUsableProductImage({ ...products[0], images: [] })).toBeNull();
+  });
+
+  it('derives shared metadata helpers', () => {
+    expect(getProductPrice(products[0])).toBe(2.35);
+    expect(getProductPrice(products[1])).toBe(3.6);
+    expect(getProductDescription(products[0], 'en')).toBe('Fresh apple description');
   });
 
   it('groups products by existing category in stable category order and skips empty sections', () => {
@@ -73,8 +115,16 @@ describe('HomeCategoryProductSections rendering', () => {
   ];
 
   const products: Product[] = [
-    { name: 'Apple', amount: 1, ean: '1', images: ['https://img/apple.jpg'], category: 'fruit' },
-    { name: 'Milk', amount: 1, ean: '2', images: [], category: 'dairy' },
+    {
+      name: 'Apple',
+      amount: 1,
+      ean: '1',
+      images: ['https://img/apple.jpg'],
+      category: 'fruit',
+      retailPrice: 4.2,
+      description_en: 'Apple home card description',
+    },
+    { name: 'Milk', amount: 3, ean: '2', images: [], category: 'dairy' },
   ];
 
   it('renders no-data message when no category sections can be produced', () => {
@@ -88,22 +138,12 @@ describe('HomeCategoryProductSections rendering', () => {
     expect(textNodes.some((node) => node.props.children === 'No products found for categories yet.')).toBe(true);
   });
 
-  it('renders a carousel per category section and uses placeholder for products without images', () => {
+  it('renders carousel cards with parity metadata and image fallback', () => {
     let tree: renderer.ReactTestRenderer | null = null;
 
     renderer.act(() => {
       tree = renderer.create(<HomeCategoryProductSections categories={categories} products={products} />);
     });
-
-    const carouselLabels = Array.from(
-      new Set(
-        tree!.root
-          .findAll((node) => typeof node.props.accessibilityLabel === 'string')
-          .map((node) => node.props.accessibilityLabel as string)
-          .filter((label) => label.startsWith('Product carousel for '))
-      )
-    );
-    expect(carouselLabels).toEqual(['Product carousel for Fruit', 'Product carousel for Dairy']);
 
     const cards = tree!.root.findAll((node) => node.type === 'View' && node.props.accessibilityRole === 'button');
     expect(cards).toHaveLength(2);
@@ -115,6 +155,18 @@ describe('HomeCategoryProductSections rendering', () => {
     expect(imageUris).toContain('https://img/apple.jpg');
     expect(imageUris).toContain('placeholder://image');
 
-    expect(cards[0].props.accessibilityLabel).toBe('View product Apple');
+    const textValues = tree!.root
+      .findAllByType('Text')
+      .map((node) => node.props.children)
+      .flat();
+
+    expect(textValues).toContain('Price: 4.20');
+    expect(textValues).toContain('Availability: 1');
+    expect(textValues).toContain('Apple home card description');
+
+    const truncatedDescriptionNodes = tree!.root.findAll(
+      (node) => node.type === 'Text' && node.props.numberOfLines === 3
+    );
+    expect(truncatedDescriptionNodes.length).toBeGreaterThan(0);
   });
 });

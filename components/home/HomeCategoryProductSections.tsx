@@ -1,3 +1,4 @@
+import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
@@ -17,15 +18,6 @@ interface CategoryProductSection {
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
 const getCategoryTranslationKey = (categoryId: string) => `categories.${categoryId}.name`;
-
-const getFirstProductImage = (product: Product): string | null => {
-  if (!Array.isArray(product.images) || product.images.length === 0) {
-    return null;
-  }
-
-  const firstImage = product.images[0]?.trim();
-  return firstImage ? firstImage : null;
-};
 
 const groupProductsByCategory = (categories: Category[], products: Product[]): CategoryProductSection[] => {
   const grouped = new Map<string, Product[]>();
@@ -49,8 +41,10 @@ const groupProductsByCategory = (categories: Category[], products: Product[]): C
 };
 
 function ProductCard({ product }: { product: Product }) {
-  const { t } = useTranslation();
-  const firstImage = getFirstProductImage(product);
+  const { t, i18n } = useTranslation();
+  const firstImage = getFirstUsableProductImage(product);
+  const description = getProductDescription(product, i18n.language);
+  const price = getProductPrice(product);
 
   return (
     <View
@@ -66,6 +60,17 @@ function ProductCard({ product }: { product: Product }) {
       />
       <Text numberOfLines={2} className="mt-2 text-sm font-medium text-neutral-900">
         {product.name}
+      </Text>
+      <Text className="mt-1 text-sm text-neutral-700">
+        {t('category.priceLabel', {
+          price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+        })}
+      </Text>
+      <Text className="mt-1 text-sm text-neutral-700">
+        {t('category.availabilityLabel', { amount: product.amount })}
+      </Text>
+      <Text numberOfLines={3} className="mt-1 text-sm text-neutral-600">
+        {description || t('category.descriptionUnavailable')}
       </Text>
     </View>
   );
@@ -108,4 +113,4 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
   );
 }
 
-export { getFirstProductImage, groupProductsByCategory };
+export { groupProductsByCategory };

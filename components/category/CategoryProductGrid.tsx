@@ -1,10 +1,13 @@
+import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
+import { Asset } from 'expo-asset';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Text, useWindowDimensions, View } from 'react-native';
+import { FlatList, Image, Text, useWindowDimensions, View } from 'react-native';
 
 const DESKTOP_MIN_WIDTH = 1024;
+const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
 const getCategoryPageTitle = (categories: Category[], categoryId: string): string => {
   return categories.find((category) => category.id === categoryId)?.name ?? categoryId;
@@ -16,22 +19,6 @@ const filterProductsByCategory = (products: Product[], categoryId: string): Prod
 
 const getCategoryGridColumns = (width: number): number => {
   return width >= DESKTOP_MIN_WIDTH ? 4 : 1;
-};
-
-const getProductDescription = (product: Product, language: string): string => {
-  if (language === 'en') {
-    return product.description_en ?? product.description_fi ?? product.description_sv ?? '';
-  }
-
-  if (language === 'sv') {
-    return product.description_sv ?? product.description_fi ?? product.description_en ?? '';
-  }
-
-  return product.description_fi ?? product.description_en ?? product.description_sv ?? '';
-};
-
-const getProductPrice = (product: Product): number | null => {
-  return product.retailPrice ?? product.unitPrice ?? null;
 };
 
 interface CategoryProductGridProps {
@@ -74,6 +61,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
         renderItem={({ item }) => {
           const description = getProductDescription(item, i18n.language);
           const price = getProductPrice(item);
+          const firstImage = getFirstUsableProductImage(item);
 
           return (
             <View
@@ -82,7 +70,12 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
               accessibilityRole="summary"
               accessibilityLabel={t('category.productCardA11yLabel', { product: item.name })}
             >
-              <Text className="text-base font-semibold text-neutral-900">{item.name}</Text>
+              <Image
+                source={firstImage ? { uri: firstImage } : placeholderImageSource}
+                defaultSource={placeholderImageSource}
+                className="h-32 w-full rounded-lg bg-neutral-100"
+              />
+              <Text className="mt-2 text-base font-semibold text-neutral-900">{item.name}</Text>
               <Text className="mt-1 text-sm text-neutral-700">
                 {t('category.priceLabel', {
                   price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
@@ -102,10 +95,4 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
   );
 }
 
-export {
-  getCategoryPageTitle,
-  filterProductsByCategory,
-  getCategoryGridColumns,
-  getProductDescription,
-  getProductPrice,
-};
+export { getCategoryPageTitle, filterProductsByCategory, getCategoryGridColumns };
