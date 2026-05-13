@@ -4,5 +4,17 @@
     "description": "Finnut verkkokaupasta löydät herkut",
     "cancel": "Peruuta",
     "delete": "Poista"
+  },
+  "home": {
+    "categoriesLabel": "Selaa kategorioita",
+    "categoryLinkA11yLabel": "Avaa kategoria {{category}}",
+    "welcome": "Verkkokauppa",
+    "stats": "{{products}} tuotetta {{categories}} kategoriassa",
+    "loadingCategories": "Ladataan kategorioita..."
+  },
+  "category": {
+    "title": "Kategoria: {{category}}",
+    "loading": "Ladataan tuotteita...",
+    "productCount": "{{count}} tuotetta"
   }
 }

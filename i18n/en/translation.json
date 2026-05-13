@@ -1,6 +1,20 @@
 {
   "common": {
+    "title": "Finnut webshop",
+    "description": "Find your favorites in Finnut webshop",
     "cancel": "Cancel",
     "delete": "Delete"
+  },
+  "home": {
+    "categoriesLabel": "Browse categories",
+    "categoryLinkA11yLabel": "Open category {{category}}",
+    "welcome": "Webshop",
+    "stats": "{{products}} products across {{categories}} categories",
+    "loadingCategories": "Loading categories..."
+  },
+  "category": {
+    "title": "Category: {{category}}",
+    "loading": "Loading products...",
+    "productCount": "{{count}} products"
   }
 }

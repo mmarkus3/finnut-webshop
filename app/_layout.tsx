@@ -23,10 +23,13 @@ const StyledView = cssInterop(View, {
 });
 
 function RootStack() {
+  const { t } = useTranslation();
+
   return (
     <Stack screenOptions={{
       headerShown: true,
       headerBackground: () => <StyledView className="h-20 bg-primary-500 p-4" />,
+      headerTintColor: '#fff',
       headerTransparent: true,
       headerLeft: () => <LogoTitle />,
       contentStyle: { paddingTop: 80 },
@@ -34,7 +37,7 @@ function RootStack() {
       <Stack.Screen
         name="index"
         options={{
-          title: '',
+          title: t('common.title'),
         }}
       />
     </Stack>

@@ -1,6 +1,20 @@
 {
   "common": {
-    "cancel": "Avboka",
+    "title": "Finnut webbutik",
+    "description": "Hitta dina favoriter i Finnut webbutik",
+    "cancel": "Avbryt",
     "delete": "Radera"
+  },
+  "home": {
+    "categoriesLabel": "Bläddra kategorier",
+    "categoryLinkA11yLabel": "Öppna kategori {{category}}",
+    "welcome": "Webbutik",
+    "stats": "{{products}} produkter i {{categories}} kategorier",
+    "loadingCategories": "Laddar kategorier..."
+  },
+  "category": {
+    "title": "Kategori: {{category}}",
+    "loading": "Laddar produkter...",
+    "productCount": "{{count}} produkter"
   }
 }
