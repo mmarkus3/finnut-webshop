@@ -45,6 +45,18 @@ const getCartTotalPrice = (state: CartState): number => {
   }, 0);
 };
 
+const getCartVatAmount = (state: CartState): number => {
+  return Object.values(state.items).reduce((sum, item) => {
+    const unitPrice = getProductPrice(item.product);
+    if (unitPrice === null) {
+      return sum;
+    }
+
+    const taxRate = Number.isFinite(item.product.tax) ? item.product.tax : 0;
+    return sum + (unitPrice * item.quantity * taxRate);
+  }, 0);
+};
+
 const canAddProductToCart = (state: CartState, product: Product): boolean => {
   const productId = normalizeCartProductId(getProductIdentifier(product));
   const currentQuantity = state.items[productId]?.quantity ?? 0;
@@ -148,6 +160,7 @@ interface CartContextValue {
   itemCount: number;
   badgeCountLabel: string;
   totalPrice: number;
+  vatAmount: number;
   addItem: (product: Product) => void;
   incrementItem: (productId: string) => void;
   decrementItem: (productId: string) => void;
@@ -169,6 +182,7 @@ function CartProvider({ children }: PropsWithChildren) {
       itemCount,
       badgeCountLabel: getCartBadgeCountLabel(itemCount),
       totalPrice: getCartTotalPrice(state),
+      vatAmount: getCartVatAmount(state),
       addItem: (product: Product) => dispatch({ type: 'ADD_ITEM', payload: { product } }),
       incrementItem: (productId: string) => dispatch({ type: 'INCREMENT', payload: { productId } }),
       decrementItem: (productId: string) => dispatch({ type: 'DECREMENT', payload: { productId } }),
@@ -192,5 +206,5 @@ const useCart = (): CartContextValue => {
 
 export {
   canAddProductToCart, CartProvider, cartReducer, getCartBadgeCountLabel, getCartItemCount,
-  getCartTotalPrice, initialCartState, normalizeCartProductId, useCart
+  getCartTotalPrice, getCartVatAmount, initialCartState, normalizeCartProductId, useCart
 };

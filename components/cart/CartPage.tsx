@@ -1,11 +1,14 @@
-import { getProductIdentifier, getProductPrice } from '@/components/product/cardUtils';
+import { getFirstUsableProductImage, getProductIdentifier, getProductPrice } from '@/components/product/cardUtils';
 import { useCart } from '@/hooks/cart';
+import { Asset } from 'expo-asset';
 import { useTranslation } from 'react-i18next';
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
+
+const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
 export function CartPage() {
   const { t } = useTranslation();
-  const { items, totalPrice, incrementItem, decrementItem, removeItem, clearCart } = useCart();
+  const { items, totalPrice, vatAmount, incrementItem, decrementItem, removeItem, clearCart } = useCart();
 
   if (items.length === 0) {
     return (
@@ -29,17 +32,30 @@ export function CartPage() {
         {items.map((item) => {
           const productId = getProductIdentifier(item.product);
           const price = getProductPrice(item.product);
+          const firstImage = getFirstUsableProductImage(item.product);
           const canIncrement = item.quantity < item.product.amount;
 
           return (
             <View key={productId} className="rounded-xl border border-neutral-200 p-3">
-              <Text className="text-base font-semibold text-neutral-900">{item.product.name}</Text>
-              <Text className="mt-1 text-sm text-neutral-600">{t('cart.eanLabel', { ean: item.product.ean })}</Text>
-              <Text className="mt-1 text-sm text-neutral-600">
-                {t('cart.priceLabel', {
-                  price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
-                })}
-              </Text>
+              <View className="flex-row gap-3">
+                <Image
+                  source={firstImage ? { uri: firstImage } : placeholderImageSource}
+                  defaultSource={placeholderImageSource}
+                  style={{ resizeMode: 'contain' }}
+                  className="h-16 w-16 rounded-md bg-neutral-100"
+                  accessibilityRole="image"
+                  accessibilityLabel={t('cart.imageA11yLabel', { product: item.product.name })}
+                />
+
+                <View className="flex-1">
+                  <Text className="text-base font-semibold text-neutral-900">{item.product.name}</Text>
+                  <Text className="mt-1 text-sm text-neutral-600">
+                    {t('cart.priceLabel', {
+                      price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+                    })}
+                  </Text>
+                </View>
+              </View>
 
               <View className="mt-3 flex-row items-center gap-2">
                 <Pressable
@@ -75,6 +91,7 @@ export function CartPage() {
       </View>
 
       <View className="mt-6 rounded-xl bg-neutral-50 p-3">
+        <Text className="text-sm text-neutral-700">{t('cart.vatLabel', { vat: vatAmount.toFixed(2) })}</Text>
         <Text className="text-sm font-semibold text-neutral-900">{t('cart.totalLabel', { total: totalPrice.toFixed(2) })}</Text>
       </View>
     </View>

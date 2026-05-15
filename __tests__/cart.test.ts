@@ -4,14 +4,15 @@ import {
   getCartBadgeCountLabel,
   getCartItemCount,
   getCartTotalPrice,
+  getCartVatAmount,
   initialCartState,
   normalizeCartProductId,
 } from '@/hooks/cart';
 import { Product } from '@/types/product';
 
 describe('cart state helpers and reducer', () => {
-  const apple: Product = { id: 'p1', name: 'Apple', amount: 2, ean: '111', images: [], retailPrice: 1.5 };
-  const milk: Product = { id: 'p2', name: 'Milk', amount: 5, ean: '222', images: [], unitPrice: 2 };
+  const apple: Product = { id: 'p1', name: 'Apple', amount: 2, ean: '111', images: [], retailPrice: 1.5, tax: 0.14 };
+  const milk: Product = { id: 'p2', name: 'Milk', amount: 5, ean: '222', images: [], unitPrice: 2, tax: 0.255 };
 
   it('adds items and clamps quantity to stock', () => {
     const s1 = cartReducer(initialCartState, { type: 'ADD_ITEM', payload: { product: apple } });
@@ -40,6 +41,24 @@ describe('cart state helpers and reducer', () => {
     expect(getCartTotalPrice(s2)).toBe(3.5);
     expect(getCartBadgeCountLabel(2)).toBe('2');
     expect(getCartBadgeCountLabel(120)).toBe('99+');
+  });
+
+  it('calculates VAT from line totals and tax rates', () => {
+    const s1 = cartReducer(initialCartState, { type: 'ADD_ITEM', payload: { product: apple } });
+    const s2 = cartReducer(s1, { type: 'ADD_ITEM', payload: { product: milk } });
+    const s3 = cartReducer(s2, { type: 'ADD_ITEM', payload: { product: milk } });
+
+    expect(getCartVatAmount(s3)).toBeCloseTo((1.5 * 1 * 0.14) + (2 * 2 * 0.255), 8);
+  });
+
+  it('treats missing or invalid tax as zero VAT contribution', () => {
+    const noTax: Product = { id: 'p3', name: 'Bread', amount: 3, ean: '333', images: [], unitPrice: 3 };
+    const invalidTax = { id: 'p4', name: 'Juice', amount: 3, ean: '444', images: [], unitPrice: 2.5, tax: NaN } as Product;
+
+    const s1 = cartReducer(initialCartState, { type: 'ADD_ITEM', payload: { product: noTax } });
+    const s2 = cartReducer(s1, { type: 'ADD_ITEM', payload: { product: invalidTax } });
+
+    expect(getCartVatAmount(s2)).toBe(0);
   });
 
   it('checks if product can be added with stock limit', () => {
