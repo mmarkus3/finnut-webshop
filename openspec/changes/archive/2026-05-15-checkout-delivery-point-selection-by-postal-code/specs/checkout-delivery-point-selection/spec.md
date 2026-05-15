@@ -1,0 +1,22 @@
+## ADDED Requirements
+
+### Requirement: Checkout SHALL fetch delivery points by postal code
+The system SHALL fetch delivery points from company-scoped orders points endpoint using entered postal code.
+
+#### Scenario: Delivery points request is sent
+- **WHEN** user has entered postal code and requests delivery points
+- **THEN** system performs GET request to `/orders/company/${process.env.EXPO_PUBLIC_COMPANY}/points?postalCode=<postalCode>` using `process.env.EXPO_PUBLIC_FIREBASE_API` base URL
+
+### Requirement: Checkout SHALL show top 10 delivery points for selection
+The system SHALL display at most 10 delivery points and allow user to choose one option.
+
+#### Scenario: Delivery points list is shown and selectable
+- **WHEN** endpoint returns delivery points
+- **THEN** checkout displays the first 10 points in a selectable list and allows exactly one selected point at a time
+
+### Requirement: Checkout SHALL handle delivery-point fetch states
+The system SHALL present loading, empty, and error states for delivery-point retrieval.
+
+#### Scenario: Fetch state feedback is visible
+- **WHEN** fetch is pending, fails, or returns no points
+- **THEN** corresponding state message is shown to user

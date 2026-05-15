@@ -116,6 +116,12 @@
     "addressCityLabel": "Kaupunki",
     "addressZipLabel": "Postinumero",
     "orderCreateLoading": "Luodaan tilausta...",
-    "orderCreateError": "Tilauksen luonti epäonnistui. Yritä uudelleen."
+    "orderCreateError": "Tilauksen luonti epäonnistui. Yritä uudelleen.",
+    "deliveryPointsTitle": "Toimituspisteet",
+    "loadDeliveryPointsButton": "Hae toimituspisteet",
+    "deliveryPointsLoading": "Haetaan toimituspisteitä...",
+    "deliveryPointsError": "Toimituspisteiden haku epäonnistui. Yritä uudelleen.",
+    "deliveryPointsEmpty": "Toimituspisteitä ei löytynyt.",
+    "deliveryPointOptionA11yLabel": "Valitse toimituspiste {{point}}"
   }
 }

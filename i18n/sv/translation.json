@@ -116,6 +116,12 @@
     "addressCityLabel": "Stad",
     "addressZipLabel": "Postnummer",
     "orderCreateLoading": "Skapar order...",
-    "orderCreateError": "Kunde inte skapa order. Försök igen."
+    "orderCreateError": "Kunde inte skapa order. Försök igen.",
+    "deliveryPointsTitle": "Leveranspunkter",
+    "loadDeliveryPointsButton": "Hämta leveranspunkter",
+    "deliveryPointsLoading": "Hämtar leveranspunkter...",
+    "deliveryPointsError": "Kunde inte hämta leveranspunkter. Försök igen.",
+    "deliveryPointsEmpty": "Inga leveranspunkter hittades.",
+    "deliveryPointOptionA11yLabel": "Välj leveranspunkt {{point}}"
   }
 }
