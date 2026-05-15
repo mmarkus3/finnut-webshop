@@ -118,7 +118,7 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
 
   if (sections.length === 0) {
     return (
-      <View className="px-4 py-2">
+      <View className="flex-1 items-center justify-center px-4 py-2">
         <Text className="text-sm text-neutral-500">{t('home.noCategoryProducts')}</Text>
       </View>
     );
