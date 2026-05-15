@@ -145,7 +145,10 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
           </View>
           <ScrollView
             horizontal
-            showsHorizontalScrollIndicator={false}
+            nestedScrollEnabled
+            directionalLockEnabled
+            contentContainerStyle={{ paddingRight: 8 }}
+            showsHorizontalScrollIndicator={true}
             accessibilityRole="adjustable"
             accessibilityLabel={t('home.categoryCarouselA11yLabel', {
               category: t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name }),

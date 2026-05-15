@@ -21,7 +21,7 @@ export function HomeCategoryLinksRow({ categories }: HomeCategoryLinksRowProps) 
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+        contentContainerStyle={{ paddingHorizontal: 0 }}
       >
         {categories.map((category) => (
           <Link
@@ -36,7 +36,7 @@ export function HomeCategoryLinksRow({ categories }: HomeCategoryLinksRowProps) 
             })}
             className="px-4 py-2"
           >
-            <Text className="text-sm font-medium text-primary-600">
+            <Text className="text-sm font-medium text-primary-600 bg-gray-100 p-6 rounded">
               {t(getCategoryTranslationKey(category), { defaultValue: category.name })}
             </Text>
           </Link>

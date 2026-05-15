@@ -189,6 +189,17 @@ describe('HomeCategoryProductSections rendering', () => {
       (node) => node.type === 'Text' && node.props.numberOfLines === 3
     );
     expect(truncatedDescriptionNodes.length).toBeGreaterThan(0);
+
+    const carouselNodes = tree!.root.findAll(
+      (node) =>
+        node.props.accessibilityRole === 'adjustable' &&
+        typeof node.props.accessibilityLabel === 'string' &&
+        node.props.accessibilityLabel.startsWith('Product carousel for ')
+    );
+    expect(carouselNodes.length).toBeGreaterThan(0);
+    expect(carouselNodes.every((node) => node.props.horizontal === true)).toBe(true);
+    expect(carouselNodes.every((node) => node.props.nestedScrollEnabled === true)).toBe(true);
+    expect(carouselNodes.every((node) => node.props.directionalLockEnabled === true)).toBe(true);
   });
 
   it('navigates to category listing when pressing show-all action', () => {
