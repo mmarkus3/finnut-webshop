@@ -4,6 +4,7 @@ import {
   getProductIdentifier,
   getProductPrice,
 } from '@/components/product/cardUtils';
+import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
@@ -49,9 +50,11 @@ const groupProductsByCategory = (categories: Category[], products: Product[]): C
 function ProductCard({ product }: { product: Product }) {
   const { t, i18n } = useTranslation();
   const router = useRouter();
+  const { addItem, canAddItem } = useCart();
   const firstImage = getFirstUsableProductImage(product);
   const description = getProductDescription(product, i18n.language);
   const price = getProductPrice(product);
+  const canAdd = canAddItem(product);
 
   const openProduct = () => {
     router.push({
@@ -63,7 +66,7 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <Pressable
       onPress={openProduct}
-      className="mr-3 w-48 rounded-xl border border-neutral-200 bg-white p-2"
+      className="mr-3 w-64 rounded-xl border border-neutral-200 bg-white p-2"
       accessibilityRole="button"
       accessibilityLabel={t('home.productCardA11yLabel', { product: product.name })}
       focusable
@@ -87,6 +90,15 @@ function ProductCard({ product }: { product: Product }) {
       <Text numberOfLines={3} className="mt-1 text-sm text-neutral-600">
         {description || t('category.descriptionUnavailable')}
       </Text>
+      <Pressable
+        onPress={() => addItem(product)}
+        disabled={!canAdd}
+        className={`mt-3 items-center rounded-lg px-3 py-2 ${canAdd ? 'bg-primary-600' : 'bg-neutral-300'}`}
+        accessibilityRole="button"
+        accessibilityLabel={t('cart.addA11yLabel', { product: product.name })}
+      >
+        <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
+      </Pressable>
     </Pressable>
   );
 }

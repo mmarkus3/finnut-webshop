@@ -52,5 +52,20 @@
     "eanLabel": "EAN: {{ean}}",
     "priceLabel": "Pris: {{price}}",
     "cartA11yLabel": "Öppna kundvagn"
+  },
+  "cart": {
+    "title": "Kundvagn",
+    "empty": "Din kundvagn ar tom.",
+    "addButton": "Lagg i kundvagn",
+    "clearButton": "Tom kundvagn",
+    "removeButton": "Ta bort",
+    "totalLabel": "Totalt: {{total}}",
+    "priceLabel": "Pris: {{price}}",
+    "eanLabel": "EAN: {{ean}}",
+    "addA11yLabel": "Lagg till {{product}} i kundvagn",
+    "clearA11yLabel": "Tom kundvagnen",
+    "removeA11yLabel": "Ta bort {{product}} fran kundvagnen",
+    "increaseA11yLabel": "Oka antal for {{product}}",
+    "decreaseA11yLabel": "Minska antal for {{product}}"
   }
 }

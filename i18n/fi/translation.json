@@ -52,5 +52,20 @@
     "eanLabel": "EAN: {{ean}}",
     "priceLabel": "Hinta: {{price}}",
     "cartA11yLabel": "Avaa ostoskori"
+  },
+  "cart": {
+    "title": "Ostoskori",
+    "empty": "Ostoskorisi on tyhjä.",
+    "addButton": "Lisää ostoskoriin",
+    "clearButton": "Tyhjennä ostoskori",
+    "removeButton": "Poista",
+    "totalLabel": "Yhteensä: {{total}}",
+    "priceLabel": "Hinta: {{price}}",
+    "eanLabel": "EAN: {{ean}}",
+    "addA11yLabel": "Lisää {{product}} ostoskoriin",
+    "clearA11yLabel": "Tyhjennä ostoskori",
+    "removeA11yLabel": "Poista {{product}} ostoskorista",
+    "increaseA11yLabel": "Lisää tuotteen {{product}} määrä",
+    "decreaseA11yLabel": "Vähennä tuotteen {{product}} määrä"
   }
 }

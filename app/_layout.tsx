@@ -1,4 +1,5 @@
 import { SearchModal } from '@/components/search/SearchModal';
+import { CartProvider, useCart } from '@/hooks/cart';
 import { useProducts } from '@/hooks/products';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Asset } from 'expo-asset';
@@ -8,7 +9,7 @@ import Head from 'expo-router/head';
 import { cssInterop } from 'nativewind';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import '../i18n/config';
 import './global.css';
 
@@ -17,12 +18,8 @@ const logoImageSource = { uri: Asset.fromModule(require('../assets/images/Finnut
 function LogoTitle() {
   const router = useRouter();
 
-  const handleLogoPress = () => {
-    router.navigate('/');
-  };
-
   return (
-    <TouchableOpacity onPress={handleLogoPress}>
+    <TouchableOpacity onPress={() => router.navigate('/')}>
       <Image
         allowDownscaling={false}
         contentFit="cover"
@@ -39,6 +36,8 @@ interface HeaderActionsProps {
 
 function HeaderActions({ onSearchPress }: HeaderActionsProps) {
   const { t } = useTranslation();
+  const router = useRouter();
+  const { itemCount, badgeCountLabel } = useCart();
 
   return (
     <View className="flex-row gap-4 pr-2">
@@ -49,8 +48,18 @@ function HeaderActions({ onSearchPress }: HeaderActionsProps) {
       >
         <FontAwesome name="search" size={22} color="#ffffff" />
       </TouchableOpacity>
-      <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('search.cartA11yLabel')}>
+
+      <TouchableOpacity
+        onPress={() => router.push('/cart')}
+        accessibilityRole="button"
+        accessibilityLabel={t('search.cartA11yLabel')}
+      >
         <FontAwesome name="shopping-cart" size={22} color="#ffffff" />
+        {itemCount > 0 ? (
+          <View className="absolute -right-2 -top-2 min-w-5 items-center rounded-full bg-red-600 px-1">
+            <Text className="text-xs font-semibold text-white">{badgeCountLabel}</Text>
+          </View>
+        ) : null}
       </TouchableOpacity>
     </View>
   );
@@ -80,6 +89,7 @@ function RootStack() {
       >
         <Stack.Screen name="index" />
         <Stack.Screen name="search/index" />
+        <Stack.Screen name="cart/index" />
       </Stack>
       <SearchModal
         isVisible={isSearchOpen}
@@ -95,12 +105,12 @@ export default function RootLayout() {
   const { t } = useTranslation();
 
   return (
-    <>
+    <CartProvider>
       <Head>
         <title>{t('common.title')}</title>
         <meta name="description" content={t('common.description')} />
       </Head>
       <RootStack />
-    </>
+    </CartProvider>
   );
 }

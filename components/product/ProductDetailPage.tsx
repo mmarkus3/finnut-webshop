@@ -4,11 +4,12 @@ import {
   getProductPrice,
   resolveProductByIdentifier,
 } from '@/components/product/cardUtils';
+import { useCart } from '@/hooks/cart';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 
 interface ProductDetailPageProps {
   productId: string;
@@ -23,6 +24,7 @@ const isDesktopWidth = (width: number): boolean => width >= DESKTOP_MIN_WIDTH;
 
 export function ProductDetailPage({ productId, products, isLoading }: ProductDetailPageProps) {
   const { t, i18n } = useTranslation();
+  const { addItem, canAddItem } = useCart();
   const { width } = useWindowDimensions();
   const isDesktop = isDesktopWidth(width);
 
@@ -48,6 +50,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
   const imageUri = getFirstUsableProductImage(product);
   const description = getProductDescription(product, i18n.language);
   const price = getProductPrice(product);
+  const canAdd = canAddItem(product);
 
   return (
     <ScrollView className="flex-1 bg-white" contentContainerStyle={{ padding: 16 }}>
@@ -76,6 +79,15 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
           <Text className="mt-2 text-sm leading-6 text-neutral-600">
             {description || t('category.descriptionUnavailable')}
           </Text>
+          <Pressable
+            onPress={() => addItem(product)}
+            disabled={!canAdd}
+            className={`mt-3 w-52 items-center rounded-lg px-3 py-2 ${canAdd ? 'bg-primary-600' : 'bg-neutral-300'}`}
+            accessibilityRole="button"
+            accessibilityLabel={t('cart.addA11yLabel', { product: product.name })}
+          >
+            <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
+          </Pressable>
         </View>
       </View>
     </ScrollView>

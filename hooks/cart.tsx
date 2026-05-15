@@ -1,0 +1,197 @@
+import { getProductIdentifier, getProductPrice } from '@/components/product/cardUtils';
+import { CartItem, CartState } from '@/types/cart';
+import { Product } from '@/types/product';
+import { createContext, PropsWithChildren, useContext, useMemo, useReducer } from 'react';
+
+const MAX_BADGE_COUNT = 99;
+
+const initialCartState: CartState = {
+  items: {},
+};
+
+type CartAction =
+  | { type: 'ADD_ITEM'; payload: { product: Product } }
+  | { type: 'INCREMENT'; payload: { productId: string } }
+  | { type: 'DECREMENT'; payload: { productId: string } }
+  | { type: 'REMOVE_ITEM'; payload: { productId: string } }
+  | { type: 'CLEAR' };
+
+const clampQuantityToStock = (quantity: number, amount: number): number => {
+  if (amount <= 0) {
+    return 0;
+  }
+
+  return Math.min(quantity, amount);
+};
+
+const getCartItemCount = (state: CartState): number => {
+  return Object.values(state.items).reduce((sum, item) => sum + item.quantity, 0);
+};
+
+const getCartBadgeCountLabel = (count: number): string => {
+  return count > MAX_BADGE_COUNT ? `${MAX_BADGE_COUNT}+` : `${count}`;
+};
+
+const getCartTotalPrice = (state: CartState): number => {
+  return Object.values(state.items).reduce((sum, item) => {
+    const unitPrice = getProductPrice(item.product);
+    if (unitPrice === null) {
+      return sum;
+    }
+
+    return sum + unitPrice * item.quantity;
+  }, 0);
+};
+
+const canAddProductToCart = (state: CartState, product: Product): boolean => {
+  const productId = getProductIdentifier(product);
+  const currentQuantity = state.items[productId]?.quantity ?? 0;
+  return currentQuantity < product.amount;
+};
+
+const cartReducer = (state: CartState, action: CartAction): CartState => {
+  switch (action.type) {
+    case 'ADD_ITEM': {
+      const product = action.payload.product;
+      const productId = getProductIdentifier(product);
+      const existing = state.items[productId];
+      const nextQuantity = clampQuantityToStock((existing?.quantity ?? 0) + 1, product.amount);
+
+      if (nextQuantity <= 0) {
+        return state;
+      }
+
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [productId]: {
+            product,
+            quantity: nextQuantity,
+          },
+        },
+      };
+    }
+
+    case 'INCREMENT': {
+      const existing = state.items[action.payload.productId];
+      if (!existing) {
+        return state;
+      }
+
+      const nextQuantity = clampQuantityToStock(existing.quantity + 1, existing.product.amount);
+      if (nextQuantity === existing.quantity) {
+        return state;
+      }
+
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [action.payload.productId]: {
+            ...existing,
+            quantity: nextQuantity,
+          },
+        },
+      };
+    }
+
+    case 'DECREMENT': {
+      const existing = state.items[action.payload.productId];
+      if (!existing) {
+        return state;
+      }
+
+      const nextQuantity = existing.quantity - 1;
+      if (nextQuantity <= 0) {
+        const { [action.payload.productId]: _removed, ...rest } = state.items;
+        return { ...state, items: rest };
+      }
+
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [action.payload.productId]: {
+            ...existing,
+            quantity: nextQuantity,
+          },
+        },
+      };
+    }
+
+    case 'REMOVE_ITEM': {
+      if (!state.items[action.payload.productId]) {
+        return state;
+      }
+
+      const { [action.payload.productId]: _removed, ...rest } = state.items;
+      return { ...state, items: rest };
+    }
+
+    case 'CLEAR':
+      return initialCartState;
+
+    default:
+      return state;
+  }
+};
+
+interface CartContextValue {
+  state: CartState;
+  items: CartItem[];
+  itemCount: number;
+  badgeCountLabel: string;
+  totalPrice: number;
+  addItem: (product: Product) => void;
+  incrementItem: (productId: string) => void;
+  decrementItem: (productId: string) => void;
+  removeItem: (productId: string) => void;
+  clearCart: () => void;
+  canAddItem: (product: Product) => boolean;
+}
+
+const CartContext = createContext<CartContextValue | null>(null);
+
+function CartProvider({ children }: PropsWithChildren) {
+  const [state, dispatch] = useReducer(cartReducer, initialCartState);
+
+  const value = useMemo<CartContextValue>(() => {
+    const itemCount = getCartItemCount(state);
+    return {
+      state,
+      items: Object.values(state.items),
+      itemCount,
+      badgeCountLabel: getCartBadgeCountLabel(itemCount),
+      totalPrice: getCartTotalPrice(state),
+      addItem: (product: Product) => dispatch({ type: 'ADD_ITEM', payload: { product } }),
+      incrementItem: (productId: string) => dispatch({ type: 'INCREMENT', payload: { productId } }),
+      decrementItem: (productId: string) => dispatch({ type: 'DECREMENT', payload: { productId } }),
+      removeItem: (productId: string) => dispatch({ type: 'REMOVE_ITEM', payload: { productId } }),
+      clearCart: () => dispatch({ type: 'CLEAR' }),
+      canAddItem: (product: Product) => canAddProductToCart(state, product),
+    };
+  }, [state]);
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+}
+
+const useCart = (): CartContextValue => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within a CartProvider');
+  }
+
+  return context;
+};
+
+export {
+  CartProvider,
+  useCart,
+  cartReducer,
+  initialCartState,
+  getCartItemCount,
+  getCartTotalPrice,
+  getCartBadgeCountLabel,
+  canAddProductToCart,
+};

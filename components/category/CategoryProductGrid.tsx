@@ -4,6 +4,7 @@ import {
   getProductIdentifier,
   getProductPrice,
 } from '@/components/product/cardUtils';
+import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
@@ -37,6 +38,7 @@ interface CategoryProductGridProps {
 export function CategoryProductGrid({ categories, categoryId, products, isLoading }: CategoryProductGridProps) {
   const { t, i18n } = useTranslation();
   const router = useRouter();
+  const { addItem, canAddItem } = useCart();
   const { width } = useWindowDimensions();
   const numColumns = getCategoryGridColumns(width);
 
@@ -69,6 +71,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
           const description = getProductDescription(item, i18n.language);
           const price = getProductPrice(item);
           const firstImage = getFirstUsableProductImage(item);
+          const canAdd = canAddItem(item);
 
           const openProduct = () => {
             router.push({
@@ -102,6 +105,15 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
               <Text numberOfLines={3} className="mt-2 text-sm text-neutral-600">
                 {description || t('category.descriptionUnavailable')}
               </Text>
+              <Pressable
+                onPress={() => addItem(item)}
+                disabled={!canAdd}
+                className={`mt-3 items-center rounded-lg px-3 py-2 ${canAdd ? 'bg-primary-600' : 'bg-neutral-300'}`}
+                accessibilityRole="button"
+                accessibilityLabel={t('cart.addA11yLabel', { product: item.name })}
+              >
+                <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
+              </Pressable>
             </Pressable>
           );
         }}

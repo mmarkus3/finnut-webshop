@@ -1,0 +1,10 @@
+import { Product } from '@/types/product';
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+export interface CartState {
+  items: Record<string, CartItem>;
+}

@@ -52,5 +52,20 @@
     "eanLabel": "EAN: {{ean}}",
     "priceLabel": "Price: {{price}}",
     "cartA11yLabel": "Open shopping cart"
+  },
+  "cart": {
+    "title": "Shopping cart",
+    "empty": "Your cart is empty.",
+    "addButton": "Add to cart",
+    "clearButton": "Clear cart",
+    "removeButton": "Remove",
+    "totalLabel": "Total: {{total}}",
+    "priceLabel": "Price: {{price}}",
+    "eanLabel": "EAN: {{ean}}",
+    "addA11yLabel": "Add {{product}} to cart",
+    "clearA11yLabel": "Clear shopping cart",
+    "removeA11yLabel": "Remove {{product}} from cart",
+    "increaseA11yLabel": "Increase quantity for {{product}}",
+    "decreaseA11yLabel": "Decrease quantity for {{product}}"
   }
 }

@@ -19,12 +19,21 @@ jest.mock('expo-asset', () => ({
   },
 }));
 
+jest.mock('@/hooks/cart', () => ({
+  useCart: () => ({
+    addItem: jest.fn(),
+    canAddItem: () => true,
+  }),
+}));
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string | number>) => {
       if (key === 'home.noCategoryProducts') return 'No products found for categories yet.';
       if (key === 'home.categoryCarouselA11yLabel') return `Product carousel for ${options?.category ?? ''}`;
       if (key === 'home.productCardA11yLabel') return `View product ${options?.product ?? ''}`;
+      if (key === 'cart.addButton') return 'Add to cart';
+      if (key === 'cart.addA11yLabel') return `Add ${options?.product ?? ''} to cart`;
       if (key === 'category.priceLabel') return `Price: ${options?.price}`;
       if (key === 'category.priceUnavailable') return 'N/A';
       if (key === 'category.availabilityLabel') return `Availability: ${options?.amount}`;
