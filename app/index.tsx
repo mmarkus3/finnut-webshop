@@ -1,9 +1,10 @@
 import { HomeCategoryLinksRow } from '@/components/home/HomeCategoryLinksRow';
 import { HomeCategoryProductSections } from '@/components/home/HomeCategoryProductSections';
+import { themeColors } from '@/constants/colors';
 import { useCategories } from '@/hooks/categories';
 import { useProducts } from '@/hooks/products';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 export default function Index() {
   const { t } = useTranslation();
@@ -17,7 +18,9 @@ export default function Index() {
       </View>
       <View className="px-4 pt-4">
         {isCategoriesLoading || isProductsLoading ? (
-          <Text className="mt-2 text-xs text-neutral-500">{t('home.loadingCategories')}</Text>
+          <View className="flex-1 items-center justify-center bg-white">
+            <ActivityIndicator size="large" color={themeColors.primary[600]} />
+          </View>
         ) : null}
       </View>
 

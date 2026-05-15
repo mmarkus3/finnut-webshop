@@ -1,9 +1,9 @@
-import React from 'react';
-import renderer from 'react-test-renderer';
 import { HomeCategoryProductSections, groupProductsByCategory } from '@/components/home/HomeCategoryProductSections';
 import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
+import React from 'react';
+import renderer from 'react-test-renderer';
 
 const mockPush = jest.fn();
 
@@ -37,7 +37,7 @@ jest.mock('react-i18next', () => ({
       if (key === 'category.priceLabel') return `Price: ${options?.price}`;
       if (key === 'category.priceUnavailable') return 'N/A';
       if (key === 'category.availabilityLabel') return `Availability: ${options?.amount}`;
-      if (key === 'category.descriptionUnavailable') return 'No description available.';
+      if (key === 'category.descriptionUnavailable') return '';
       if (key.startsWith('categories.')) return options?.defaultValue ?? key;
       return key;
     },

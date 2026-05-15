@@ -4,6 +4,7 @@ import {
   getProductIdentifier,
   getProductPrice,
 } from '@/components/product/cardUtils';
+import { themeColors } from '@/constants/colors';
 import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
@@ -11,7 +12,7 @@ import { Asset } from 'expo-asset';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
 
 const DESKTOP_MIN_WIDTH = 1024;
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
@@ -47,6 +48,14 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
     () => filterProductsByCategory(products, categoryId),
     [categoryId, products]
   );
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white">
+        <ActivityIndicator size="large" color={themeColors.primary[600]} />
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white px-4 py-6">
@@ -103,7 +112,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
                 {t('category.availabilityLabel', { amount: item.amount })}
               </Text>
               <Text numberOfLines={3} className="mt-2 text-sm text-neutral-600">
-                {description || t('category.descriptionUnavailable')}
+                {description || ''}
               </Text>
               <Pressable
                 onPress={() => addItem(item)}
@@ -122,4 +131,5 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
   );
 }
 
-export { getCategoryPageTitle, filterProductsByCategory, getCategoryGridColumns };
+export { filterProductsByCategory, getCategoryGridColumns, getCategoryPageTitle };
+

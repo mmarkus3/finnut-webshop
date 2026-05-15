@@ -40,7 +40,7 @@ function HeaderActions({ onSearchPress }: HeaderActionsProps) {
   const { itemCount, badgeCountLabel } = useCart();
 
   return (
-    <View className="flex-row gap-4 pr-2">
+    <View className="flex-row gap-4 pr-4">
       <TouchableOpacity
         onPress={onSearchPress}
         accessibilityRole="button"

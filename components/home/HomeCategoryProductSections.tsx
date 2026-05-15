@@ -88,7 +88,7 @@ function ProductCard({ product }: { product: Product }) {
         {t('category.availabilityLabel', { amount: product.amount })}
       </Text>
       <Text numberOfLines={3} className="mt-1 text-sm text-neutral-600">
-        {description || t('category.descriptionUnavailable')}
+        {description || ''}
       </Text>
       <Pressable
         onPress={() => addItem(product)}
