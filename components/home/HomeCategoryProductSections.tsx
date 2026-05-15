@@ -109,6 +109,7 @@ function ProductCard({ product }: { product: Product }) {
 
 export function HomeCategoryProductSections({ categories, products }: HomeCategoryProductSectionsProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const sections = groupProductsByCategory(categories, products);
 
   if (sections.length === 0) {
@@ -123,9 +124,25 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
     <View className="w-full gap-6 px-4 py-4">
       {sections.map((section) => (
         <View key={section.category.id} className="gap-3">
-          <Text className="text-lg font-semibold text-neutral-900">
-            {t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name })}
-          </Text>
+          <View className="flex-row items-center justify-between">
+            <Text className="text-lg font-semibold text-neutral-900">
+              {t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name })}
+            </Text>
+            <Pressable
+              onPress={() =>
+                router.push({
+                  pathname: '/category/[categoryId]',
+                  params: { categoryId: section.category.id },
+                })
+              }
+              accessibilityRole="button"
+              accessibilityLabel={t('home.showAllA11yLabel', {
+                category: t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name }),
+              })}
+            >
+              <Text className="text-sm font-medium text-primary-700">{t('home.showAllButton')}</Text>
+            </Pressable>
+          </View>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}

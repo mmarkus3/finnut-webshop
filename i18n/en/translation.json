@@ -13,7 +13,9 @@
     "loadingCategories": "Loading categories...",
     "noCategoryProducts": "No products found for categories yet.",
     "categoryCarouselA11yLabel": "Product carousel for {{category}}",
-    "productCardA11yLabel": "View product {{product}}"
+    "productCardA11yLabel": "View product {{product}}",
+    "showAllButton": "Show all",
+    "showAllA11yLabel": "Show all products in {{category}}"
   },
   "category": {
     "title": "Category: {{category}}",

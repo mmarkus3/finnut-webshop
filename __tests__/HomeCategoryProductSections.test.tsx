@@ -32,6 +32,8 @@ jest.mock('react-i18next', () => ({
       if (key === 'home.noCategoryProducts') return 'No products found for categories yet.';
       if (key === 'home.categoryCarouselA11yLabel') return `Product carousel for ${options?.category ?? ''}`;
       if (key === 'home.productCardA11yLabel') return `View product ${options?.product ?? ''}`;
+      if (key === 'home.showAllButton') return 'Show all';
+      if (key === 'home.showAllA11yLabel') return `Show all products in ${options?.category ?? ''}`;
       if (key === 'cart.addButton') return 'Add to cart';
       if (key === 'cart.addA11yLabel') return `Add ${options?.product ?? ''} to cart`;
       if (key === 'category.priceLabel') return `Price: ${options?.price}`;
@@ -168,6 +170,7 @@ describe('HomeCategoryProductSections rendering', () => {
       .flat();
 
     expect(textValues).toContain('Price: 4.20');
+    expect(textValues).toContain('Show all');
     expect(textValues).toContain('Loppuu pian');
     expect(textValues).toContain('Loppu varastosta');
     expect(textValues).toContain('Varastossa');
@@ -186,6 +189,29 @@ describe('HomeCategoryProductSections rendering', () => {
       (node) => node.type === 'Text' && node.props.numberOfLines === 3
     );
     expect(truncatedDescriptionNodes.length).toBeGreaterThan(0);
+  });
+
+  it('navigates to category listing when pressing show-all action', () => {
+    let tree: renderer.ReactTestRenderer | null = null;
+
+    renderer.act(() => {
+      tree = renderer.create(<HomeCategoryProductSections categories={categories} products={products} />);
+    });
+
+    const showAllButton = tree!.root.find(
+      (node) =>
+        typeof node.props.onPress === 'function' &&
+        node.props.accessibilityLabel === 'Show all products in Fruit'
+    );
+
+    renderer.act(() => {
+      showAllButton.props.onPress();
+    });
+
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/category/[categoryId]',
+      params: { categoryId: 'fruit' },
+    });
   });
 
   it('navigates to product detail route when pressing card', () => {

@@ -13,7 +13,9 @@
     "loadingCategories": "Ladataan kategorioita...",
     "noCategoryProducts": "Kategorioille ei löytynyt vielä tuotteita.",
     "categoryCarouselA11yLabel": "Tuotekaruselli kategorialle {{category}}",
-    "productCardA11yLabel": "Näytä tuote {{product}}"
+    "productCardA11yLabel": "Näytä tuote {{product}}",
+    "showAllButton": "Näytä kaikki",
+    "showAllA11yLabel": "Näytä kaikki kategorian {{category}} tuotteet"
   },
   "category": {
     "title": "Kategoria: {{category}}",
