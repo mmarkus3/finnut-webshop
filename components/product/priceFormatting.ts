@@ -6,9 +6,9 @@ const getCurrencyMarkerForLocale = (language: string): '€' | 'SEK' => {
   return '€';
 };
 
-const formatPriceWithCurrency = (price: number, language: string): string => {
+const formatPriceWithCurrency = (price: number, language: string, fixed = 2): string => {
   const currencyMarker = getCurrencyMarkerForLocale(language);
-  return `${price.toFixed(2)} ${currencyMarker}`;
+  return `${price.toFixed(fixed)} ${currencyMarker}`;
 };
 
 export { formatPriceWithCurrency, getCurrencyMarkerForLocale };

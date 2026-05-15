@@ -16,6 +16,19 @@ jest.mock('@/hooks/cart', () => ({
   useCart: () => mockCart,
 }));
 
+jest.mock('@/hooks/deliveryPricing', () => ({
+  useDeliveryPricing: () => ({ pricing: { over: 100, delivery: 7.9 }, isLoading: false, error: null }),
+  getDeliveryCost: (cartTotal: number, pricing: { over: number; delivery: number } | null) => {
+    if (!pricing) {
+      return { isFree: false, cost: null, over: null };
+    }
+    if (cartTotal >= pricing.over) {
+      return { isFree: true, cost: 0, over: pricing.over };
+    }
+    return { isFree: false, cost: pricing.delivery, over: pricing.over };
+  },
+}));
+
 jest.mock('@/hooks/deliveryPoints', () => ({
   fetchDeliveryPointsByPostalCode: (postalCode: string) => mockFetchDeliveryPointsByPostalCode(postalCode),
 }));
@@ -46,6 +59,8 @@ jest.mock('react-i18next', () => ({
       if (key === 'cart.vatIncludedLabel') return 'VAT (included in price)';
       if (key === 'cart.totalWithoutVatLabel') return 'Total (excl. VAT)';
       if (key === 'cart.totalLabelText') return 'Total';
+      if (key === 'cart.deliveryLabel') return 'Delivery';
+      if (key === 'delivery.free') return 'Free';
       if (key === 'category.priceUnavailable') return 'N/A';
       return key;
     },
@@ -70,6 +85,8 @@ describe('CheckoutPage', () => {
     expect(textNodes.some((node) => node.props.children === 'Customer information')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Order summary')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Subtotal')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Delivery')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === '7.90 €')).toBe(true);
 
     const inputs = tree!.root.findAllByType('TextInput');
     expect(inputs.length).toBe(6);
@@ -93,8 +110,9 @@ describe('CheckoutPage', () => {
       tree = renderer.create(<CheckoutPage />);
     });
 
-    const inputs = tree!.root.findAllByType('TextInput');
-    const postalCodeInput = inputs[5];
+    const postalCodeInput = tree!.root.find(
+      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
+    );
     renderer.act(() => {
       postalCodeInput.props.onChangeText('00100');
     });
@@ -121,9 +139,11 @@ describe('CheckoutPage', () => {
       tree = renderer.create(<CheckoutPage />);
     });
 
-    const inputs = tree!.root.findAllByType('TextInput');
+    const postalCodeInput = tree!.root.find(
+      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
+    );
     renderer.act(() => {
-      inputs[5].props.onChangeText('00100');
+      postalCodeInput.props.onChangeText('00100');
     });
 
     const loadButton = tree!.root.find(

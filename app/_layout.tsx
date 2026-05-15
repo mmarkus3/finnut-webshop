@@ -1,5 +1,7 @@
+import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { SearchModal } from '@/components/search/SearchModal';
 import { CartProvider, useCart } from '@/hooks/cart';
+import { DeliveryPricingProvider, useDeliveryPricing } from '@/hooks/deliveryPricing';
 import { useProducts } from '@/hooks/products';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Asset } from 'expo-asset';
@@ -19,11 +21,11 @@ function LogoTitle() {
   const router = useRouter();
 
   return (
-    <TouchableOpacity onPress={() => router.navigate('/')}>
+    <TouchableOpacity onPress={() => router.navigate('/')} className="pt-10">
       <Image
         allowDownscaling={false}
         contentFit="cover"
-        style={{ width: 110, height: 50, margin: 16 }}
+        style={{ width: 110, height: 50, margin: 24 }}
         source={logoImageSource}
       />
     </TouchableOpacity>
@@ -40,7 +42,7 @@ function HeaderActions({ onSearchPress }: HeaderActionsProps) {
   const { itemCount, badgeCountLabel } = useCart();
 
   return (
-    <View className="flex-row gap-4 pr-4">
+    <View className="flex-row gap-4 pr-4 pt-10">
       <TouchableOpacity
         onPress={onSearchPress}
         accessibilityRole="button"
@@ -71,20 +73,29 @@ const StyledView = cssInterop(View, {
 
 function RootStack() {
   const { products, isLoading } = useProducts();
+  const { pricing } = useDeliveryPricing();
+  const { i18n, t } = useTranslation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <>
+      {pricing ? (
+        <View className="px-4 py-2 bg-emerald-50 border-b border-emerald-200">
+          <Text className="text-xs text-emerald-800">
+            {t('delivery.bannerFreeOver', { over: formatPriceWithCurrency(pricing.over, i18n.language, 0) })}
+          </Text>
+        </View>
+      ) : null}
       <Stack
         screenOptions={{
           headerShown: true,
-          headerBackground: () => <StyledView className="h-20 bg-primary-500 p-4" />,
+          headerBackground: () => <StyledView className="h-28 bg-primary-500 p-4" />,
           headerTintColor: '#fff',
           headerTransparent: true,
           headerLeft: () => <LogoTitle />,
           headerRight: () => <HeaderActions onSearchPress={() => setIsSearchOpen(true)} />,
           headerTitle: '',
-          contentStyle: { paddingTop: 80 },
+          contentStyle: { paddingTop: pricing ? 116 : 80 },
         }}
       >
         <Stack.Screen name="index" />
@@ -106,12 +117,14 @@ export default function RootLayout() {
   const { t } = useTranslation();
 
   return (
-    <CartProvider>
-      <Head>
-        <title>{t('common.title')}</title>
-        <meta name="description" content={t('common.description')} />
-      </Head>
-      <RootStack />
-    </CartProvider>
+    <DeliveryPricingProvider>
+      <CartProvider>
+        <Head>
+          <title>{t('common.title')}</title>
+          <meta name="description" content={t('common.description')} />
+        </Head>
+        <RootStack />
+      </CartProvider>
+    </DeliveryPricingProvider>
   );
 }

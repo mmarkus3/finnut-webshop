@@ -24,6 +24,19 @@ jest.mock('@/hooks/cart', () => ({
   useCart: () => mockCart,
 }));
 
+jest.mock('@/hooks/deliveryPricing', () => ({
+  useDeliveryPricing: () => ({ pricing: { over: 100, delivery: 7.9 }, isLoading: false, error: null }),
+  getDeliveryCost: (cartTotal: number, pricing: { over: number; delivery: number } | null) => {
+    if (!pricing) {
+      return { isFree: false, cost: null, over: null };
+    }
+    if (cartTotal >= pricing.over) {
+      return { isFree: true, cost: 0, over: pricing.over };
+    }
+    return { isFree: false, cost: pricing.delivery, over: pricing.over };
+  },
+}));
+
 jest.mock('@/hooks/activeOrder', () => ({
   getActiveOrderId: () => mockGetActiveOrderId(),
   saveActiveOrderId: (id: string) => mockSaveActiveOrderId(id),
@@ -64,6 +77,7 @@ jest.mock('react-i18next', () => ({
       if (key === 'cart.eanLabel') return `EAN: ${options?.ean}`;
       if (key === 'cart.priceLabel') return `Price: ${options?.price}`;
       if (key === 'category.priceUnavailable') return 'N/A';
+      if (key === 'delivery.free') return 'Free';
       return key;
     },
     i18n: mockI18n,
@@ -114,7 +128,7 @@ describe('CartPage', () => {
     expect(textNodes.some((node) => node.props.children === 'Välisumma')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'ALV (sisältyy hintaan)')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Toimitus')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Lasketaan kassalla')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === '7.90 €')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Yhteensä')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Yhteensä (ei ALV)')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Jatka kassalle')).toBe(true);
@@ -146,7 +160,7 @@ describe('CartPage', () => {
     mockCart.items = [
       { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
     ];
-    mockCart.totalPrice = 1.5;
+    mockCart.totalPrice = 120;
     mockCart.vatAmount = 0.38;
 
     let tree: renderer.ReactTestRenderer | null = null;
@@ -156,9 +170,10 @@ describe('CartPage', () => {
 
     const textNodes = tree!.root.findAllByType('Text');
     expect(textNodes.some((node) => node.props.children === 'Price: 1.50 SEK')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === '1.50 SEK')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === '120.00 SEK')).toBe(true);
     expect(textNodes.some((node) => node.props.children === '0.38 SEK')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === '1.12 SEK')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === '119.62 SEK')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Free')).toBe(true);
   });
 
   it('detects mobile vs desktop layout breakpoints', () => {

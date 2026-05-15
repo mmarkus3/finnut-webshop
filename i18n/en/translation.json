@@ -123,5 +123,9 @@
     "deliveryPointsError": "Could not load delivery points. Please try again.",
     "deliveryPointsEmpty": "No delivery points found.",
     "deliveryPointOptionA11yLabel": "Select delivery point {{point}}"
+  },
+  "delivery": {
+    "bannerFreeOver": "Free delivery for orders over {{over}}",
+    "free": "Free"
   }
 }

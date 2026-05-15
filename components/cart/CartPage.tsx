@@ -4,6 +4,7 @@ import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { clearActiveOrderId, getActiveOrderId, saveActiveOrderId } from '@/hooks/activeOrder';
 import { useCart } from '@/hooks/cart';
 import { syncOrderForCheckout } from '@/hooks/checkoutOrder';
+import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Asset } from 'expo-asset';
 import { useRouter } from 'expo-router';
@@ -22,7 +23,9 @@ export function CartPage() {
   const { width } = useWindowDimensions();
   const isDesktop = isDesktopWidth(width);
   const { items, totalPrice, vatAmount, incrementItem, decrementItem, removeItem, clearCart } = useCart();
+  const { pricing } = useDeliveryPricing();
   const summaryWithoutVat = Math.max(0, totalPrice - vatAmount);
+  const deliveryCost = getDeliveryCost(totalPrice, pricing);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
@@ -149,7 +152,13 @@ export function CartPage() {
             </View>
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-neutral-700">{t('cart.deliveryLabel')}</Text>
-              <Text className="text-sm text-neutral-900">{t('cart.deliveryValuePlaceholder')}</Text>
+              <Text className="text-sm text-neutral-900">
+                {deliveryCost.cost === null
+                  ? t('cart.deliveryValuePlaceholder')
+                  : deliveryCost.isFree
+                    ? t('delivery.free')
+                    : formatPriceWithCurrency(deliveryCost.cost, i18n.language)}
+              </Text>
             </View>
           </View>
 

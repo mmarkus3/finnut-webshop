@@ -2,6 +2,7 @@ import { getProductPrice } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
+import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
 import { DeliveryPoint, fetchDeliveryPointsByPostalCode } from '@/hooks/deliveryPoints';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
@@ -17,6 +18,7 @@ export function CheckoutPage() {
   const { width } = useWindowDimensions();
   const isDesktop = isDesktopWidth(width);
   const { items, totalPrice, vatAmount } = useCart();
+  const { pricing } = useDeliveryPricing();
   const [customer, setCustomer] = useState({
     firstname: '',
     lastname: '',
@@ -31,6 +33,7 @@ export function CheckoutPage() {
   const [deliveryPointsError, setDeliveryPointsError] = useState<string | null>(null);
 
   const summaryWithoutVat = Math.max(0, totalPrice - vatAmount);
+  const deliveryCost = getDeliveryCost(totalPrice, pricing);
 
   const loadDeliveryPoints = async () => {
     try {
@@ -129,6 +132,16 @@ export function CheckoutPage() {
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-neutral-700">{t('cart.vatIncludedLabel')}</Text>
               <Text className="text-sm text-neutral-900">{formatPriceWithCurrency(vatAmount, i18n.language)}</Text>
+            </View>
+            <View className="flex-row items-center justify-between">
+              <Text className="text-sm text-neutral-700">{t('cart.deliveryLabel')}</Text>
+              <Text className="text-sm text-neutral-900">
+                {deliveryCost.cost === null
+                  ? t('cart.deliveryValuePlaceholder')
+                  : deliveryCost.isFree
+                    ? t('delivery.free')
+                    : formatPriceWithCurrency(deliveryCost.cost, i18n.language)}
+              </Text>
             </View>
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-neutral-700">{t('cart.totalWithoutVatLabel')}</Text>

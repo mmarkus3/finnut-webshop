@@ -123,5 +123,9 @@
     "deliveryPointsError": "Kunde inte hämta leveranspunkter. Försök igen.",
     "deliveryPointsEmpty": "Inga leveranspunkter hittades.",
     "deliveryPointOptionA11yLabel": "Välj leveranspunkt {{point}}"
+  },
+  "delivery": {
+    "bannerFreeOver": "Fri leverans för beställningar över {{over}}",
+    "free": "Gratis"
   }
 }

@@ -123,5 +123,9 @@
     "deliveryPointsError": "Toimituspisteiden haku epäonnistui. Yritä uudelleen.",
     "deliveryPointsEmpty": "Toimituspisteitä ei löytynyt.",
     "deliveryPointOptionA11yLabel": "Valitse toimituspiste {{point}}"
+  },
+  "delivery": {
+    "bannerFreeOver": "Ilmainen toimitus yli {{over}} tilauksille",
+    "free": "Ilmainen"
   }
 }
