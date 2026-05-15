@@ -94,31 +94,31 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
           };
 
           return (
-            <Pressable
-              onPress={openProduct}
-              style={{ width: numColumns === 4 ? '24%' : '100%' }}
-              className="rounded-xl border border-neutral-200 bg-white p-3"
-              accessibilityRole="button"
-              accessibilityLabel={t('category.productCardA11yLabel', { product: item.name })}
-            >
-              <Image
-                source={firstImage ? { uri: firstImage } : placeholderImageSource}
-                defaultSource={placeholderImageSource}
-                style={{ resizeMode: 'contain' }}
-                className="h-32 w-full rounded-lg bg-neutral-100"
-              />
-              <Text className="mt-2 text-base font-semibold text-neutral-900">{item.name}</Text>
-              <Text className="mt-1 text-sm text-neutral-700">
-                {t('category.priceLabel', {
-                  price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
-                })}
-              </Text>
-              <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
-                <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
-              </View>
-              <Text numberOfLines={3} className="mt-2 text-sm text-neutral-600">
-                {description || ''}
-              </Text>
+            <View className="rounded-xl border border-neutral-200 bg-white p-3" style={{ width: numColumns === 4 ? '24%' : '100%' }}>
+              <Pressable
+                onPress={openProduct}
+                accessibilityRole="button"
+                accessibilityLabel={t('category.productCardA11yLabel', { product: item.name })}
+              >
+                <Image
+                  source={firstImage ? { uri: firstImage } : placeholderImageSource}
+                  defaultSource={placeholderImageSource}
+                  style={{ resizeMode: 'contain' }}
+                  className="h-32 w-full rounded-lg bg-neutral-100"
+                />
+                <Text className="mt-2 text-base font-semibold text-neutral-900">{item.name}</Text>
+                <Text className="mt-1 text-sm text-neutral-700">
+                  {t('category.priceLabel', {
+                    price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+                  })}
+                </Text>
+                <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
+                  <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
+                </View>
+                <Text numberOfLines={3} ellipsizeMode="tail" className="mt-2 text-sm text-neutral-600">
+                  {description || ''}
+                </Text>
+              </Pressable>
               <Pressable
                 onPress={() => addItem(item)}
                 disabled={!canAdd}
@@ -128,7 +128,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
               >
                 <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
               </Pressable>
-            </Pressable>
+            </View>
           );
         }}
       />

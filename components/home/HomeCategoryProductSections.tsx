@@ -68,33 +68,34 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <Pressable
-      onPress={openProduct}
-      className="mr-3 w-64 rounded-xl border border-neutral-200 bg-white p-2"
-      accessibilityRole="button"
-      accessibilityLabel={t('home.productCardA11yLabel', { product: product.name })}
-      focusable
-    >
-      <Image
-        source={firstImage ? { uri: firstImage } : placeholderImageSource}
-        defaultSource={placeholderImageSource}
-        style={{ resizeMode: 'contain' }}
-        className="h-32 w-full rounded-lg bg-neutral-100"
-      />
-      <Text numberOfLines={2} className="mt-2 text-sm font-medium text-neutral-900">
-        {product.name}
-      </Text>
-      <Text className="mt-1 text-sm text-neutral-700">
-        {t('category.priceLabel', {
-          price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
-        })}
-      </Text>
-      <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
-        <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
-      </View>
-      <Text numberOfLines={3} className="mt-1 text-sm text-neutral-600">
-        {description || ''}
-      </Text>
+    <View className="mr-3 w-64 rounded-xl border border-neutral-200 bg-white p-2">
+      <Pressable
+        onPress={openProduct}
+        accessibilityRole="button"
+        accessibilityLabel={t('home.productCardA11yLabel', { product: product.name })}
+        focusable
+      >
+        <Image
+          source={firstImage ? { uri: firstImage } : placeholderImageSource}
+          defaultSource={placeholderImageSource}
+          style={{ resizeMode: 'contain' }}
+          className="h-32 w-full rounded-lg bg-neutral-100"
+        />
+        <Text numberOfLines={2} className="mt-2 text-sm font-medium text-neutral-900">
+          {product.name}
+        </Text>
+        <Text className="mt-1 text-sm text-neutral-700">
+          {t('category.priceLabel', {
+            price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+          })}
+        </Text>
+        <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
+          <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
+        </View>
+        <Text numberOfLines={3} ellipsizeMode="tail" className="mt-1 text-sm text-neutral-600">
+          {description || ''}
+        </Text>
+      </Pressable>
       <Pressable
         onPress={() => addItem(product)}
         disabled={!canAdd}
@@ -104,7 +105,7 @@ function ProductCard({ product }: { product: Product }) {
       >
         <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
       </Pressable>
-    </Pressable>
+    </View>
   );
 }
 
