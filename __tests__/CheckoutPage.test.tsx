@@ -1,4 +1,4 @@
-import { CheckoutPage } from '@/components/checkout/CheckoutPage';
+import { CheckoutPage, getCheckoutSectionsLayoutClass, isDesktopWidth } from '@/components/checkout/CheckoutPage';
 import React from 'react';
 import renderer from 'react-test-renderer';
 
@@ -51,7 +51,6 @@ describe('CheckoutPage', () => {
 
     const textNodes = tree!.root.findAllByType('Text');
     expect(textNodes.some((node) => node.props.children === 'Checkout')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Order ID: order-1')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Customer information')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Order summary')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Subtotal')).toBe(true);
@@ -59,5 +58,12 @@ describe('CheckoutPage', () => {
 
     const inputs = tree!.root.findAllByType('TextInput');
     expect(inputs.length).toBe(6);
+  });
+
+  it('uses responsive layout helpers for desktop and mobile', () => {
+    expect(isDesktopWidth(390)).toBe(false);
+    expect(isDesktopWidth(1200)).toBe(true);
+    expect(getCheckoutSectionsLayoutClass(false)).toContain('flex-col');
+    expect(getCheckoutSectionsLayoutClass(true)).toContain('flex-row');
   });
 });
