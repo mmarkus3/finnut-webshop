@@ -32,5 +32,25 @@
     "notFoundDescription": "Den här produkten kunde inte hittas.",
     "imageA11yLabel": "Produktbild för {{product}}",
     "eanLabel": "EAN: {{ean}}"
+  },
+  "search": {
+    "modalTitle": "Sök produkter",
+    "placeholder": "Sök produkter",
+    "loading": "Söker produkter...",
+    "noResults": "Inga produkter hittades.",
+    "viewAllButton": "Visa alla resultat",
+    "startTyping": "Börja skriva för att söka produkter.",
+    "resultsTitle": "Sök: {{query}}",
+    "resultsHeader": "Resultat för \"{{query}}\"",
+    "enterQuery": "Ange en sökfråga för att se matchande produkter.",
+    "openModalA11yLabel": "Öppna produktsökning",
+    "closeA11yLabel": "Stäng sökmodal",
+    "closeButton": "Stäng",
+    "inputA11yLabel": "Inmatning för produktsökning",
+    "productResultA11yLabel": "Öppna produkt {{product}}",
+    "viewAllA11yLabel": "Visa alla sökresultat",
+    "eanLabel": "EAN: {{ean}}",
+    "priceLabel": "Pris: {{price}}",
+    "cartA11yLabel": "Öppna kundvagn"
   }
 }

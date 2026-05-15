@@ -1,9 +1,12 @@
+import { SearchModal } from '@/components/search/SearchModal';
+import { useProducts } from '@/hooks/products';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Asset } from "expo-asset";
+import { Asset } from 'expo-asset';
 import { Image } from 'expo-image';
-import { Stack, useRouter } from "expo-router";
+import { Stack, useRouter } from 'expo-router';
 import Head from 'expo-router/head';
-import { cssInterop } from "nativewind";
+import { cssInterop } from 'nativewind';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import '../i18n/config';
@@ -11,26 +14,43 @@ import './global.css';
 
 const logoImageSource = { uri: Asset.fromModule(require('../assets/images/Finnut-Logo-white.webp')).uri };
 
-function LogoTitle({ onPress }: { onPress: () => void }) {
+function LogoTitle() {
+  const router = useRouter();
+
+  const handleLogoPress = () => {
+    router.navigate('/');
+  };
+
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={handleLogoPress}>
       <Image
         allowDownscaling={false}
         contentFit="cover"
         style={{ width: 110, height: 50, margin: 16 }}
-        source={logoImageSource} />
+        source={logoImageSource}
+      />
     </TouchableOpacity>
   );
 }
 
-function HeaderActions() {
+interface HeaderActionsProps {
+  onSearchPress: () => void;
+}
+
+function HeaderActions({ onSearchPress }: HeaderActionsProps) {
+  const { t } = useTranslation();
+
   return (
-    <View className="flex-row gap-1">
-      <TouchableOpacity>
-        <FontAwesome.Button name="search" backgroundColor="bg-primary-500"></FontAwesome.Button>
+    <View className="flex-row gap-4 pr-2">
+      <TouchableOpacity
+        onPress={onSearchPress}
+        accessibilityRole="button"
+        accessibilityLabel={t('search.openModalA11yLabel')}
+      >
+        <FontAwesome name="search" size={22} color="#ffffff" />
       </TouchableOpacity>
-      <TouchableOpacity>
-        <FontAwesome.Button name="shopping-cart" backgroundColor="bg-primary-500"></FontAwesome.Button>
+      <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('search.cartA11yLabel')}>
+        <FontAwesome name="shopping-cart" size={22} color="#ffffff" />
       </TouchableOpacity>
     </View>
   );
@@ -41,28 +61,33 @@ const StyledView = cssInterop(View, {
 });
 
 function RootStack() {
-  const { t } = useTranslation();
-  const router = useRouter();
-
-  const handleLogoPress = () => {
-    router.navigate('/');
-  }
+  const { products, isLoading } = useProducts();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
-    <Stack screenOptions={{
-      headerShown: true,
-      headerBackground: () => <StyledView className="h-20 bg-primary-500 p-4" />,
-      headerTintColor: '#fff',
-      headerTransparent: true,
-      headerLeft: () => <LogoTitle onPress={handleLogoPress} />,
-      headerRight: () => <HeaderActions />,
-      headerTitle: '',
-      contentStyle: { paddingTop: 80 },
-    }}>
-      <Stack.Screen
-        name="index"
+    <>
+      <Stack
+        screenOptions={{
+          headerShown: true,
+          headerBackground: () => <StyledView className="h-20 bg-primary-500 p-4" />,
+          headerTintColor: '#fff',
+          headerTransparent: true,
+          headerLeft: () => <LogoTitle />,
+          headerRight: () => <HeaderActions onSearchPress={() => setIsSearchOpen(true)} />,
+          headerTitle: '',
+          contentStyle: { paddingTop: 80 },
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="search/index" />
+      </Stack>
+      <SearchModal
+        isVisible={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        products={products}
+        isLoadingProducts={isLoading}
       />
-    </Stack>
+    </>
   );
 }
 

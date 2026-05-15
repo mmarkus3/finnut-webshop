@@ -32,5 +32,25 @@
     "notFoundDescription": "Tätä tuotetta ei löytynyt.",
     "imageA11yLabel": "Tuotekuva tuotteelle {{product}}",
     "eanLabel": "EAN: {{ean}}"
+  },
+  "search": {
+    "modalTitle": "Hae tuotteita",
+    "placeholder": "Hae tuotteita",
+    "loading": "Haetaan tuotteita...",
+    "noResults": "Tuotteita ei löytynyt.",
+    "viewAllButton": "Näytä kaikki tulokset",
+    "startTyping": "Aloita kirjoittaminen hakeaksesi tuotteita.",
+    "resultsTitle": "Haku: {{query}}",
+    "resultsHeader": "Tulokset haulle \"{{query}}\"",
+    "enterQuery": "Syötä hakusana nähdäksesi sopivat tuotteet.",
+    "openModalA11yLabel": "Avaa tuotehaku",
+    "closeA11yLabel": "Sulje hakumodaali",
+    "closeButton": "Sulje",
+    "inputA11yLabel": "Tuotehaun syötekenttä",
+    "productResultA11yLabel": "Avaa tuote {{product}}",
+    "viewAllA11yLabel": "Näytä kaikki hakutulokset",
+    "eanLabel": "EAN: {{ean}}",
+    "priceLabel": "Hinta: {{price}}",
+    "cartA11yLabel": "Avaa ostoskori"
   }
 }

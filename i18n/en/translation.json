@@ -32,5 +32,25 @@
     "notFoundDescription": "This product could not be found.",
     "imageA11yLabel": "Product image for {{product}}",
     "eanLabel": "EAN: {{ean}}"
+  },
+  "search": {
+    "modalTitle": "Search products",
+    "placeholder": "Search products",
+    "loading": "Searching products...",
+    "noResults": "No products found.",
+    "viewAllButton": "View all results",
+    "startTyping": "Start typing to search products.",
+    "resultsTitle": "Search: {{query}}",
+    "resultsHeader": "Results for \"{{query}}\"",
+    "enterQuery": "Enter a search query to see matching products.",
+    "openModalA11yLabel": "Open product search",
+    "closeA11yLabel": "Close search modal",
+    "closeButton": "Close",
+    "inputA11yLabel": "Search products input",
+    "productResultA11yLabel": "Open product {{product}}",
+    "viewAllA11yLabel": "View all search results",
+    "eanLabel": "EAN: {{ean}}",
+    "priceLabel": "Price: {{price}}",
+    "cartA11yLabel": "Open shopping cart"
   }
 }
