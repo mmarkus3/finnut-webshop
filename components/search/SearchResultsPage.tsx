@@ -1,9 +1,9 @@
+import { CategoryProductGrid } from '@/components/category/CategoryProductGrid';
 import { filterProductsByQuery, normalizeSearchQuery } from '@/hooks/productSearch';
+import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CategoryProductGrid } from '@/components/category/CategoryProductGrid';
-import { Category } from '@/types/category';
 import { Text, View } from 'react-native';
 
 interface SearchResultsPageProps {
@@ -43,7 +43,7 @@ export function SearchResultsPage({ products, query, isLoading }: SearchResultsP
 
   if (!isLoading && filteredProducts.length === 0) {
     return (
-      <View className="flex-1 bg-white px-4 py-6">
+      <View className="flex-1 items-center justify-center bg-white px-4 py-6">
         <Text className="text-xl font-semibold text-neutral-900">{t('search.resultsHeader', { query: normalizedQuery })}</Text>
         <Text className="mt-2 text-sm text-neutral-600">{t('search.noResults')}</Text>
       </View>
@@ -60,4 +60,5 @@ export function SearchResultsPage({ products, query, isLoading }: SearchResultsP
   );
 }
 
-export { mapProductsToSearchCategory, getSearchPseudoCategory };
+export { getSearchPseudoCategory, mapProductsToSearchCategory };
+
