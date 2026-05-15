@@ -35,3 +35,17 @@ The system SHALL navigate user to checkout page only after order creation succee
 - **WHEN** backend order create request succeeds
 - **THEN** user is navigated from cart page to checkout page
 
+### Requirement: Checkout CTA SHALL navigate only after successful active-order sync
+The system SHALL navigate to checkout only after create/update synchronization succeeds.
+
+#### Scenario: Successful update then navigation
+- **WHEN** active-order update request succeeds
+- **THEN** system navigates from cart to checkout page with the active order context
+
+### Requirement: Cart footer SHALL include payment provider image
+The system SHALL include a payment provider image element beneath order summary and checkout controls.
+
+#### Scenario: Footer image appears after summary and CTA
+- **WHEN** cart summary and checkout button are shown
+- **THEN** payment provider image is rendered below those elements in the cart page flow
+

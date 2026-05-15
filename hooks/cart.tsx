@@ -60,7 +60,7 @@ const getCartVatAmount = (state: CartState): number => {
     }
 
     const taxRate = Number.isFinite(item.product.tax) ? item.product.tax : 0;
-    return sum + (unitPrice * item.quantity * taxRate);
+    return sum + (unitPrice * item.quantity * taxRate!);
   }, 0);
 };
 

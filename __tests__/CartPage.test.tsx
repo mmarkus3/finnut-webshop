@@ -17,7 +17,8 @@ const mockI18n = { language: 'fi' };
 const mockPush = jest.fn();
 const mockGetActiveOrderId = jest.fn(() => null);
 const mockSaveActiveOrderId = jest.fn();
-const mockCreateOrderForCheckout = jest.fn();
+const mockClearActiveOrderId = jest.fn();
+const mockSyncOrderForCheckout = jest.fn();
 
 jest.mock('@/hooks/cart', () => ({
   useCart: () => mockCart,
@@ -26,10 +27,11 @@ jest.mock('@/hooks/cart', () => ({
 jest.mock('@/hooks/activeOrder', () => ({
   getActiveOrderId: () => mockGetActiveOrderId(),
   saveActiveOrderId: (id: string) => mockSaveActiveOrderId(id),
+  clearActiveOrderId: () => mockClearActiveOrderId(),
 }));
 
 jest.mock('@/hooks/checkoutOrder', () => ({
-  createOrderForCheckout: (items: unknown[]) => mockCreateOrderForCheckout(items),
+  syncOrderForCheckout: (items: unknown[], activeOrderId: string | null) => mockSyncOrderForCheckout(items, activeOrderId),
 }));
 
 jest.mock('expo-router', () => ({
@@ -78,8 +80,9 @@ describe('CartPage', () => {
     mockGetActiveOrderId.mockReset();
     mockGetActiveOrderId.mockReturnValue(null);
     mockSaveActiveOrderId.mockReset();
-    mockCreateOrderForCheckout.mockReset();
-    mockCreateOrderForCheckout.mockResolvedValue({ id: 'order-created' });
+    mockClearActiveOrderId.mockReset();
+    mockSyncOrderForCheckout.mockReset();
+    mockSyncOrderForCheckout.mockResolvedValue({ id: 'order-created' });
   });
 
   it('renders empty state', () => {
@@ -134,6 +137,8 @@ describe('CartPage', () => {
     expect(imageNodes.length).toBeGreaterThan(0);
     expect(imageNodes[0].props.source).toBeDefined();
     expect(imageNodes[0].props.defaultSource).toBeDefined();
+    const hasVismaBanner = imageNodes.some((node) => node.props.source?.uri === 'https://static.vismapay.com/pay_banners/row.png');
+    expect(hasVismaBanner).toBe(true);
   });
 
   it('renders SEK currency when locale is Swedish', () => {
@@ -178,22 +183,18 @@ describe('CartPage', () => {
         node.props.accessibilityLabel === 'Jatka kassalle'
     );
 
-    renderer.act(() => {
-      checkoutButton.props.onPress();
+    return renderer.act(async () => {
+      await checkoutButton.props.onPress();
     });
 
-    expect(mockPush).toHaveBeenCalledWith({
-      pathname: '/checkout',
-      params: { orderId: 'order-123' },
-    });
   });
 
-  it('creates order, saves id, and navigates with created id when no stored id exists', async () => {
+  it('updates active order then navigates with existing id', async () => {
     mockCart.items = [
       { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
     ];
-    mockGetActiveOrderId.mockReturnValue(null);
-    mockCreateOrderForCheckout.mockResolvedValue({ id: 'new-order-1' });
+    mockGetActiveOrderId.mockReturnValue('order-123');
+    mockSyncOrderForCheckout.mockResolvedValue({ id: 'order-123' });
 
     let tree: renderer.ReactTestRenderer | null = null;
     renderer.act(() => {
@@ -210,11 +211,67 @@ describe('CartPage', () => {
       await checkoutButton.props.onPress();
     });
 
-    expect(mockCreateOrderForCheckout).toHaveBeenCalled();
+    expect(mockSyncOrderForCheckout).toHaveBeenCalledWith(mockCart.items, 'order-123');
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/checkout',
+      params: { orderId: 'order-123' },
+    });
+  });
+
+  it('creates order, saves id, and navigates with created id when no stored id exists', async () => {
+    mockCart.items = [
+      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
+    ];
+    mockGetActiveOrderId.mockReturnValue(null);
+    mockSyncOrderForCheckout.mockResolvedValue({ id: 'new-order-1' });
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CartPage />);
+    });
+
+    const checkoutButton = tree!.root.find(
+      (node) =>
+        typeof node.props.onPress === 'function' &&
+        node.props.accessibilityLabel === 'Jatka kassalle'
+    );
+
+    await renderer.act(async () => {
+      await checkoutButton.props.onPress();
+    });
+
+    expect(mockSyncOrderForCheckout).toHaveBeenCalledWith(mockCart.items, null);
     expect(mockSaveActiveOrderId).toHaveBeenCalledWith('new-order-1');
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/checkout',
       params: { orderId: 'new-order-1' },
     });
+  });
+
+  it('shows error and blocks navigation when order sync fails', async () => {
+    mockCart.items = [
+      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
+    ];
+    mockGetActiveOrderId.mockReturnValue('order-123');
+    mockSyncOrderForCheckout.mockRejectedValue(new Error('sync failed'));
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CartPage />);
+    });
+
+    const checkoutButton = tree!.root.find(
+      (node) =>
+        typeof node.props.onPress === 'function' &&
+        node.props.accessibilityLabel === 'Jatka kassalle'
+    );
+
+    await renderer.act(async () => {
+      await checkoutButton.props.onPress();
+    });
+
+    const textNodes = tree!.root.findAllByType('Text');
+    expect(textNodes.some((node) => node.props.children === 'checkout.orderCreateError')).toBe(true);
+    expect(mockPush).not.toHaveBeenCalled();
   });
 });

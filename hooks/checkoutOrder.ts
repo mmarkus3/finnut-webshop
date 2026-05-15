@@ -26,4 +26,42 @@ const createOrderForCheckout = async (
   return service.save(payload);
 };
 
-export { buildCheckoutOrderPayload, buildOrdersService, createOrderForCheckout };
+const shouldFallbackToCreate = (error: unknown): boolean => {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  const maybeError = error as { response?: { status?: number } };
+  const status = maybeError.response?.status;
+  return status === 400 || status === 404;
+};
+
+const syncOrderForCheckout = async (
+  items: CartItem[],
+  activeOrderId: string | null,
+  service: Pick<OrdersService, 'save'> = buildOrdersService()
+): Promise<Order> => {
+  const payload = buildCheckoutOrderPayload(items);
+
+  if (!activeOrderId) {
+    return service.save(payload);
+  }
+
+  try {
+    return await service.save({ ...payload, id: activeOrderId });
+  } catch (error) {
+    if (!shouldFallbackToCreate(error)) {
+      throw error;
+    }
+
+    return service.save(payload);
+  }
+};
+
+export {
+  buildCheckoutOrderPayload,
+  buildOrdersService,
+  createOrderForCheckout,
+  shouldFallbackToCreate,
+  syncOrderForCheckout,
+};

@@ -1,9 +1,9 @@
 import { getFirstUsableProductImage, getProductIdentifier, getProductPrice } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
-import { getActiveOrderId, saveActiveOrderId } from '@/hooks/activeOrder';
+import { clearActiveOrderId, getActiveOrderId, saveActiveOrderId } from '@/hooks/activeOrder';
 import { useCart } from '@/hooks/cart';
-import { createOrderForCheckout } from '@/hooks/checkoutOrder';
+import { syncOrderForCheckout } from '@/hooks/checkoutOrder';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Asset } from 'expo-asset';
 import { useRouter } from 'expo-router';
@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
 
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
+const paymentBannerSource = { uri: 'https://static.vismapay.com/pay_banners/row.png' };
 
 const isDesktopWidth = (width: number): boolean => width >= DESKTOP_MIN_WIDTH;
 
@@ -28,19 +29,17 @@ export function CartPage() {
   const proceedToCheckout = async () => {
     const activeOrderId = getActiveOrderId();
     // TODO: clearActiveOrderId should be called when order is completed or canceled in checkout flow.
-    if (activeOrderId) {
-      router.push({ pathname: '/checkout', params: { orderId: activeOrderId } });
-      return;
-    }
-
     try {
       setCheckoutError(null);
       setIsCreatingOrder(true);
-      const order = await createOrderForCheckout(items);
+      const order = await syncOrderForCheckout(items, activeOrderId);
       if (!order.id) {
         throw new Error('Missing order id from backend response');
       }
 
+      if (activeOrderId && order.id !== activeOrderId) {
+        clearActiveOrderId();
+      }
       saveActiveOrderId(order.id);
       router.push({ pathname: '/checkout', params: { orderId: order.id } });
     } catch {
@@ -178,6 +177,16 @@ export function CartPage() {
           </Pressable>
           {checkoutError ? <Text className="mt-2 text-sm text-red-600">{checkoutError}</Text> : null}
         </View>
+      </View>
+
+      <View className="mt-16 items-center">
+        <Image
+          source={paymentBannerSource}
+          style={{ resizeMode: 'contain' }}
+          className="h-12 w-full"
+          accessibilityRole="image"
+          accessibilityLabel="Visma Pay payment methods"
+        />
       </View>
     </View>
   );
