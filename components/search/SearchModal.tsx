@@ -2,6 +2,7 @@ import {
   getProductIdentifier,
   getProductPrice,
 } from '@/components/product/cardUtils';
+import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { filterProductsByQuery, normalizeSearchQuery } from '@/hooks/productSearch';
 import { Product } from '@/types/product';
 import { useRouter } from 'expo-router';
@@ -34,7 +35,7 @@ const getModalPreviewProducts = (products: Product[], query: string): Product[] 
 const canSubmitSearchQuery = (query: string): boolean => Boolean(normalizeSearchQuery(query));
 
 export function SearchModal({ isVisible, onClose, products, isLoadingProducts }: SearchModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const inputRef = useRef<TextInput>(null);
   const [query, setQuery] = useState('');
@@ -123,10 +124,9 @@ export function SearchModal({ isVisible, onClose, products, isLoadingProducts }:
                       accessibilityLabel={t('search.productResultA11yLabel', { product: item.name })}
                     >
                       <Text className="text-sm font-semibold text-neutral-900">{item.name}</Text>
-                      <Text className="text-xs text-neutral-600">{t('search.eanLabel', { ean: item.ean })}</Text>
                       <Text className="text-xs text-neutral-600">
                         {t('search.priceLabel', {
-                          price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+                          price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
                         })}
                       </Text>
                     </Pressable>
@@ -152,4 +152,5 @@ export function SearchModal({ isVisible, onClose, products, isLoadingProducts }:
   );
 }
 
-export { SEARCH_PREVIEW_LIMIT, getModalPreviewProducts, canSubmitSearchQuery };
+export { canSubmitSearchQuery, getModalPreviewProducts, SEARCH_PREVIEW_LIMIT };
+

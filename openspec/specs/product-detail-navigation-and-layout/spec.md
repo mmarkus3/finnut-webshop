@@ -1,5 +1,8 @@
-## ADDED Requirements
+# product-detail-navigation-and-layout Specification
 
+## Purpose
+Define navigation and layout requirements for the dedicated product detail page.
+## Requirements
 ### Requirement: Users SHALL be able to navigate to a product page
 The system SHALL allow users to open a dedicated product page from product browse surfaces.
 
@@ -28,3 +31,11 @@ The system SHALL render a responsive product detail layout that differs between 
 #### Scenario: Mobile layout uses stacked arrangement
 - **WHEN** the product page is viewed on mobile viewport
 - **THEN** the product image is displayed on top and product details are displayed below it
+
+### Requirement: Product detail price SHALL include localized currency
+The system SHALL display product detail page price values with locale-specific currency markers.
+
+#### Scenario: Product detail price includes locale currency
+- **WHEN** a product detail page renders a price field
+- **THEN** the price text includes `€` for Finnish locale and `SEK` for Swedish locale
+

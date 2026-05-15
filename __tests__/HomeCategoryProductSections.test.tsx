@@ -45,7 +45,7 @@ jest.mock('react-i18next', () => ({
       if (key.startsWith('categories.')) return options?.defaultValue ?? key;
       return key;
     },
-    i18n: { language: 'en' },
+    i18n: { language: 'fi' },
   }),
 }));
 
@@ -169,7 +169,7 @@ describe('HomeCategoryProductSections rendering', () => {
       .map((node) => node.props.children)
       .flat();
 
-    expect(textValues).toContain('Price: 4.20');
+    expect(textValues).toContain('Price: 4.20 €');
     expect(textValues).toContain('Show all');
     expect(textValues).toContain('Loppuu pian');
     expect(textValues).toContain('Loppu varastosta');

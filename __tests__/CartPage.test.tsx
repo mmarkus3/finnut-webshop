@@ -12,6 +12,7 @@ const mockCart = {
   removeItem: jest.fn(),
   clearCart: jest.fn(),
 };
+const mockI18n = { language: 'fi' };
 
 jest.mock('@/hooks/cart', () => ({
   useCart: () => mockCart,
@@ -31,6 +32,7 @@ jest.mock('react-i18next', () => ({
       if (key === 'category.priceUnavailable') return 'N/A';
       return key;
     },
+    i18n: mockI18n,
   }),
 }));
 
@@ -39,6 +41,7 @@ describe('CartPage', () => {
     mockCart.items = [];
     mockCart.totalPrice = 0;
     mockCart.vatAmount = 0;
+    mockI18n.language = 'fi';
   });
 
   it('renders empty state', () => {
@@ -65,8 +68,9 @@ describe('CartPage', () => {
 
     const textNodes = tree!.root.findAllByType('Text');
     expect(textNodes.some((node) => node.props.children === 'Apple')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'VAT: 0.77')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Total: 3.00')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Price: 1.50 €')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'VAT: 0.77 €')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Total: 3.00 €')).toBe(true);
   });
 
   it('uses fallback image when product has no usable image', () => {
@@ -83,5 +87,24 @@ describe('CartPage', () => {
     expect(imageNodes.length).toBeGreaterThan(0);
     expect(imageNodes[0].props.source).toBeDefined();
     expect(imageNodes[0].props.defaultSource).toBeDefined();
+  });
+
+  it('renders SEK currency when locale is Swedish', () => {
+    mockI18n.language = 'sv';
+    mockCart.items = [
+      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
+    ];
+    mockCart.totalPrice = 1.5;
+    mockCart.vatAmount = 0.38;
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CartPage />);
+    });
+
+    const textNodes = tree!.root.findAllByType('Text');
+    expect(textNodes.some((node) => node.props.children === 'Price: 1.50 SEK')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'VAT: 0.38 SEK')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Total: 1.50 SEK')).toBe(true);
   });
 });

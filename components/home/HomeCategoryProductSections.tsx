@@ -7,6 +7,7 @@ import {
   getProductIdentifier,
   getProductPrice,
 } from '@/components/product/cardUtils';
+import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
@@ -86,9 +87,9 @@ function ProductCard({ product }: { product: Product }) {
         </Text>
         <Text className="mt-1 text-sm text-neutral-700">
           {t('category.priceLabel', {
-            price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
-          })}
-        </Text>
+                    price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
+                  })}
+                </Text>
         <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
           <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
         </View>

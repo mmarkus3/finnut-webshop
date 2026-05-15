@@ -1,5 +1,8 @@
-## MODIFIED Requirements
+# homepage-category-product-sections Specification
 
+## Purpose
+Define home page category section product card behavior and required displayed metadata.
+## Requirements
 ### Requirement: Product cards SHALL use deterministic image fallback
 The system SHALL display the first product image for each product card, and SHALL use a placeholder image when the product has no available images.
 
@@ -21,3 +24,11 @@ The system SHALL display product name, price, availability amount, and descripti
 #### Scenario: Home description preview is capped
 - **WHEN** a home product description exceeds three lines of text
 - **THEN** the card truncates the description preview to a maximum of three lines
+
+### Requirement: Home product card price SHALL include localized currency
+The system SHALL display home category product card prices with locale-specific currency markers.
+
+#### Scenario: Home card price includes locale currency
+- **WHEN** a home category product card renders a price
+- **THEN** the price text includes `€` for Finnish locale and `SEK` for Swedish locale
+

@@ -7,6 +7,7 @@ import {
   getProductPrice,
   resolveProductByIdentifier,
 } from '@/components/product/cardUtils';
+import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { themeColors } from '@/constants/colors';
 import { useCart } from '@/hooks/cart';
 import { Product } from '@/types/product';
@@ -153,7 +154,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
           <Text className="text-2xl font-semibold text-neutral-900">{product.name}</Text>
           <Text className="text-sm text-neutral-700">
             {t('category.priceLabel', {
-              price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+              price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
             })}
           </Text>
           <View className={`mt-1 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>

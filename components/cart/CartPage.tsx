@@ -1,4 +1,5 @@
 import { getFirstUsableProductImage, getProductIdentifier, getProductPrice } from '@/components/product/cardUtils';
+import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { useCart } from '@/hooks/cart';
 import { Asset } from 'expo-asset';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +8,7 @@ import { Image, Pressable, Text, View } from 'react-native';
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
 export function CartPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { items, totalPrice, vatAmount, incrementItem, decrementItem, removeItem, clearCart } = useCart();
 
   if (items.length === 0) {
@@ -51,7 +52,7 @@ export function CartPage() {
                   <Text className="text-base font-semibold text-neutral-900">{item.product.name}</Text>
                   <Text className="mt-1 text-sm text-neutral-600">
                     {t('cart.priceLabel', {
-                      price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+                      price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
                     })}
                   </Text>
                 </View>
@@ -91,8 +92,8 @@ export function CartPage() {
       </View>
 
       <View className="mt-6 rounded-xl bg-neutral-50 p-3">
-        <Text className="text-sm text-neutral-700">{t('cart.vatLabel', { vat: vatAmount.toFixed(2) })}</Text>
-        <Text className="text-sm font-semibold text-neutral-900">{t('cart.totalLabel', { total: totalPrice.toFixed(2) })}</Text>
+        <Text className="text-sm text-neutral-700">{t('cart.vatLabel', { vat: formatPriceWithCurrency(vatAmount, i18n.language) })}</Text>
+        <Text className="text-sm font-semibold text-neutral-900">{t('cart.totalLabel', { total: formatPriceWithCurrency(totalPrice, i18n.language) })}</Text>
       </View>
     </View>
   );

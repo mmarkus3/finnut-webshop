@@ -7,6 +7,7 @@ import {
   getProductIdentifier,
   getProductPrice,
 } from '@/components/product/cardUtils';
+import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { themeColors } from '@/constants/colors';
 import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
@@ -109,7 +110,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
                 <Text className="mt-2 text-base font-semibold text-neutral-900">{item.name}</Text>
                 <Text className="mt-1 text-sm text-neutral-700">
                   {t('category.priceLabel', {
-                    price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
+                    price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
                   })}
                 </Text>
                 <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
