@@ -21,3 +21,10 @@ The system SHALL aggregate VAT contributions from all cart line items into a sin
 - **WHEN** cart has multiple line items
 - **THEN** summary VAT equals the sum of all line-item VAT contributions
 
+### Requirement: Cart lifecycle SHALL preserve user selections across refresh
+The system SHALL retain cart selections across app refresh by restoring persisted cart state.
+
+#### Scenario: Refresh keeps prior cart items
+- **WHEN** a user refreshes/reopens the app after previously adding cart items
+- **THEN** the same cart items and quantities are shown after initialization completes
+

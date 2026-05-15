@@ -1,12 +1,16 @@
 import {
   canAddProductToCart,
+  CART_STORAGE_KEY,
   cartReducer,
   getCartBadgeCountLabel,
   getCartItemCount,
   getCartTotalPrice,
   getCartVatAmount,
   initialCartState,
+  loadPersistedCartState,
   normalizeCartProductId,
+  parseStoredCartState,
+  persistCartState,
 } from '@/hooks/cart';
 import { Product } from '@/types/product';
 
@@ -85,5 +89,69 @@ describe('cart state helpers and reducer', () => {
 
     const s2 = cartReducer(s1, { type: 'REMOVE_ITEM', payload: { productId: normalized } });
     expect(s2.items[normalized]).toBeUndefined();
+  });
+});
+
+describe('cart persistence helpers', () => {
+  const mockStorage = (() => {
+    let values: Record<string, string> = {};
+    return {
+      getItem: jest.fn((key: string) => (key in values ? values[key] : null)),
+      setItem: jest.fn((key: string, value: string) => {
+        values[key] = value;
+      }),
+      clear: () => {
+        values = {};
+      },
+    };
+  })();
+
+  beforeEach(() => {
+    mockStorage.getItem.mockClear();
+    mockStorage.setItem.mockClear();
+    mockStorage.clear();
+    Object.defineProperty(globalThis, 'localStorage', { value: mockStorage, configurable: true });
+  });
+
+  it('parses valid stored cart payload', () => {
+    const payload = JSON.stringify({
+      items: {
+        p1: {
+          product: { id: 'p1', name: 'Apple', amount: 2, ean: '111', images: [] },
+          quantity: 2,
+        },
+      },
+    });
+
+    const parsed = parseStoredCartState(payload);
+    expect(parsed).toEqual({
+      items: {
+        p1: {
+          product: { id: 'p1', name: 'Apple', amount: 2, ean: '111', images: [] },
+          quantity: 2,
+        },
+      },
+    });
+  });
+
+  it('falls back to empty state for invalid payload during load', () => {
+    mockStorage.setItem(CART_STORAGE_KEY, '{broken json');
+    expect(loadPersistedCartState()).toEqual(initialCartState);
+  });
+
+  it('persists state to local storage', () => {
+    const state = {
+      items: {
+        p1: {
+          product: { id: 'p1', name: 'Apple', amount: 2, ean: '111', images: [] },
+          quantity: 1,
+        },
+      },
+    };
+
+    persistCartState(state);
+
+    expect(mockStorage.setItem).toHaveBeenCalledWith(CART_STORAGE_KEY, JSON.stringify(state));
+    expect(loadPersistedCartState()).toEqual(state);
   });
 });

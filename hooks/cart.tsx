@@ -1,13 +1,20 @@
 import { getProductIdentifier, getProductPrice } from '@/components/product/cardUtils';
 import { CartItem, CartState } from '@/types/cart';
 import { Product } from '@/types/product';
-import { createContext, PropsWithChildren, useContext, useMemo, useReducer } from 'react';
+import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useReducer } from 'react';
 
 const MAX_BADGE_COUNT = 99;
 
 const initialCartState: CartState = {
   items: {},
 };
+const CART_STORAGE_KEY = 'finnut.cart.v1';
+
+interface StorageLike {
+  getItem: (key: string) => string | null;
+  setItem: (key: string, value: string) => void;
+  removeItem?: (key: string) => void;
+}
 
 type CartAction =
   | { type: 'ADD_ITEM'; payload: { product: Product } }
@@ -61,6 +68,83 @@ const canAddProductToCart = (state: CartState, product: Product): boolean => {
   const productId = normalizeCartProductId(getProductIdentifier(product));
   const currentQuantity = state.items[productId]?.quantity ?? 0;
   return currentQuantity < product.amount;
+};
+
+const getCartStorage = (): StorageLike | null => {
+  if (typeof globalThis === 'undefined') {
+    return null;
+  }
+
+  const candidate = (globalThis as { localStorage?: StorageLike }).localStorage;
+  if (!candidate || typeof candidate.getItem !== 'function' || typeof candidate.setItem !== 'function') {
+    return null;
+  }
+
+  return candidate;
+};
+
+const isValidStoredCartItem = (item: unknown): item is CartItem => {
+  if (!item || typeof item !== 'object') {
+    return false;
+  }
+
+  const candidate = item as CartItem;
+  return (
+    typeof candidate.quantity === 'number'
+    && Number.isFinite(candidate.quantity)
+    && candidate.quantity > 0
+    && !!candidate.product
+    && typeof candidate.product === 'object'
+    && typeof candidate.product.amount === 'number'
+    && Number.isFinite(candidate.product.amount)
+  );
+};
+
+const parseStoredCartState = (rawValue: string | null): CartState | null => {
+  if (!rawValue) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(rawValue) as { items?: Record<string, unknown> };
+    if (!parsed || typeof parsed !== 'object' || !parsed.items || typeof parsed.items !== 'object') {
+      return null;
+    }
+
+    const items: Record<string, CartItem> = {};
+    for (const [key, item] of Object.entries(parsed.items)) {
+      if (isValidStoredCartItem(item)) {
+        items[key] = item;
+      }
+    }
+
+    return { items };
+  } catch {
+    return null;
+  }
+};
+
+const loadPersistedCartState = (): CartState => {
+  const storage = getCartStorage();
+  if (!storage) {
+    return initialCartState;
+  }
+
+  const parsed = parseStoredCartState(storage.getItem(CART_STORAGE_KEY));
+  if (!parsed) {
+    return initialCartState;
+  }
+
+  return parsed;
+};
+
+const persistCartState = (state: CartState): void => {
+  const storage = getCartStorage();
+  if (!storage) {
+    return;
+  }
+
+  storage.setItem(CART_STORAGE_KEY, JSON.stringify(state));
 };
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
@@ -172,7 +256,11 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | null>(null);
 
 function CartProvider({ children }: PropsWithChildren) {
-  const [state, dispatch] = useReducer(cartReducer, initialCartState);
+  const [state, dispatch] = useReducer(cartReducer, initialCartState, () => loadPersistedCartState());
+
+  useEffect(() => {
+    persistCartState(state);
+  }, [state]);
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = getCartItemCount(state);
@@ -205,6 +293,7 @@ const useCart = (): CartContextValue => {
 };
 
 export {
-  canAddProductToCart, CartProvider, cartReducer, getCartBadgeCountLabel, getCartItemCount,
-  getCartTotalPrice, getCartVatAmount, initialCartState, normalizeCartProductId, useCart
+  canAddProductToCart, CART_STORAGE_KEY, CartProvider, cartReducer, getCartBadgeCountLabel, getCartItemCount,
+  getCartTotalPrice, getCartVatAmount, initialCartState, loadPersistedCartState, normalizeCartProductId,
+  parseStoredCartState, persistCartState, useCart
 };
