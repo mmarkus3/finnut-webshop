@@ -9,6 +9,7 @@ import {
 } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { themeColors } from '@/constants/colors';
+import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
@@ -18,7 +19,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
 
-const DESKTOP_MIN_WIDTH = 1024;
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
 const getCategoryPageTitle = (categories: Category[], categoryId: string): string => {

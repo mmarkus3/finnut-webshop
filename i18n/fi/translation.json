@@ -86,7 +86,19 @@
     "clearA11yLabel": "Tyhjennä ostoskori",
     "removeA11yLabel": "Poista {{product}} ostoskorista",
     "increaseA11yLabel": "Lisää tuotteen {{product}} määrä",
-    "decreaseA11yLabel": "Vähennä tuotteen {{product}} määrä"
+    "decreaseA11yLabel": "Vähennä tuotteen {{product}} määrä",
+    "orderSummaryTitle": "Tilausyhteenveto",
+    "subtotalLabel": "Välisumma",
+    "vatIncludedLabel": "ALV (sisältyy hintaan)",
+    "deliveryLabel": "Toimitus",
+    "deliveryValuePlaceholder": "Lasketaan kassalla",
+    "totalLabelText": "Yhteensä",
+    "totalWithoutVatLabel": "Yhteensä (ei ALV)",
+    "checkoutButton": "Jatka kassalle",
+    "summarySectionA11yLabel": "Tilausyhteenveto",
+    "itemsSectionA11yLabel": "Tuotteet",
+    "desktopLayoutA11yLabel": "Työpöytänäkymä",
+    "mobileLayoutA11yLabel": "Mobiilinäkymä"
   },
   "availability": {
     "outOfStock": "Loppu varastosta",

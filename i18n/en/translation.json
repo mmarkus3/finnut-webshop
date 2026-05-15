@@ -86,7 +86,19 @@
     "clearA11yLabel": "Clear shopping cart",
     "removeA11yLabel": "Remove {{product}} from cart",
     "increaseA11yLabel": "Increase quantity for {{product}}",
-    "decreaseA11yLabel": "Decrease quantity for {{product}}"
+    "decreaseA11yLabel": "Decrease quantity for {{product}}",
+    "orderSummaryTitle": "Order summary",
+    "subtotalLabel": "Subtotal",
+    "vatIncludedLabel": "VAT (included in price)",
+    "deliveryLabel": "Delivery",
+    "deliveryValuePlaceholder": "Calculated at checkout",
+    "totalLabelText": "Total",
+    "totalWithoutVatLabel": "Total (excl. VAT)",
+    "checkoutButton": "Continue to checkout",
+    "summarySectionA11yLabel": "Order summary",
+    "itemsSectionA11yLabel": "Products",
+    "desktopLayoutA11yLabel": "Desktop layout",
+    "mobileLayoutA11yLabel": "Mobile layout"
   },
   "availability": {
     "outOfStock": "Loppu varastosta",

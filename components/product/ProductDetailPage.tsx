@@ -9,6 +9,7 @@ import {
 } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { themeColors } from '@/constants/colors';
+import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
@@ -32,7 +33,6 @@ interface ProductDetailSection {
   fields: ProductDetailField[];
 }
 
-const DESKTOP_MIN_WIDTH = 1024;
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
 const isDesktopWidth = (width: number): boolean => width >= DESKTOP_MIN_WIDTH;

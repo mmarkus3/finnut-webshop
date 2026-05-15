@@ -86,7 +86,19 @@
     "clearA11yLabel": "Tom kundvagnen",
     "removeA11yLabel": "Ta bort {{product}} fran kundvagnen",
     "increaseA11yLabel": "Oka antal for {{product}}",
-    "decreaseA11yLabel": "Minska antal for {{product}}"
+    "decreaseA11yLabel": "Minska antal for {{product}}",
+    "orderSummaryTitle": "Ordersammanfattning",
+    "subtotalLabel": "Delsumma",
+    "vatIncludedLabel": "Moms (ingår i priset)",
+    "deliveryLabel": "Leverans",
+    "deliveryValuePlaceholder": "Beräknas i kassan",
+    "totalLabelText": "Totalt",
+    "totalWithoutVatLabel": "Totalt (exkl. moms)",
+    "checkoutButton": "Fortsätt till kassan",
+    "summarySectionA11yLabel": "Ordersammanfattning",
+    "itemsSectionA11yLabel": "Produkter",
+    "desktopLayoutA11yLabel": "Skrivbordslayout",
+    "mobileLayoutA11yLabel": "Mobil layout"
   },
   "availability": {
     "outOfStock": "Loppu varastosta",
