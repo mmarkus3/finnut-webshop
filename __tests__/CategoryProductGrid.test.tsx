@@ -9,6 +9,8 @@ import {
 } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
+import React from 'react';
+import renderer from 'react-test-renderer';
 
 jest.mock('@/hooks/cart', () => ({
   useCart: () => ({
@@ -116,5 +118,25 @@ describe('CategoryProductGrid helpers', () => {
     expect(getAvailabilityStatusMeta(0).bgClassName).toBe('bg-red-100');
     expect(getAvailabilityStatusMeta(5).bgClassName).toBe('bg-yellow-100');
     expect(getAvailabilityStatusMeta(20).bgClassName).toBe('bg-green-100');
+  });
+
+  it('uses fixed description container size in grid cards', () => {
+    const { CategoryProductGrid } = require('@/components/category/CategoryProductGrid');
+    const categories: Category[] = [{ id: 'fruits', name: 'Fruits', description: '' }];
+    const products: Product[] = [
+      { id: 'p-apple', name: 'Apple', amount: 2, ean: '1', images: ['https://img/apple.jpg'], category: 'fruits', retailPrice: 1.99 },
+    ];
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(
+        <CategoryProductGrid categories={categories} categoryId="fruits" products={products} isLoading={false} />
+      );
+    });
+
+    const fixedDescriptionContainers = tree!.root.findAll(
+      (node) => typeof node.props.className === 'string' && node.props.className.includes('min-h-[60px]')
+    );
+    expect(fixedDescriptionContainers.length).toBeGreaterThan(0);
   });
 });

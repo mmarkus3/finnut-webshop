@@ -190,6 +190,11 @@ describe('HomeCategoryProductSections rendering', () => {
     );
     expect(truncatedDescriptionNodes.length).toBeGreaterThan(0);
 
+    const fixedDescriptionContainers = tree!.root.findAll(
+      (node) => typeof node.props.className === 'string' && node.props.className.includes('min-h-[60px]')
+    );
+    expect(fixedDescriptionContainers.length).toBeGreaterThan(0);
+
     const carouselNodes = tree!.root.findAll(
       (node) =>
         node.props.accessibilityRole === 'adjustable' &&

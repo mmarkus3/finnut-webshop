@@ -92,9 +92,11 @@ function ProductCard({ product }: { product: Product }) {
         <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
           <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
         </View>
-        <Text numberOfLines={3} ellipsizeMode="tail" className="mt-1 text-sm text-neutral-600">
-          {description || ''}
-        </Text>
+        <View className="mt-1 min-h-[60px]">
+          <Text numberOfLines={3} ellipsizeMode="tail" className="text-sm text-neutral-600">
+            {description || ''}
+          </Text>
+        </View>
       </Pressable>
       <Pressable
         onPress={() => addItem(product)}
@@ -123,9 +125,9 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
   }
 
   return (
-    <View className="w-full gap-6 px-4 py-4">
+    <ScrollView className="w-full gap-6 px-4 py-4">
       {sections.map((section) => (
-        <View key={section.category.id} className="gap-3">
+        <View key={section.category.id} className="gap-3 mt-4">
           <View className="flex-row items-center justify-between">
             <Text className="text-lg font-semibold text-neutral-900">
               {t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name })}
@@ -162,7 +164,7 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
           </ScrollView>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 

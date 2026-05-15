@@ -115,9 +115,11 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
                 <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
                   <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
                 </View>
-                <Text numberOfLines={3} ellipsizeMode="tail" className="mt-2 text-sm text-neutral-600">
-                  {description || ''}
-                </Text>
+                <View className="mt-2 min-h-[60px]">
+                  <Text numberOfLines={3} ellipsizeMode="tail" className="text-sm text-neutral-600">
+                    {description || ''}
+                  </Text>
+                </View>
               </Pressable>
               <Pressable
                 onPress={() => addItem(item)}
