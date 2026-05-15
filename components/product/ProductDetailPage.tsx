@@ -142,6 +142,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
           <Image
             source={imageUri ? { uri: imageUri } : placeholderImageSource}
             defaultSource={placeholderImageSource}
+            style={{ resizeMode: 'contain' }}
             className={isDesktop ? 'h-[520px] w-full rounded-xl bg-neutral-100' : 'h-80 w-full rounded-xl bg-neutral-100'}
             accessibilityRole="image"
             accessibilityLabel={t('product.imageA11yLabel', { product: product.name })}

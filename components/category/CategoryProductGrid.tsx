@@ -104,6 +104,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
               <Image
                 source={firstImage ? { uri: firstImage } : placeholderImageSource}
                 defaultSource={placeholderImageSource}
+                style={{ resizeMode: 'contain' }}
                 className="h-32 w-full rounded-lg bg-neutral-100"
               />
               <Text className="mt-2 text-base font-semibold text-neutral-900">{item.name}</Text>

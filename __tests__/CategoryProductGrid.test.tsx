@@ -1,5 +1,5 @@
 import { filterProductsByCategory, getCategoryGridColumns, getCategoryPageTitle } from '@/components/category/CategoryProductGrid';
-import { getAvailabilityStatusMeta, getAvailabilityStatusKey } from '@/components/product/availabilityStatus';
+import { getAvailabilityStatusKey, getAvailabilityStatusMeta } from '@/components/product/availabilityStatus';
 import {
   getFirstUsableProductImage,
   getProductDescription,
@@ -9,6 +9,45 @@ import {
 } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
+
+jest.mock('@/hooks/cart', () => ({
+  useCart: () => ({
+    addItem: jest.fn(),
+    canAddItem: () => true,
+  }),
+}));
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
+}));
+
+jest.mock('expo-asset', () => ({
+  Asset: {
+    fromModule: () => ({ uri: 'placeholder://image' }),
+  },
+}));
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, string | number>) => {
+      if (key === 'category.loading') return 'Loading products...';
+      if (key === 'category.productCount') return `${options?.count} products`;
+      if (key === 'category.noProducts') return 'No products';
+      if (key === 'category.productCardA11yLabel') return `Product card for ${options?.product}`;
+      if (key === 'category.priceLabel') return `Price: ${options?.price}`;
+      if (key === 'category.priceUnavailable') return 'N/A';
+      if (key === 'availability.outOfStock') return 'Loppu varastosta';
+      if (key === 'availability.lowStock') return 'Loppuu pian';
+      if (key === 'availability.inStock') return 'Varastossa';
+      if (key === 'cart.addButton') return 'Add to cart';
+      if (key === 'cart.addA11yLabel') return `Add ${options?.product}`;
+      return key;
+    },
+    i18n: { language: 'en' },
+  }),
+}));
 
 describe('CategoryProductGrid helpers', () => {
   const categories: Category[] = [

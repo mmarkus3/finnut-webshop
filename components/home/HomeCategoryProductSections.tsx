@@ -78,6 +78,7 @@ function ProductCard({ product }: { product: Product }) {
       <Image
         source={firstImage ? { uri: firstImage } : placeholderImageSource}
         defaultSource={placeholderImageSource}
+        style={{ resizeMode: 'contain' }}
         className="h-32 w-full rounded-lg bg-neutral-100"
       />
       <Text numberOfLines={2} className="mt-2 text-sm font-medium text-neutral-900">
