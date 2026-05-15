@@ -16,6 +16,8 @@ type CartAction =
   | { type: 'REMOVE_ITEM'; payload: { productId: string } }
   | { type: 'CLEAR' };
 
+const normalizeCartProductId = (productId: string): string => String(productId);
+
 const clampQuantityToStock = (quantity: number, amount: number): number => {
   if (amount <= 0) {
     return 0;
@@ -44,7 +46,7 @@ const getCartTotalPrice = (state: CartState): number => {
 };
 
 const canAddProductToCart = (state: CartState, product: Product): boolean => {
-  const productId = getProductIdentifier(product);
+  const productId = normalizeCartProductId(getProductIdentifier(product));
   const currentQuantity = state.items[productId]?.quantity ?? 0;
   return currentQuantity < product.amount;
 };
@@ -53,7 +55,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
       const product = action.payload.product;
-      const productId = getProductIdentifier(product);
+      const productId = normalizeCartProductId(getProductIdentifier(product));
       const existing = state.items[productId];
       const nextQuantity = clampQuantityToStock((existing?.quantity ?? 0) + 1, product.amount);
 
@@ -74,7 +76,8 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case 'INCREMENT': {
-      const existing = state.items[action.payload.productId];
+      const productId = normalizeCartProductId(action.payload.productId);
+      const existing = state.items[productId];
       if (!existing) {
         return state;
       }
@@ -88,7 +91,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         ...state,
         items: {
           ...state.items,
-          [action.payload.productId]: {
+          [productId]: {
             ...existing,
             quantity: nextQuantity,
           },
@@ -97,14 +100,15 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case 'DECREMENT': {
-      const existing = state.items[action.payload.productId];
+      const productId = normalizeCartProductId(action.payload.productId);
+      const existing = state.items[productId];
       if (!existing) {
         return state;
       }
 
       const nextQuantity = existing.quantity - 1;
       if (nextQuantity <= 0) {
-        const { [action.payload.productId]: _removed, ...rest } = state.items;
+        const { [productId]: _removed, ...rest } = state.items;
         return { ...state, items: rest };
       }
 
@@ -112,7 +116,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         ...state,
         items: {
           ...state.items,
-          [action.payload.productId]: {
+          [productId]: {
             ...existing,
             quantity: nextQuantity,
           },
@@ -121,11 +125,12 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case 'REMOVE_ITEM': {
-      if (!state.items[action.payload.productId]) {
+      const productId = normalizeCartProductId(action.payload.productId);
+      if (!state.items[productId]) {
         return state;
       }
 
-      const { [action.payload.productId]: _removed, ...rest } = state.items;
+      const { [productId]: _removed, ...rest } = state.items;
       return { ...state, items: rest };
     }
 
@@ -186,12 +191,6 @@ const useCart = (): CartContextValue => {
 };
 
 export {
-  CartProvider,
-  useCart,
-  cartReducer,
-  initialCartState,
-  getCartItemCount,
-  getCartTotalPrice,
-  getCartBadgeCountLabel,
-  canAddProductToCart,
+  canAddProductToCart, CartProvider, cartReducer, getCartBadgeCountLabel, getCartItemCount,
+  getCartTotalPrice, initialCartState, normalizeCartProductId, useCart
 };

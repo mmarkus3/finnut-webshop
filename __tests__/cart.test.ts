@@ -5,6 +5,7 @@ import {
   getCartItemCount,
   getCartTotalPrice,
   initialCartState,
+  normalizeCartProductId,
 } from '@/hooks/cart';
 import { Product } from '@/types/product';
 
@@ -47,5 +48,23 @@ describe('cart state helpers and reducer', () => {
 
     expect(canAddProductToCart(s2, apple)).toBe(false);
     expect(canAddProductToCart(s2, milk)).toBe(true);
+  });
+
+  it('normalizes runtime product ids so remove works with non-string ids', () => {
+    const numericIdProduct = {
+      id: 101 as unknown as string,
+      name: 'Numeric',
+      amount: 3,
+      ean: 'ean-101',
+      images: [],
+      retailPrice: 1,
+    } as Product;
+
+    const s1 = cartReducer(initialCartState, { type: 'ADD_ITEM', payload: { product: numericIdProduct } });
+    const normalized = normalizeCartProductId('101');
+    expect(s1.items[normalized]).toBeDefined();
+
+    const s2 = cartReducer(s1, { type: 'REMOVE_ITEM', payload: { productId: normalized } });
+    expect(s2.items[normalized]).toBeUndefined();
   });
 });
