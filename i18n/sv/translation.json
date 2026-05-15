@@ -104,5 +104,18 @@
     "outOfStock": "Loppu varastosta",
     "lowStock": "Loppuu pian",
     "inStock": "Varastossa"
+  },
+  "checkout": {
+    "title": "Kassa",
+    "orderIdLabel": "Order-ID: {{orderId}}",
+    "customerInfoTitle": "Kundinformation",
+    "firstnameLabel": "Förnamn",
+    "lastnameLabel": "Efternamn",
+    "emailLabel": "E-post",
+    "addressStreetLabel": "Gatuadress",
+    "addressCityLabel": "Stad",
+    "addressZipLabel": "Postnummer",
+    "orderCreateLoading": "Skapar order...",
+    "orderCreateError": "Kunde inte skapa order. Försök igen."
   }
 }

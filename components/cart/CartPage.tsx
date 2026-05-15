@@ -1,9 +1,13 @@
 import { getFirstUsableProductImage, getProductIdentifier, getProductPrice } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
+import { getActiveOrderId, saveActiveOrderId } from '@/hooks/activeOrder';
 import { useCart } from '@/hooks/cart';
+import { createOrderForCheckout } from '@/hooks/checkoutOrder';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Asset } from 'expo-asset';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
 
@@ -13,10 +17,38 @@ const isDesktopWidth = (width: number): boolean => width >= DESKTOP_MIN_WIDTH;
 
 export function CartPage() {
   const { t, i18n } = useTranslation();
+  const router = useRouter();
   const { width } = useWindowDimensions();
   const isDesktop = isDesktopWidth(width);
   const { items, totalPrice, vatAmount, incrementItem, decrementItem, removeItem, clearCart } = useCart();
   const summaryWithoutVat = Math.max(0, totalPrice - vatAmount);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  const proceedToCheckout = async () => {
+    const activeOrderId = getActiveOrderId();
+    // TODO: clearActiveOrderId should be called when order is completed or canceled in checkout flow.
+    if (activeOrderId) {
+      router.push({ pathname: '/checkout', params: { orderId: activeOrderId } });
+      return;
+    }
+
+    try {
+      setCheckoutError(null);
+      setIsCreatingOrder(true);
+      const order = await createOrderForCheckout(items);
+      if (!order.id) {
+        throw new Error('Missing order id from backend response');
+      }
+
+      saveActiveOrderId(order.id);
+      router.push({ pathname: '/checkout', params: { orderId: order.id } });
+    } catch {
+      setCheckoutError(t('checkout.orderCreateError'));
+    } finally {
+      setIsCreatingOrder(false);
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -136,12 +168,15 @@ export function CartPage() {
           </View>
 
           <Pressable
-            className="mt-4 items-center rounded-lg bg-primary-600 px-3 py-3"
+            className={`mt-4 items-center rounded-lg px-3 py-3 ${isCreatingOrder ? 'bg-neutral-300' : 'bg-primary-600'}`}
             accessibilityRole="button"
             accessibilityLabel={t('cart.checkoutButton')}
+            onPress={proceedToCheckout}
+            disabled={isCreatingOrder}
           >
-            <Text className="text-sm font-medium text-white">{t('cart.checkoutButton')}</Text>
+            <Text className="text-sm font-medium text-white">{isCreatingOrder ? t('checkout.orderCreateLoading') : t('cart.checkoutButton')}</Text>
           </Pressable>
+          {checkoutError ? <Text className="mt-2 text-sm text-red-600">{checkoutError}</Text> : null}
         </View>
       </View>
     </View>

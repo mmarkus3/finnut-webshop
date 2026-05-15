@@ -104,5 +104,18 @@
     "outOfStock": "Loppu varastosta",
     "lowStock": "Loppuu pian",
     "inStock": "Varastossa"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "orderIdLabel": "Order ID: {{orderId}}",
+    "customerInfoTitle": "Customer information",
+    "firstnameLabel": "First name",
+    "lastnameLabel": "Last name",
+    "emailLabel": "Email",
+    "addressStreetLabel": "Street address",
+    "addressCityLabel": "City",
+    "addressZipLabel": "ZIP code",
+    "orderCreateLoading": "Creating order...",
+    "orderCreateError": "Could not create order. Please try again."
   }
 }

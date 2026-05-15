@@ -90,6 +90,7 @@ function RootStack() {
         <Stack.Screen name="index" />
         <Stack.Screen name="search/index" />
         <Stack.Screen name="cart/index" />
+        <Stack.Screen name="checkout/index" />
       </Stack>
       <SearchModal
         isVisible={isSearchOpen}

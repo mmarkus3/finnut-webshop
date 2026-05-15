@@ -104,5 +104,18 @@
     "outOfStock": "Loppu varastosta",
     "lowStock": "Loppuu pian",
     "inStock": "Varastossa"
+  },
+  "checkout": {
+    "title": "Kassa",
+    "orderIdLabel": "Tilausnumero: {{orderId}}",
+    "customerInfoTitle": "Asiakastiedot",
+    "firstnameLabel": "Etunimi",
+    "lastnameLabel": "Sukunimi",
+    "emailLabel": "Sähköposti",
+    "addressStreetLabel": "Katuosoite",
+    "addressCityLabel": "Kaupunki",
+    "addressZipLabel": "Postinumero",
+    "orderCreateLoading": "Luodaan tilausta...",
+    "orderCreateError": "Tilauksen luonti epäonnistui. Yritä uudelleen."
   }
 }

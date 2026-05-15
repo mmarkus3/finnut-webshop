@@ -14,9 +14,28 @@ const mockCart = {
   clearCart: jest.fn(),
 };
 const mockI18n = { language: 'fi' };
+const mockPush = jest.fn();
+const mockGetActiveOrderId = jest.fn(() => null);
+const mockSaveActiveOrderId = jest.fn();
+const mockCreateOrderForCheckout = jest.fn();
 
 jest.mock('@/hooks/cart', () => ({
   useCart: () => mockCart,
+}));
+
+jest.mock('@/hooks/activeOrder', () => ({
+  getActiveOrderId: () => mockGetActiveOrderId(),
+  saveActiveOrderId: (id: string) => mockSaveActiveOrderId(id),
+}));
+
+jest.mock('@/hooks/checkoutOrder', () => ({
+  createOrderForCheckout: (items: unknown[]) => mockCreateOrderForCheckout(items),
+}));
+
+jest.mock('expo-router', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
 }));
 
 jest.mock('react-i18next', () => ({
@@ -55,6 +74,12 @@ describe('CartPage', () => {
     mockCart.totalPrice = 0;
     mockCart.vatAmount = 0;
     mockI18n.language = 'fi';
+    mockPush.mockReset();
+    mockGetActiveOrderId.mockReset();
+    mockGetActiveOrderId.mockReturnValue(null);
+    mockSaveActiveOrderId.mockReset();
+    mockCreateOrderForCheckout.mockReset();
+    mockCreateOrderForCheckout.mockResolvedValue({ id: 'order-created' });
   });
 
   it('renders empty state', () => {
@@ -134,5 +159,62 @@ describe('CartPage', () => {
   it('detects mobile vs desktop layout breakpoints', () => {
     expect(isDesktopWidth(390)).toBe(false);
     expect(isDesktopWidth(1200)).toBe(true);
+  });
+
+  it('reuses stored active order id when proceeding to checkout', () => {
+    mockCart.items = [
+      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
+    ];
+    mockGetActiveOrderId.mockReturnValue('order-123');
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CartPage />);
+    });
+
+    const checkoutButton = tree!.root.find(
+      (node) =>
+        typeof node.props.onPress === 'function' &&
+        node.props.accessibilityLabel === 'Jatka kassalle'
+    );
+
+    renderer.act(() => {
+      checkoutButton.props.onPress();
+    });
+
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/checkout',
+      params: { orderId: 'order-123' },
+    });
+  });
+
+  it('creates order, saves id, and navigates with created id when no stored id exists', async () => {
+    mockCart.items = [
+      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
+    ];
+    mockGetActiveOrderId.mockReturnValue(null);
+    mockCreateOrderForCheckout.mockResolvedValue({ id: 'new-order-1' });
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CartPage />);
+    });
+
+    const checkoutButton = tree!.root.find(
+      (node) =>
+        typeof node.props.onPress === 'function' &&
+        node.props.accessibilityLabel === 'Jatka kassalle'
+    );
+
+    await renderer.act(async () => {
+      await checkoutButton.props.onPress();
+    });
+
+    expect(mockCreateOrderForCheckout).toHaveBeenCalled();
+    expect(mockSaveActiveOrderId).toHaveBeenCalledWith('new-order-1');
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: '/checkout',
+      params: { orderId: 'new-order-1' },
+    });
   });
 });
