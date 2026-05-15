@@ -2,6 +2,7 @@ import { getFirstUsableProductImage, getProductIdentifier, getProductPrice } fro
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Asset } from 'expo-asset';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
@@ -48,53 +49,55 @@ export function CartPage() {
 
             return (
               <View key={productId} className="rounded-xl border border-neutral-200 p-3">
-                <View className="flex-row gap-3">
-                  <Image
-                    source={firstImage ? { uri: firstImage } : placeholderImageSource}
-                    defaultSource={placeholderImageSource}
-                    style={{ resizeMode: 'contain' }}
-                    className="h-16 w-16 rounded-md bg-neutral-100"
-                    accessibilityRole="image"
-                    accessibilityLabel={t('cart.imageA11yLabel', { product: item.product.name })}
-                  />
+                <View className="md:flex md:flex-row justify-between">
+                  <View className="flex-row gap-3">
+                    <Image
+                      source={firstImage ? { uri: firstImage } : placeholderImageSource}
+                      defaultSource={placeholderImageSource}
+                      style={{ resizeMode: 'contain' }}
+                      className="h-16 w-16 rounded-md bg-neutral-100"
+                      accessibilityRole="image"
+                      accessibilityLabel={t('cart.imageA11yLabel', { product: item.product.name })}
+                    />
 
-                  <View className="flex-1">
-                    <Text className="text-base font-semibold text-neutral-900">{item.product.name}</Text>
-                    <Text className="mt-1 text-sm text-neutral-600">
-                      {t('cart.priceLabel', {
-                        price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
-                      })}
-                    </Text>
+                    <View className="flex-1">
+                      <Text className="text-base font-semibold text-neutral-900" ellipsizeMode="tail">{item.product.name}</Text>
+                      <Text className="mt-1 text-sm text-neutral-600">
+                        {t('cart.priceLabel', {
+                          price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
+                        })}
+                      </Text>
+                    </View>
                   </View>
-                </View>
 
-                <View className="mt-3 flex-row items-center gap-2">
-                  <Pressable
-                    onPress={() => decrementItem(productId)}
-                    className="rounded-md border border-neutral-300 px-3 py-1"
-                    accessibilityRole="button"
-                    accessibilityLabel={t('cart.decreaseA11yLabel', { product: item.product.name })}
-                  >
-                    <Text className="text-base text-neutral-900">-</Text>
-                  </Pressable>
-                  <Text className="min-w-8 text-center text-sm text-neutral-900">{item.quantity}</Text>
-                  <Pressable
-                    onPress={() => incrementItem(productId)}
-                    disabled={!canIncrement}
-                    className={`rounded-md px-3 py-1 ${canIncrement ? 'border border-neutral-300' : 'border border-neutral-200 bg-neutral-100'}`}
-                    accessibilityRole="button"
-                    accessibilityLabel={t('cart.increaseA11yLabel', { product: item.product.name })}
-                  >
-                    <Text className={`text-base ${canIncrement ? 'text-neutral-900' : 'text-neutral-400'}`}>+</Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => removeItem(productId)}
-                    className="ml-2"
-                    accessibilityRole="button"
-                    accessibilityLabel={t('cart.removeA11yLabel', { product: item.product.name })}
-                  >
-                    <Text className="text-sm text-red-600">{t('cart.removeButton')}</Text>
-                  </Pressable>
+                  <View className="mt-3 flex-row items-center gap-2">
+                    <Pressable
+                      onPress={() => decrementItem(productId)}
+                      className="rounded-md border border-neutral-300 px-3 py-1"
+                      accessibilityRole="button"
+                      accessibilityLabel={t('cart.decreaseA11yLabel', { product: item.product.name })}
+                    >
+                      <Text className="text-base text-neutral-900">-</Text>
+                    </Pressable>
+                    <Text className="min-w-8 text-center text-sm text-neutral-900">{item.quantity}</Text>
+                    <Pressable
+                      onPress={() => incrementItem(productId)}
+                      disabled={!canIncrement}
+                      className={`rounded-md px-3 py-1 ${canIncrement ? 'border border-neutral-300' : 'border border-neutral-200 bg-neutral-100'}`}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('cart.increaseA11yLabel', { product: item.product.name })}
+                    >
+                      <Text className={`text-base ${canIncrement ? 'text-neutral-900' : 'text-neutral-400'}`}>+</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => removeItem(productId)}
+                      className="ml-2"
+                      accessibilityRole="button"
+                      accessibilityLabel={t('cart.removeA11yLabel', { product: item.product.name })}
+                    >
+                      <FontAwesome name="trash-o" size={24}></FontAwesome>
+                    </Pressable>
+                  </View>
                 </View>
               </View>
             );
