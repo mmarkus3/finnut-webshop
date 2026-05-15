@@ -9,7 +9,7 @@ export function CartPage() {
 
   if (items.length === 0) {
     return (
-      <View className="flex-1 bg-white px-4 py-6">
+      <View className="flex-1 bg-white px-4 py-6 items-center justify-center">
         <Text className="text-2xl font-semibold text-neutral-900">{t('cart.title')}</Text>
         <Text className="mt-3 text-sm text-neutral-600">{t('cart.empty')}</Text>
       </View>

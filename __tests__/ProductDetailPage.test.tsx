@@ -6,6 +6,7 @@ import {
 } from '@/components/product/ProductDetailPage';
 import { Product } from '@/types/product';
 import { resolveProductByIdentifier } from '@/components/product/cardUtils';
+import { getAvailabilityStatusMeta, getAvailabilityStatusKey } from '@/components/product/availabilityStatus';
 
 const t = (key: string) => key;
 
@@ -67,11 +68,11 @@ describe('ProductDetailPage helpers', () => {
     };
 
     const sections = getProductDetailSections(product, 'en', t);
-    expect(sections).toHaveLength(3);
-    expect(sections[0].title).toBe('product.originSectionTitle');
-    expect(sections[0].fields[0].value).toBe('Finland');
-    expect(sections[1].fields[0].value).toBe('oats');
+    expect(sections).toHaveLength(4);
+    expect(sections[0].title).toBe('product.descriptionLabel');
+    expect(sections[0].fields[0].value).toBe('Crunchy granola');
     expect(sections[2].fields.some((field) => field.value === '1000')).toBe(true);
+    expect(sections[3].fields[0].value).toBe('Finland');
 
     const fallbackSections = getProductDetailSections(
       { id: 'x', name: 'X', amount: 1, ean: 'x', images: [] },
@@ -79,5 +80,19 @@ describe('ProductDetailPage helpers', () => {
       t
     );
     expect(fallbackSections[0].fields[0].value).toBe('product.unavailableValue');
+  });
+
+  it('provides availability status labels and styles for product detail thresholds', () => {
+    expect(getAvailabilityStatusKey(0)).toBe('outOfStock');
+    expect(getAvailabilityStatusMeta(0).labelKey).toBe('availability.outOfStock');
+    expect(getAvailabilityStatusMeta(0).textClassName).toBe('text-red-700');
+
+    expect(getAvailabilityStatusKey(4)).toBe('lowStock');
+    expect(getAvailabilityStatusMeta(4).labelKey).toBe('availability.lowStock');
+    expect(getAvailabilityStatusMeta(4).textClassName).toBe('text-yellow-700');
+
+    expect(getAvailabilityStatusKey(10)).toBe('inStock');
+    expect(getAvailabilityStatusMeta(10).labelKey).toBe('availability.inStock');
+    expect(getAvailabilityStatusMeta(10).textClassName).toBe('text-green-700');
   });
 });

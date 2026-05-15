@@ -1,4 +1,7 @@
 import {
+  getAvailabilityStatusMeta,
+} from '@/components/product/availabilityStatus';
+import {
   getFirstUsableProductImage,
   getProductDescription,
   getProductPrice,
@@ -47,7 +50,6 @@ const getLocalizedIngredients = (product: Product, language: string): string | n
 };
 
 const getProductDetailSections = (product: Product, language: string, t: (key: string, options?: Record<string, unknown>) => string): ProductDetailSection[] => {
-  const ingredients = getLocalizedIngredients(product, language);
   const description = getProductDescription(product, language);
 
   const originSection: ProductDetailSection = {
@@ -131,6 +133,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
   const price = getProductPrice(product);
   const canAdd = canAddItem(product);
   const sections = getProductDetailSections(product, i18n.language, t);
+  const availabilityStatus = getAvailabilityStatusMeta(product.amount);
 
   return (
     <ScrollView className="flex-1 bg-white" contentContainerStyle={{ padding: 16 }}>
@@ -152,9 +155,9 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
               price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
             })}
           </Text>
-          <Text className="text-sm text-neutral-700">
-            {t('category.availabilityLabel', { amount: product.amount })}
-          </Text>
+          <View className={`mt-1 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
+            <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
+          </View>
           <Text className="text-sm text-neutral-700">{t('product.eanLabel', { ean: product.ean })}</Text>
           <Pressable
             onPress={() => addItem(product)}
@@ -188,4 +191,3 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
 }
 
 export { formatOptionalNumber, getLocalizedIngredients, getProductDetailSections, isDesktopWidth };
-

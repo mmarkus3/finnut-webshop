@@ -83,5 +83,10 @@
     "removeA11yLabel": "Remove {{product}} from cart",
     "increaseA11yLabel": "Increase quantity for {{product}}",
     "decreaseA11yLabel": "Decrease quantity for {{product}}"
+  },
+  "availability": {
+    "outOfStock": "Loppu varastosta",
+    "lowStock": "Loppuu pian",
+    "inStock": "Varastossa"
   }
 }

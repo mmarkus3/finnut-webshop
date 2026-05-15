@@ -1,4 +1,7 @@
 import {
+  getAvailabilityStatusMeta,
+} from '@/components/product/availabilityStatus';
+import {
   getFirstUsableProductImage,
   getProductDescription,
   getProductIdentifier,
@@ -81,6 +84,7 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
           const price = getProductPrice(item);
           const firstImage = getFirstUsableProductImage(item);
           const canAdd = canAddItem(item);
+          const availabilityStatus = getAvailabilityStatusMeta(item.amount);
 
           const openProduct = () => {
             router.push({
@@ -108,9 +112,9 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
                   price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
                 })}
               </Text>
-              <Text className="mt-1 text-sm text-neutral-700">
-                {t('category.availabilityLabel', { amount: item.amount })}
-              </Text>
+              <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
+                <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
+              </View>
               <Text numberOfLines={3} className="mt-2 text-sm text-neutral-600">
                 {description || ''}
               </Text>
@@ -132,4 +136,3 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
 }
 
 export { filterProductsByCategory, getCategoryGridColumns, getCategoryPageTitle };
-

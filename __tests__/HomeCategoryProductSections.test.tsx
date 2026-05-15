@@ -36,7 +36,9 @@ jest.mock('react-i18next', () => ({
       if (key === 'cart.addA11yLabel') return `Add ${options?.product ?? ''} to cart`;
       if (key === 'category.priceLabel') return `Price: ${options?.price}`;
       if (key === 'category.priceUnavailable') return 'N/A';
-      if (key === 'category.availabilityLabel') return `Availability: ${options?.amount}`;
+      if (key === 'availability.outOfStock') return 'Loppu varastosta';
+      if (key === 'availability.lowStock') return 'Loppuu pian';
+      if (key === 'availability.inStock') return 'Varastossa';
       if (key === 'category.descriptionUnavailable') return '';
       if (key.startsWith('categories.')) return options?.defaultValue ?? key;
       return key;
@@ -117,7 +119,8 @@ describe('HomeCategoryProductSections rendering', () => {
       retailPrice: 4.2,
       description_en: 'Apple home card description',
     },
-    { name: 'Milk', amount: 3, ean: '2', images: [], category: 'dairy' },
+    { name: 'Milk', amount: 0, ean: '2', images: [], category: 'dairy' },
+    { name: 'Bread', amount: 12, ean: '3', images: [], category: 'dairy' },
   ];
 
   beforeEach(() => {
@@ -150,7 +153,7 @@ describe('HomeCategoryProductSections rendering', () => {
           .filter((label) => label.startsWith('View product '))
       )
     );
-    expect(cardLabels).toEqual(['View product Apple', 'View product Milk']);
+    expect(cardLabels).toEqual(['View product Apple', 'View product Milk', 'View product Bread']);
 
     const imageUris = tree!.root
       .findAll((node) => node.props.source !== undefined)
@@ -165,8 +168,19 @@ describe('HomeCategoryProductSections rendering', () => {
       .flat();
 
     expect(textValues).toContain('Price: 4.20');
-    expect(textValues).toContain('Availability: 1');
+    expect(textValues).toContain('Loppuu pian');
+    expect(textValues).toContain('Loppu varastosta');
+    expect(textValues).toContain('Varastossa');
     expect(textValues).toContain('Apple home card description');
+
+    const statusNodes = tree!.root.findAll(
+      (node) =>
+        typeof node.props.className === 'string' &&
+        (node.props.className.includes('bg-red-100') ||
+          node.props.className.includes('bg-yellow-100') ||
+          node.props.className.includes('bg-green-100'))
+    );
+    expect(statusNodes.length).toBeGreaterThanOrEqual(3);
 
     const truncatedDescriptionNodes = tree!.root.findAll(
       (node) => node.type === 'Text' && node.props.numberOfLines === 3

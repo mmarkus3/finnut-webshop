@@ -83,5 +83,10 @@
     "removeA11yLabel": "Ta bort {{product}} fran kundvagnen",
     "increaseA11yLabel": "Oka antal for {{product}}",
     "decreaseA11yLabel": "Minska antal for {{product}}"
+  },
+  "availability": {
+    "outOfStock": "Loppu varastosta",
+    "lowStock": "Loppuu pian",
+    "inStock": "Varastossa"
   }
 }

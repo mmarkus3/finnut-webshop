@@ -1,4 +1,5 @@
 import { filterProductsByCategory, getCategoryGridColumns, getCategoryPageTitle } from '@/components/category/CategoryProductGrid';
+import { getAvailabilityStatusMeta, getAvailabilityStatusKey } from '@/components/product/availabilityStatus';
 import {
   getFirstUsableProductImage,
   getProductDescription,
@@ -66,5 +67,15 @@ describe('CategoryProductGrid helpers', () => {
     expect(getProductIdentifier(products[1])).toBe('2');
     expect(resolveProductByIdentifier(products, 'p-apple')?.name).toBe('Apple');
     expect(resolveProductByIdentifier(products, 'missing')).toBeNull();
+  });
+
+  it('maps availability thresholds to status and color classes', () => {
+    expect(getAvailabilityStatusKey(0)).toBe('outOfStock');
+    expect(getAvailabilityStatusKey(9)).toBe('lowStock');
+    expect(getAvailabilityStatusKey(10)).toBe('inStock');
+
+    expect(getAvailabilityStatusMeta(0).bgClassName).toBe('bg-red-100');
+    expect(getAvailabilityStatusMeta(5).bgClassName).toBe('bg-yellow-100');
+    expect(getAvailabilityStatusMeta(20).bgClassName).toBe('bg-green-100');
   });
 });

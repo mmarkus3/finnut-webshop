@@ -1,4 +1,7 @@
 import {
+  getAvailabilityStatusMeta,
+} from '@/components/product/availabilityStatus';
+import {
   getFirstUsableProductImage,
   getProductDescription,
   getProductIdentifier,
@@ -55,6 +58,7 @@ function ProductCard({ product }: { product: Product }) {
   const description = getProductDescription(product, i18n.language);
   const price = getProductPrice(product);
   const canAdd = canAddItem(product);
+  const availabilityStatus = getAvailabilityStatusMeta(product.amount);
 
   const openProduct = () => {
     router.push({
@@ -84,9 +88,9 @@ function ProductCard({ product }: { product: Product }) {
           price: price !== null ? price.toFixed(2) : t('category.priceUnavailable'),
         })}
       </Text>
-      <Text className="mt-1 text-sm text-neutral-700">
-        {t('category.availabilityLabel', { amount: product.amount })}
-      </Text>
+      <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
+        <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
+      </View>
       <Text numberOfLines={3} className="mt-1 text-sm text-neutral-600">
         {description || ''}
       </Text>
