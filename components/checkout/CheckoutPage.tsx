@@ -2,9 +2,9 @@ import { getProductPrice } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
-import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
 import { saveDeliveryMethodToOrder } from '@/hooks/deliveryMethodPersistence';
 import { DeliveryPoint, fetchDeliveryPointsByPostalCode } from '@/hooks/deliveryPoints';
+import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -82,12 +82,12 @@ export function CheckoutPage() {
         <View className={isDesktop ? 'flex-1 rounded-xl border border-neutral-200 p-4' : 'rounded-xl border border-neutral-200 p-4'}>
           <Text className="text-lg font-semibold text-neutral-900">{t('checkout.customerInfoTitle')}</Text>
 
-          <TextInput value={customer.firstname} onChangeText={(v) => setCustomer((p) => ({ ...p, firstname: v }))} placeholder={t('checkout.firstnameLabel')} className="mt-3 rounded-lg border border-neutral-300 px-3 py-2" />
-          <TextInput value={customer.lastname} onChangeText={(v) => setCustomer((p) => ({ ...p, lastname: v }))} placeholder={t('checkout.lastnameLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
-          <TextInput value={customer.email} onChangeText={(v) => setCustomer((p) => ({ ...p, email: v }))} placeholder={t('checkout.emailLabel')} keyboardType="email-address" className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
-          <TextInput value={customer.address_street} onChangeText={(v) => setCustomer((p) => ({ ...p, address_street: v }))} placeholder={t('checkout.addressStreetLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
-          <TextInput value={customer.address_zip} onChangeText={(v) => setCustomer((p) => ({ ...p, address_zip: v }))} placeholder={t('checkout.addressZipLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
-          <TextInput value={customer.address_city} onChangeText={(v) => setCustomer((p) => ({ ...p, address_city: v }))} placeholder={t('checkout.addressCityLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
+          <TextInput autoComplete="given-name" value={customer.firstname} onChangeText={(v) => setCustomer((p) => ({ ...p, firstname: v }))} placeholder={t('checkout.firstnameLabel')} className="mt-3 rounded-lg border border-neutral-300 px-3 py-2" />
+          <TextInput autoComplete="family-name" value={customer.lastname} onChangeText={(v) => setCustomer((p) => ({ ...p, lastname: v }))} placeholder={t('checkout.lastnameLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
+          <TextInput autoComplete="email" value={customer.email} onChangeText={(v) => setCustomer((p) => ({ ...p, email: v }))} placeholder={t('checkout.emailLabel')} keyboardType="email-address" className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
+          <TextInput autoComplete="street-address" value={customer.address_street} onChangeText={(v) => setCustomer((p) => ({ ...p, address_street: v }))} placeholder={t('checkout.addressStreetLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
+          <TextInput autoComplete="postal-code" value={customer.address_zip} onChangeText={(v) => setCustomer((p) => ({ ...p, address_zip: v }))} placeholder={t('checkout.addressZipLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
+          <TextInput autoComplete="postal-address-locality" value={customer.address_city} onChangeText={(v) => setCustomer((p) => ({ ...p, address_city: v }))} placeholder={t('checkout.addressCityLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
 
           <View className="mt-4 rounded-lg border border-neutral-200 p-3">
             <Text className="text-base font-semibold text-neutral-900">{t('checkout.deliveryPointsTitle')}</Text>

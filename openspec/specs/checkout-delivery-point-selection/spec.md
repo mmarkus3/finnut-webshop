@@ -24,3 +24,10 @@ The system SHALL present loading, empty, and error states for delivery-point ret
 - **WHEN** fetch is pending, fails, or returns no points
 - **THEN** corresponding state message is shown to user
 
+### Requirement: Delivery-point selection SHALL trigger persistence to active order
+The system SHALL persist selected delivery point id as order delivery method value.
+
+#### Scenario: Point selection persists method id
+- **WHEN** user selects one delivery point from list
+- **THEN** selected point id is sent to backend as order `deliveryMethod` value
+
