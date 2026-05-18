@@ -6,12 +6,12 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       if (key === 'information.title') return 'Information';
-      if (key === 'information.termsTitle') return 'Terms and conditions';
+      if (key === 'information.termsTitle') return 'Villkor';
       if (key === 'information.termsSections') {
         return [
           {
-            heading: 'Contact us',
-            paragraphs: ['E-mail: eetu@finnut.fi', 'Telephone: +358 40 727 2051'],
+            heading: 'Kontakta oss',
+            paragraphs: ['E-post: eetu@finnut.fi', 'Telefon: +358 40 727 2051'],
           },
         ];
       }
@@ -21,7 +21,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 describe('InformationPage', () => {
-  it('renders english terms title and representative terms content', () => {
+  it('renders swedish terms title and representative terms content', () => {
     let tree: renderer.ReactTestRenderer | null = null;
 
     renderer.act(() => {
@@ -30,8 +30,8 @@ describe('InformationPage', () => {
 
     const textNodes = tree!.root.findAllByType('Text');
     expect(textNodes.some((node) => node.props.children === 'Information')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Terms and conditions')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Contact us')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'E-mail: eetu@finnut.fi')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Villkor')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Kontakta oss')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'E-post: eetu@finnut.fi')).toBe(true);
   });
 });
