@@ -128,9 +128,9 @@
     "deliveryMethodSaveError": "Toimitustavan tallennus epäonnistui. Yritä uudelleen."
   },
   "information": {
-    "linkLabel": "Tietoa",
+    "linkLabel": "Tietoja",
     "linkA11yLabel": "Avaa tietosivu",
-    "title": "Tietoa",
+    "title": "Tietoja",
     "termsTitle": "Toimitusehdot",
     "termsSections": [
       {
@@ -191,7 +191,11 @@
           "Verkkokaupalla on lakisääteinen virhevastuu myydyistä tuotteista. Reklamaatiotapauksissa pyydämme olemaan yhteydessä asiakaspalveluumme. Kuluttajalla on oikeus viedä mahdolliset riitatilanteet kuluttajariitalautakunnan ratkaistavaksi."
         ]
       }
-    ]
+    ],
+    "instagramLabel": "Instagram",
+    "instagramA11yLabel": "Avaa Instagram-sivu",
+    "facebookLabel": "Facebook",
+    "facebookA11yLabel": "Avaa Facebook-sivu"
   },
   "delivery": {
     "bannerFreeOver": "Ilmainen toimitus yli {{over}} tilauksille",

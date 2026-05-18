@@ -18,14 +18,12 @@ describe('AppPageWithInfoLink', () => {
       );
     });
 
-    const viewNodes = tree!.root.findAllByType('View');
-    const contentContainer = viewNodes.find((node) => node.props.className === 'flex-1');
-    expect(contentContainer).toBeDefined();
-
-    const rootView = viewNodes.find((node) => node.props.className === 'flex-1 bg-white');
-    expect(rootView).toBeDefined();
-
-    const rootChildren = rootView!.props.children;
+    const scrollView = tree!.root.find(
+      (node) => typeof node.props.className === 'string' && node.props.className === 'flex-1 bg-white'
+    );
+    expect(scrollView).toBeDefined();
+    expect(scrollView.props.className).toBe('flex-1 bg-white');
+    const rootChildren = scrollView.props.children;
     expect(Array.isArray(rootChildren)).toBe(true);
     expect(typeof rootChildren[0].type).toBe('function');
     expect(rootChildren[1].type.name).toBe('GlobalBottomInfoLink');

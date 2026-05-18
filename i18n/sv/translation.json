@@ -191,7 +191,11 @@
           "Verkkokaupalla on lakisääteinen virhevastuu myydyistä tuotteista. Reklamaatiotapauksissa pyydämme olemaan yhteydessä asiakaspalveluumme. Kuluttajalla on oikeus viedä mahdolliset riitatilanteet kuluttajariitalautakunnan ratkaistavaksi."
         ]
       }
-    ]
+    ],
+    "instagramLabel": "Instagram",
+    "instagramA11yLabel": "Öppna Instagram-sida",
+    "facebookLabel": "Facebook",
+    "facebookA11yLabel": "Öppna Facebook-sida"
   },
   "delivery": {
     "bannerFreeOver": "Fri leverans för beställningar över {{over}}",
