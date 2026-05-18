@@ -1,4 +1,4 @@
-import { AxiosInstance, create } from 'axios';
+import { getJson, HttpRequester } from '@/hooks/httpFetch';
 
 interface RawPaymentMethod {
   id?: string;
@@ -18,12 +18,6 @@ interface PaymentMethod {
   name: string;
 }
 
-const buildPaymentMethodsClient = (): AxiosInstance => {
-  return create({
-    baseURL: process.env.EXPO_PUBLIC_FIREBASE_API!,
-  });
-};
-
 const normalizePaymentMethod = (method: RawPaymentMethod, index: number): PaymentMethod => {
   const id = method.id?.trim() || method.code?.trim() || `${method.name ?? method.title ?? 'payment'}-${index}`;
   const name = method.name?.trim() || method.title?.trim() || method.label?.trim() || `Payment method ${index + 1}`;
@@ -31,14 +25,14 @@ const normalizePaymentMethod = (method: RawPaymentMethod, index: number): Paymen
 };
 
 const fetchPaymentMethods = async (
-  client: AxiosInstance = buildPaymentMethodsClient()
+  requester?: HttpRequester
 ): Promise<PaymentMethod[]> => {
-  const response = await client.request<RawPaymentMethod[] | PaymentMethodsResponse>({
-    method: 'GET',
-    url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/paymentMethods`,
-  });
+  const data = await getJson<RawPaymentMethod[] | PaymentMethodsResponse>(
+    process.env.EXPO_PUBLIC_FIREBASE_API!,
+    { url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/paymentMethods` },
+    requester
+  );
 
-  const data = response.data;
   const methods = Array.isArray(data)
     ? data
     : Array.isArray(data?.paymentMethods)

@@ -3,13 +3,15 @@ import { DELIVERY_POINTS_LIMIT, fetchDeliveryPointsByPostalCode } from '@/hooks/
 describe('delivery points helper', () => {
   it('calls endpoint with postalCode param and limits to top 10', async () => {
     const request = jest.fn().mockResolvedValue({
-      data: Array.from({ length: 12 }).map((_, i) => ({
-        id: `p-${i + 1}`,
-        name: `Point ${i + 1}`,
-        address: `Street ${i + 1}`,
-        postalCode: '00100',
-        city: 'Helsinki',
-      })),
+      data: {
+        pickupPoint: Array.from({ length: 12 }).map((_, i) => ({
+          id: `p-${i + 1}`,
+          name: `Point ${i + 1}`,
+          address: `Street ${i + 1}`,
+          postalCode: '00100',
+          city: 'Helsinki',
+        })),
+      },
     });
 
     const points = await fetchDeliveryPointsByPostalCode('00100', { request } as never);

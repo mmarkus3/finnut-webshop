@@ -1,4 +1,4 @@
-import { create } from 'axios';
+import { getJson, HttpRequester } from '@/hooks/httpFetch';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
 
 interface DeliveryPricing {
@@ -14,18 +14,15 @@ interface DeliveryPricingContextValue {
 
 const DeliveryPricingContext = createContext<DeliveryPricingContextValue | null>(null);
 
-const fetchDeliveryPricing = async (): Promise<DeliveryPricing | null> => {
-  const client = create({
-    baseURL: process.env.EXPO_PUBLIC_FIREBASE_API!,
-  });
+const fetchDeliveryPricing = async (requester?: HttpRequester): Promise<DeliveryPricing | null> => {
+  const data = await getJson<{ over?: number; delivery?: number }>(
+    process.env.EXPO_PUBLIC_FIREBASE_API!,
+    { url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/prices` },
+    requester
+  );
 
-  const response = await client.request<{ over?: number; delivery?: number }>({
-    method: 'GET',
-    url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/prices`,
-  });
-
-  const over = response.data?.over;
-  const delivery = response.data?.delivery;
+  const over = data?.over;
+  const delivery = data?.delivery;
 
   if (!Number.isFinite(over) || !Number.isFinite(delivery)) {
     return null;

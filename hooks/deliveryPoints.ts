@@ -1,4 +1,4 @@
-import { AxiosInstance, create } from 'axios';
+import { getJson, HttpRequester } from '@/hooks/httpFetch';
 
 const DELIVERY_POINTS_LIMIT = 10;
 
@@ -20,12 +20,6 @@ interface DeliveryPoint {
   addressLine: string;
 }
 
-const buildDeliveryPointsClient = (): AxiosInstance => {
-  return create({
-    baseURL: `${process.env.EXPO_PUBLIC_FIREBASE_API!}/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/points`,
-  });
-};
-
 const normalizeDeliveryPoint = (point: RawDeliveryPoint, index: number): DeliveryPoint => {
   const id = point.id?.trim() || `${point.name ?? 'point'}-${index}`;
   const name = point.name?.trim() || `Point ${index + 1}`;
@@ -37,19 +31,20 @@ const normalizeDeliveryPoint = (point: RawDeliveryPoint, index: number): Deliver
 
 const fetchDeliveryPointsByPostalCode = async (
   postalCode: string,
-  client: AxiosInstance = buildDeliveryPointsClient()
+  requester?: HttpRequester
 ): Promise<DeliveryPoint[]> => {
   const normalizedPostalCode = postalCode.trim();
   if (!normalizedPostalCode) {
     return [];
   }
 
-  const response = await client.request<DeliverPointResponse>({
-    method: 'GET',
-    params: { postalCode: normalizedPostalCode },
-  });
+  const data = await getJson<DeliverPointResponse>(
+    `${process.env.EXPO_PUBLIC_FIREBASE_API!}/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/points`,
+    { params: { postalCode: normalizedPostalCode } },
+    requester
+  );
 
-  const points = response.data.pickupPoint;
+  const points = Array.isArray(data.pickupPoint) ? data.pickupPoint : [];
   return points
     .map((point, index) => normalizeDeliveryPoint(point, index))
     .slice(0, DELIVERY_POINTS_LIMIT);
@@ -58,4 +53,3 @@ const fetchDeliveryPointsByPostalCode = async (
 export {
   DELIVERY_POINTS_LIMIT, fetchDeliveryPointsByPostalCode, type DeliveryPoint
 };
-
