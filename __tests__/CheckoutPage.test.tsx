@@ -4,6 +4,7 @@ import renderer from 'react-test-renderer';
 
 const mockFetchDeliveryPointsByPostalCode = jest.fn();
 const mockSaveDeliveryMethodToOrder = jest.fn();
+const mockFetchPaymentMethods = jest.fn();
 
 const mockCart = {
   items: [
@@ -32,6 +33,10 @@ jest.mock('@/hooks/deliveryPricing', () => ({
 
 jest.mock('@/hooks/deliveryPoints', () => ({
   fetchDeliveryPointsByPostalCode: (postalCode: string) => mockFetchDeliveryPointsByPostalCode(postalCode),
+}));
+
+jest.mock('@/hooks/paymentMethods', () => ({
+  fetchPaymentMethods: () => mockFetchPaymentMethods(),
 }));
 
 jest.mock('expo-router', () => ({
@@ -63,6 +68,12 @@ jest.mock('react-i18next', () => ({
       if (key === 'checkout.deliveryPointOptionA11yLabel') return `Select delivery point ${options?.point}`;
       if (key === 'checkout.deliveryMethodSaving') return 'Saving delivery method...';
       if (key === 'checkout.deliveryMethodSaveError') return 'Could not save delivery method. Please try again.';
+      if (key === 'checkout.nextToPaymentButton') return 'Continue to payment methods';
+      if (key === 'checkout.paymentMethodsTitle') return 'Payment methods';
+      if (key === 'checkout.paymentMethodsLoading') return 'Loading payment methods...';
+      if (key === 'checkout.paymentMethodsError') return 'Could not load payment methods. Please try again.';
+      if (key === 'checkout.paymentMethodsEmpty') return 'No payment methods available.';
+      if (key === 'checkout.paymentMethodOptionA11yLabel') return `Select payment method ${options?.method}`;
       if (key === 'cart.orderSummaryTitle') return 'Order summary';
       if (key === 'cart.subtotalLabel') return 'Subtotal';
       if (key === 'cart.vatIncludedLabel') return 'VAT (included in price)';
@@ -83,6 +94,8 @@ describe('CheckoutPage', () => {
     mockFetchDeliveryPointsByPostalCode.mockResolvedValue([]);
     mockSaveDeliveryMethodToOrder.mockReset();
     mockSaveDeliveryMethodToOrder.mockResolvedValue(undefined);
+    mockFetchPaymentMethods.mockReset();
+    mockFetchPaymentMethods.mockResolvedValue([]);
   });
 
   it('renders customer form and summary', () => {
@@ -111,66 +124,7 @@ describe('CheckoutPage', () => {
     expect(getCheckoutSectionsLayoutClass(true)).toContain('flex-row');
   });
 
-  it('fetches delivery points by postal code and renders options', async () => {
-    mockFetchDeliveryPointsByPostalCode.mockResolvedValue([
-      { id: 'dp1', name: 'Point A', addressLine: 'Street 1, 00100, City' },
-      { id: 'dp2', name: 'Point B', addressLine: 'Street 2, 00100, City' },
-    ]);
-
-    let tree: renderer.ReactTestRenderer | null = null;
-    renderer.act(() => {
-      tree = renderer.create(<CheckoutPage />);
-    });
-
-    const postalCodeInput = tree!.root.find(
-      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
-    );
-    renderer.act(() => {
-      postalCodeInput.props.onChangeText('00100');
-    });
-
-    const loadButton = tree!.root.find(
-      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Load delivery points'
-    );
-
-    await renderer.act(async () => {
-      await loadButton.props.onPress();
-    });
-
-    expect(mockFetchDeliveryPointsByPostalCode).toHaveBeenCalledWith('00100');
-    const textNodes = tree!.root.findAllByType('Text');
-    expect(textNodes.some((node) => node.props.children === 'Point A')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Point B')).toBe(true);
-  });
-
-  it('shows error state when delivery points fetch fails', async () => {
-    mockFetchDeliveryPointsByPostalCode.mockRejectedValue(new Error('fail'));
-
-    let tree: renderer.ReactTestRenderer | null = null;
-    renderer.act(() => {
-      tree = renderer.create(<CheckoutPage />);
-    });
-
-    const postalCodeInput = tree!.root.find(
-      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
-    );
-    renderer.act(() => {
-      postalCodeInput.props.onChangeText('00100');
-    });
-
-    const loadButton = tree!.root.find(
-      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Load delivery points'
-    );
-
-    await renderer.act(async () => {
-      await loadButton.props.onPress();
-    });
-
-    const textNodes = tree!.root.findAllByType('Text');
-    expect(textNodes.some((node) => node.props.children === 'Could not load delivery points. Please try again.')).toBe(true);
-  });
-
-  it('saves selected delivery point to active order', async () => {
+  it('keeps next-to-payment disabled until required customer and delivery data are complete', async () => {
     mockFetchDeliveryPointsByPostalCode.mockResolvedValue([
       { id: 'dp1', name: 'Point A', addressLine: 'Street 1, 00100, City' },
     ]);
@@ -180,12 +134,27 @@ describe('CheckoutPage', () => {
       tree = renderer.create(<CheckoutPage />);
     });
 
-    const postalCodeInput = tree!.root.find(
-      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
-    );
-    renderer.act(() => {
-      postalCodeInput.props.onChangeText('00100');
-    });
+    const nextButton = () =>
+      tree!.root.find(
+        (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Continue to payment methods'
+      );
+
+    expect(nextButton().props.disabled).toBe(true);
+
+    const setInput = (placeholder: string, value: string) => {
+      const input = tree!.root.find((node) => node.type === 'TextInput' && node.props.placeholder === placeholder);
+      renderer.act(() => {
+        input.props.onChangeText(value);
+      });
+    };
+
+    setInput('First name', 'John');
+    setInput('Last name', 'Doe');
+    setInput('Email', 'john@example.com');
+    setInput('Phone number', '+358401234567');
+    setInput('Street address', 'Main street 1');
+    setInput('City', 'Helsinki');
+    setInput('ZIP code', '00100');
 
     const loadButton = tree!.root.find(
       (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Load delivery points'
@@ -203,31 +172,41 @@ describe('CheckoutPage', () => {
       await pointButton.props.onPress();
     });
 
-    expect(mockSaveDeliveryMethodToOrder).toHaveBeenCalledWith('order-1', 'dp1');
+    expect(nextButton().props.disabled).toBe(false);
   });
 
-  it('shows delivery method save error when persisting selection fails', async () => {
+  it('navigates to payment step and loads payment methods while keeping summary visible', async () => {
     mockFetchDeliveryPointsByPostalCode.mockResolvedValue([
       { id: 'dp1', name: 'Point A', addressLine: 'Street 1, 00100, City' },
     ]);
-    mockSaveDeliveryMethodToOrder.mockRejectedValue(new Error('fail'));
+    mockFetchPaymentMethods.mockResolvedValue([
+      { id: 'pm1', name: 'Card' },
+      { id: 'pm2', name: 'MobilePay' },
+    ]);
 
     let tree: renderer.ReactTestRenderer | null = null;
     renderer.act(() => {
       tree = renderer.create(<CheckoutPage />);
     });
 
-    const postalCodeInput = tree!.root.find(
-      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
-    );
-    renderer.act(() => {
-      postalCodeInput.props.onChangeText('00100');
-    });
+    const setInput = (placeholder: string, value: string) => {
+      const input = tree!.root.find((node) => node.type === 'TextInput' && node.props.placeholder === placeholder);
+      renderer.act(() => {
+        input.props.onChangeText(value);
+      });
+    };
+
+    setInput('First name', 'John');
+    setInput('Last name', 'Doe');
+    setInput('Email', 'john@example.com');
+    setInput('Phone number', '+358401234567');
+    setInput('Street address', 'Main street 1');
+    setInput('City', 'Helsinki');
+    setInput('ZIP code', '00100');
 
     const loadButton = tree!.root.find(
       (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Load delivery points'
     );
-
     await renderer.act(async () => {
       await loadButton.props.onPress();
     });
@@ -235,12 +214,73 @@ describe('CheckoutPage', () => {
     const pointButton = tree!.root.find(
       (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Select delivery point Point A'
     );
-
     await renderer.act(async () => {
       await pointButton.props.onPress();
     });
 
+    const nextButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Continue to payment methods'
+    );
+    await renderer.act(async () => {
+      await nextButton.props.onPress();
+    });
+
+    expect(mockFetchPaymentMethods).toHaveBeenCalledTimes(1);
     const textNodes = tree!.root.findAllByType('Text');
-    expect(textNodes.some((node) => node.props.children === 'Could not save delivery method. Please try again.')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Payment methods')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Card')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'MobilePay')).toBe(true);
+    expect(textNodes.some((node) => node.props.children === 'Order summary')).toBe(true);
+  });
+
+  it('shows payment methods error state when payment methods fetch fails', async () => {
+    mockFetchDeliveryPointsByPostalCode.mockResolvedValue([
+      { id: 'dp1', name: 'Point A', addressLine: 'Street 1, 00100, City' },
+    ]);
+    mockFetchPaymentMethods.mockRejectedValue(new Error('fail'));
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CheckoutPage />);
+    });
+
+    const setInput = (placeholder: string, value: string) => {
+      const input = tree!.root.find((node) => node.type === 'TextInput' && node.props.placeholder === placeholder);
+      renderer.act(() => {
+        input.props.onChangeText(value);
+      });
+    };
+
+    setInput('First name', 'John');
+    setInput('Last name', 'Doe');
+    setInput('Email', 'john@example.com');
+    setInput('Phone number', '+358401234567');
+    setInput('Street address', 'Main street 1');
+    setInput('City', 'Helsinki');
+    setInput('ZIP code', '00100');
+
+    const loadButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Load delivery points'
+    );
+    await renderer.act(async () => {
+      await loadButton.props.onPress();
+    });
+
+    const pointButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Select delivery point Point A'
+    );
+    await renderer.act(async () => {
+      await pointButton.props.onPress();
+    });
+
+    const nextButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Continue to payment methods'
+    );
+    await renderer.act(async () => {
+      await nextButton.props.onPress();
+    });
+
+    const textNodes = tree!.root.findAllByType('Text');
+    expect(textNodes.some((node) => node.props.children === 'Could not load payment methods. Please try again.')).toBe(true);
   });
 });

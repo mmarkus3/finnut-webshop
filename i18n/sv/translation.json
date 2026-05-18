@@ -125,7 +125,13 @@
     "deliveryPointsEmpty": "Inga leveranspunkter hittades.",
     "deliveryPointOptionA11yLabel": "Välj leveranspunkt {{point}}",
     "deliveryMethodSaving": "Sparar leveranssätt...",
-    "deliveryMethodSaveError": "Kunde inte spara leveranssätt. Försök igen."
+    "deliveryMethodSaveError": "Kunde inte spara leveranssätt. Försök igen.",
+    "nextToPaymentButton": "Fortsätt till betalningsmetoder",
+    "paymentMethodsTitle": "Betalningsmetoder",
+    "paymentMethodsLoading": "Laddar betalningsmetoder...",
+    "paymentMethodsError": "Kunde inte hämta betalningsmetoder. Försök igen.",
+    "paymentMethodsEmpty": "Inga betalningsmetoder tillgängliga.",
+    "paymentMethodOptionA11yLabel": "Välj betalningsmetod {{method}}"
   },
   "information": {
     "linkLabel": "Information",

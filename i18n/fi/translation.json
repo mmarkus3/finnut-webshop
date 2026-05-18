@@ -125,7 +125,13 @@
     "deliveryPointsEmpty": "Toimituspisteitä ei löytynyt.",
     "deliveryPointOptionA11yLabel": "Valitse toimituspiste {{point}}",
     "deliveryMethodSaving": "Tallennetaan toimitustapaa...",
-    "deliveryMethodSaveError": "Toimitustavan tallennus epäonnistui. Yritä uudelleen."
+    "deliveryMethodSaveError": "Toimitustavan tallennus epäonnistui. Yritä uudelleen.",
+    "nextToPaymentButton": "Jatka maksutapoihin",
+    "paymentMethodsTitle": "Maksutavat",
+    "paymentMethodsLoading": "Ladataan maksutapoja...",
+    "paymentMethodsError": "Maksutapojen haku epäonnistui. Yritä uudelleen.",
+    "paymentMethodsEmpty": "Maksutapoja ei ole saatavilla.",
+    "paymentMethodOptionA11yLabel": "Valitse maksutapa {{method}}"
   },
   "information": {
     "linkLabel": "Tietoja",

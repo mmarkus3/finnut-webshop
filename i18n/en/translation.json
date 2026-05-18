@@ -125,7 +125,13 @@
     "deliveryPointsEmpty": "No delivery points found.",
     "deliveryPointOptionA11yLabel": "Select delivery point {{point}}",
     "deliveryMethodSaving": "Saving delivery method...",
-    "deliveryMethodSaveError": "Could not save delivery method. Please try again."
+    "deliveryMethodSaveError": "Could not save delivery method. Please try again.",
+    "nextToPaymentButton": "Continue to payment methods",
+    "paymentMethodsTitle": "Payment methods",
+    "paymentMethodsLoading": "Loading payment methods...",
+    "paymentMethodsError": "Could not load payment methods. Please try again.",
+    "paymentMethodsEmpty": "No payment methods available.",
+    "paymentMethodOptionA11yLabel": "Select payment method {{method}}"
   },
   "information": {
     "linkLabel": "Information",
