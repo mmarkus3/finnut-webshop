@@ -9,7 +9,7 @@ interface AppPageWithInfoLinkProps {
 export function AppPageWithInfoLink({ children }: AppPageWithInfoLinkProps) {
   return (
     <ScrollView className="flex-1 bg-white">
-      <View>{children}</View>
+      <View className="flex-1 min-h-[70vh]">{children}</View>
       <GlobalBottomInfoLink />
     </ScrollView>
   );
