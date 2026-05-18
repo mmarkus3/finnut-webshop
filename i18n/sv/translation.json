@@ -122,7 +122,9 @@
     "deliveryPointsLoading": "Hämtar leveranspunkter...",
     "deliveryPointsError": "Kunde inte hämta leveranspunkter. Försök igen.",
     "deliveryPointsEmpty": "Inga leveranspunkter hittades.",
-    "deliveryPointOptionA11yLabel": "Välj leveranspunkt {{point}}"
+    "deliveryPointOptionA11yLabel": "Välj leveranspunkt {{point}}",
+    "deliveryMethodSaving": "Sparar leveranssätt...",
+    "deliveryMethodSaveError": "Kunde inte spara leveranssätt. Försök igen."
   },
   "delivery": {
     "bannerFreeOver": "Fri leverans för beställningar över {{over}}",

@@ -122,7 +122,9 @@
     "deliveryPointsLoading": "Haetaan toimituspisteitä...",
     "deliveryPointsError": "Toimituspisteiden haku epäonnistui. Yritä uudelleen.",
     "deliveryPointsEmpty": "Toimituspisteitä ei löytynyt.",
-    "deliveryPointOptionA11yLabel": "Valitse toimituspiste {{point}}"
+    "deliveryPointOptionA11yLabel": "Valitse toimituspiste {{point}}",
+    "deliveryMethodSaving": "Tallennetaan toimitustapaa...",
+    "deliveryMethodSaveError": "Toimitustavan tallennus epäonnistui. Yritä uudelleen."
   },
   "delivery": {
     "bannerFreeOver": "Ilmainen toimitus yli {{over}} tilauksille",

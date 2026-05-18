@@ -3,6 +3,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 
 const mockFetchDeliveryPointsByPostalCode = jest.fn();
+const mockSaveDeliveryMethodToOrder = jest.fn();
 
 const mockCart = {
   items: [
@@ -37,6 +38,11 @@ jest.mock('expo-router', () => ({
   useLocalSearchParams: () => ({ orderId: 'order-1' }),
 }));
 
+jest.mock('@/hooks/deliveryMethodPersistence', () => ({
+  saveDeliveryMethodToOrder: (orderId: string, deliveryMethodId: string) =>
+    mockSaveDeliveryMethodToOrder(orderId, deliveryMethodId),
+}));
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string | number>) => {
@@ -54,6 +60,8 @@ jest.mock('react-i18next', () => ({
       if (key === 'checkout.deliveryPointsError') return 'Could not load delivery points. Please try again.';
       if (key === 'checkout.deliveryPointsEmpty') return 'No delivery points found.';
       if (key === 'checkout.deliveryPointOptionA11yLabel') return `Select delivery point ${options?.point}`;
+      if (key === 'checkout.deliveryMethodSaving') return 'Saving delivery method...';
+      if (key === 'checkout.deliveryMethodSaveError') return 'Could not save delivery method. Please try again.';
       if (key === 'cart.orderSummaryTitle') return 'Order summary';
       if (key === 'cart.subtotalLabel') return 'Subtotal';
       if (key === 'cart.vatIncludedLabel') return 'VAT (included in price)';
@@ -72,6 +80,8 @@ describe('CheckoutPage', () => {
   beforeEach(() => {
     mockFetchDeliveryPointsByPostalCode.mockReset();
     mockFetchDeliveryPointsByPostalCode.mockResolvedValue([]);
+    mockSaveDeliveryMethodToOrder.mockReset();
+    mockSaveDeliveryMethodToOrder.mockResolvedValue(undefined);
   });
 
   it('renders customer form and summary', () => {
@@ -156,5 +166,79 @@ describe('CheckoutPage', () => {
 
     const textNodes = tree!.root.findAllByType('Text');
     expect(textNodes.some((node) => node.props.children === 'Could not load delivery points. Please try again.')).toBe(true);
+  });
+
+  it('saves selected delivery point to active order', async () => {
+    mockFetchDeliveryPointsByPostalCode.mockResolvedValue([
+      { id: 'dp1', name: 'Point A', addressLine: 'Street 1, 00100, City' },
+    ]);
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CheckoutPage />);
+    });
+
+    const postalCodeInput = tree!.root.find(
+      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
+    );
+    renderer.act(() => {
+      postalCodeInput.props.onChangeText('00100');
+    });
+
+    const loadButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Load delivery points'
+    );
+
+    await renderer.act(async () => {
+      await loadButton.props.onPress();
+    });
+
+    const pointButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Select delivery point Point A'
+    );
+
+    await renderer.act(async () => {
+      await pointButton.props.onPress();
+    });
+
+    expect(mockSaveDeliveryMethodToOrder).toHaveBeenCalledWith('order-1', 'dp1');
+  });
+
+  it('shows delivery method save error when persisting selection fails', async () => {
+    mockFetchDeliveryPointsByPostalCode.mockResolvedValue([
+      { id: 'dp1', name: 'Point A', addressLine: 'Street 1, 00100, City' },
+    ]);
+    mockSaveDeliveryMethodToOrder.mockRejectedValue(new Error('fail'));
+
+    let tree: renderer.ReactTestRenderer | null = null;
+    renderer.act(() => {
+      tree = renderer.create(<CheckoutPage />);
+    });
+
+    const postalCodeInput = tree!.root.find(
+      (node) => node.type === 'TextInput' && node.props.placeholder === 'ZIP code'
+    );
+    renderer.act(() => {
+      postalCodeInput.props.onChangeText('00100');
+    });
+
+    const loadButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Load delivery points'
+    );
+
+    await renderer.act(async () => {
+      await loadButton.props.onPress();
+    });
+
+    const pointButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Select delivery point Point A'
+    );
+
+    await renderer.act(async () => {
+      await pointButton.props.onPress();
+    });
+
+    const textNodes = tree!.root.findAllByType('Text');
+    expect(textNodes.some((node) => node.props.children === 'Could not save delivery method. Please try again.')).toBe(true);
   });
 });

@@ -3,6 +3,7 @@ import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
 import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
+import { saveDeliveryMethodToOrder } from '@/hooks/deliveryMethodPersistence';
 import { DeliveryPoint, fetchDeliveryPointsByPostalCode } from '@/hooks/deliveryPoints';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
@@ -14,7 +15,7 @@ const getCheckoutSectionsLayoutClass = (isDesktop: boolean): string => (isDeskto
 
 export function CheckoutPage() {
   const { t, i18n } = useTranslation();
-  useLocalSearchParams<{ orderId?: string }>();
+  const { orderId } = useLocalSearchParams<{ orderId?: string }>();
   const { width } = useWindowDimensions();
   const isDesktop = isDesktopWidth(width);
   const { items, totalPrice, vatAmount } = useCart();
@@ -31,6 +32,8 @@ export function CheckoutPage() {
   const [selectedDeliveryPointId, setSelectedDeliveryPointId] = useState<string | null>(null);
   const [isLoadingDeliveryPoints, setIsLoadingDeliveryPoints] = useState(false);
   const [deliveryPointsError, setDeliveryPointsError] = useState<string | null>(null);
+  const [isSavingDeliveryMethod, setIsSavingDeliveryMethod] = useState(false);
+  const [deliveryMethodError, setDeliveryMethodError] = useState<string | null>(null);
 
   const summaryWithoutVat = Math.max(0, totalPrice - vatAmount);
   const deliveryCost = getDeliveryCost(totalPrice, pricing);
@@ -52,6 +55,24 @@ export function CheckoutPage() {
   };
 
   const hasPostalCode = customer.address_zip.trim().length > 0;
+
+  const selectDeliveryPoint = async (pointId: string) => {
+    if (!orderId || isSavingDeliveryMethod) {
+      setDeliveryMethodError(t('checkout.deliveryMethodSaveError'));
+      return;
+    }
+
+    try {
+      setDeliveryMethodError(null);
+      setIsSavingDeliveryMethod(true);
+      await saveDeliveryMethodToOrder(orderId, pointId);
+      setSelectedDeliveryPointId(pointId);
+    } catch {
+      setDeliveryMethodError(t('checkout.deliveryMethodSaveError'));
+    } finally {
+      setIsSavingDeliveryMethod(false);
+    }
+  };
 
   return (
     <ScrollView className="flex-1 bg-white px-4 py-6">
@@ -93,7 +114,8 @@ export function CheckoutPage() {
                 return (
                   <Pressable
                     key={point.id}
-                    onPress={() => setSelectedDeliveryPointId(point.id)}
+                    onPress={() => selectDeliveryPoint(point.id)}
+                    disabled={isSavingDeliveryMethod}
                     className={`rounded-lg border px-3 py-2 ${isSelected ? 'border-primary-600 bg-primary-50' : 'border-neutral-300'}`}
                     accessibilityRole="button"
                     accessibilityLabel={t('checkout.deliveryPointOptionA11yLabel', { point: point.name })}
@@ -104,6 +126,8 @@ export function CheckoutPage() {
                 );
               })}
             </View>
+            {isSavingDeliveryMethod ? <Text className="mt-2 text-sm text-neutral-600">{t('checkout.deliveryMethodSaving')}</Text> : null}
+            {deliveryMethodError ? <Text className="mt-2 text-sm text-red-600">{deliveryMethodError}</Text> : null}
           </View>
         </View>
 
