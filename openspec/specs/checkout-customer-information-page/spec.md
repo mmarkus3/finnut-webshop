@@ -8,7 +8,7 @@ The system SHALL route users to a checkout page that requests customer informati
 
 #### Scenario: Checkout page shows customer form
 - **WHEN** user opens checkout page after cart checkout action
-- **THEN** the page displays input fields for first name, last name, email, street address, city, and zip code
+- **THEN** the page displays input fields for first name, last name, email, phone number, street address, city, and zip code
 
 ### Requirement: Checkout page SHALL display cart-like order summary
 The system SHALL display ordered products and price summary on checkout page using the same summary semantics as cart page.
