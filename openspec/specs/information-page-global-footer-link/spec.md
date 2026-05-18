@@ -4,11 +4,11 @@
 TBD - created by archiving change information-page-with-global-bottom-link. Update Purpose after archive.
 ## Requirements
 ### Requirement: System SHALL provide a dedicated information page
-The system SHALL expose a navigable information page route with heading/content text for webshop/company information and full delivery terms.
+The system SHALL expose a navigable information page route with locale-appropriate heading/content text for webshop/company information and full delivery terms.
 
-#### Scenario: User opens information page
-- **WHEN** user navigates to the information page route
-- **THEN** the page renders the delivery terms title "Toimitusehdot" and full terms content sections including contact details, ordering, payment provider, payment methods, delivery, returns, and cancellation/complaints information
+#### Scenario: User opens information page in English locale
+- **WHEN** user navigates to the information page route with English locale active
+- **THEN** the page renders the English terms heading "Terms and conditions" and full English terms content sections including contact, orders, payment facilitator, payment methods, shipping, returns, and cancellation/defect/reclamation information
 
 ### Requirement: System SHALL show global bottom information link area on all pages
 The system SHALL append an information-page link area to page content flow on all core app pages, rather than rendering it as a fixed/global layout footer element.

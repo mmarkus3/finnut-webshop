@@ -50,20 +50,26 @@ describe('GlobalBottomInfoLink', () => {
 
     const textNodes = tree!.root.findAllByType('Text');
     expect(textNodes.some((node) => node.props.children === 'Information')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Instagram')).toBe(true);
-    expect(textNodes.some((node) => node.props.children === 'Facebook')).toBe(true);
+    const instagramButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Open Instagram page'
+    );
+    const facebookButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Open Facebook page'
+    );
+    expect(instagramButton).toBeDefined();
+    expect(facebookButton).toBeDefined();
     const rootContainer = tree!.root.find(
       (node) => node.type === 'View' && typeof node.props.className === 'string' && node.props.className.includes('bg-primary-500')
     );
     expect(rootContainer).toBeDefined();
-    const socialRow = tree!.root.find(
+    const centeredRows = tree!.root.findAll(
       (node) =>
         node.type === 'View' &&
         typeof node.props.className === 'string' &&
         node.props.className.includes('flex-row') &&
         node.props.className.includes('justify-center')
     );
-    expect(socialRow).toBeDefined();
+    expect(centeredRows.length).toBeGreaterThan(0);
   });
 
   it('navigates to information page', () => {
