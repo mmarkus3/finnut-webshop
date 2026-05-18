@@ -4,6 +4,8 @@ import renderer from 'react-test-renderer';
 import { Image } from 'react-native';
 import { isDesktopWidth } from '@/components/cart/CartPage';
 
+jest.mock('@expo/vector-icons/FontAwesome', () => 'FontAwesome');
+
 const mockCart = {
   items: [],
   totalPrice: 0,

@@ -5,6 +5,8 @@ import { Linking } from 'react-native';
 
 const mockPush = jest.fn();
 
+jest.mock('@expo/vector-icons/FontAwesome', () => 'FontAwesome');
+
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: mockPush,
