@@ -50,7 +50,9 @@
     "saltLabel": "Suola:",
     "fiberLabel": "Kuitu:",
     "unavailableValue": "Ei saatavilla",
-    "unitPricePerKgLabel": "{{price}}/kg"
+    "unitPricePerKgLabel": "{{price}}/kg",
+    "decreaseQuantityA11yLabel": "Vähennä tuotteen {{product}} määrää",
+    "increaseQuantityA11yLabel": "Lisää tuotteen {{product}} määrää"
   },
   "search": {
     "modalTitle": "Hae tuotteita",

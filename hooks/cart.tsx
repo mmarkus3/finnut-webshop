@@ -17,7 +17,7 @@ interface StorageLike {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: { product: Product } }
+  | { type: 'ADD_ITEM'; payload: { product: Product; quantity?: number } }
   | { type: 'INCREMENT'; payload: { productId: string } }
   | { type: 'DECREMENT'; payload: { productId: string } }
   | { type: 'REMOVE_ITEM'; payload: { productId: string } }
@@ -151,9 +151,10 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
       const product = action.payload.product;
+      const requestedQuantity = Math.max(1, Math.floor(action.payload.quantity ?? 1));
       const productId = normalizeCartProductId(getProductIdentifier(product));
       const existing = state.items[productId];
-      const nextQuantity = clampQuantityToStock((existing?.quantity ?? 0) + 1, product.amount);
+      const nextQuantity = clampQuantityToStock((existing?.quantity ?? 0) + requestedQuantity, product.amount);
 
       if (nextQuantity <= 0) {
         return state;
@@ -245,7 +246,7 @@ interface CartContextValue {
   badgeCountLabel: string;
   totalPrice: number;
   vatAmount: number;
-  addItem: (product: Product) => void;
+  addItem: (product: Product, quantity?: number) => void;
   incrementItem: (productId: string) => void;
   decrementItem: (productId: string) => void;
   removeItem: (productId: string) => void;
@@ -271,7 +272,7 @@ function CartProvider({ children }: PropsWithChildren) {
       badgeCountLabel: getCartBadgeCountLabel(itemCount),
       totalPrice: getCartTotalPrice(state),
       vatAmount: getCartVatAmount(state),
-      addItem: (product: Product) => dispatch({ type: 'ADD_ITEM', payload: { product } }),
+      addItem: (product: Product, quantity = 1) => dispatch({ type: 'ADD_ITEM', payload: { product, quantity } }),
       incrementItem: (productId: string) => dispatch({ type: 'INCREMENT', payload: { productId } }),
       decrementItem: (productId: string) => dispatch({ type: 'DECREMENT', payload: { productId } }),
       removeItem: (productId: string) => dispatch({ type: 'REMOVE_ITEM', payload: { productId } }),

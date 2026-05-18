@@ -13,7 +13,7 @@ import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Image, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 
@@ -114,6 +114,15 @@ const getProductDetailSections = (product: Product, language: string, t: (key: s
   return [descriptionSection, ingredientSection, nutritionSection, originSection];
 };
 
+const getMaxAddableQuantity = (product: Product): number => Math.max(0, Math.floor(product.amount));
+
+const clampSelectedQuantity = (quantity: number, max: number): number => {
+  if (max <= 0) {
+    return 1;
+  }
+  return Math.min(max, Math.max(1, Math.floor(quantity)));
+};
+
 export function ProductDetailPage({ productId, products, isLoading }: ProductDetailPageProps) {
   const { t, i18n } = useTranslation();
   const { addItem, canAddItem } = useCart();
@@ -121,6 +130,11 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
   const isDesktop = isDesktopWidth(width);
 
   const product = useMemo(() => resolveProductByIdentifier(products, productId), [productId, products]);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+
+  useEffect(() => {
+    setSelectedQuantity(1);
+  }, [productId]);
 
   if (isLoading) {
     return (
@@ -145,6 +159,10 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
   const canAdd = canAddItem(product);
   const sections = getProductDetailSections(product, i18n.language, t);
   const availabilityStatus = getAvailabilityStatusMeta(product.amount);
+  const maxAddableQuantity = getMaxAddableQuantity(product);
+  const clampedSelectedQuantity = clampSelectedQuantity(selectedQuantity, maxAddableQuantity);
+  const canDecreaseQuantity = clampedSelectedQuantity > 1;
+  const canIncreaseQuantity = clampedSelectedQuantity < maxAddableQuantity;
 
   return (
     <ScrollView className="flex-1 bg-white" contentContainerStyle={{ padding: 16 }}>
@@ -172,10 +190,33 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
             <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
           </View>
           <Text className="text-sm text-neutral-700">{t('product.eanLabel', { ean: product.ean })}</Text>
+
+          <View className="mt-3 flex-row items-center gap-2">
+            <Pressable
+              onPress={() => setSelectedQuantity((prev) => clampSelectedQuantity(prev - 1, maxAddableQuantity))}
+              disabled={!canDecreaseQuantity}
+              className={`rounded-md px-3 py-1 ${canDecreaseQuantity ? 'border border-neutral-300' : 'border border-neutral-200 bg-neutral-100'}`}
+              accessibilityRole="button"
+              accessibilityLabel={t('product.decreaseQuantityA11yLabel', { product: product.name })}
+            >
+              <Text className={`${canDecreaseQuantity ? 'text-neutral-900' : 'text-neutral-400'}`}>-</Text>
+            </Pressable>
+            <Text className="min-w-8 text-center text-sm font-medium text-neutral-900">{clampedSelectedQuantity}</Text>
+            <Pressable
+              onPress={() => setSelectedQuantity((prev) => clampSelectedQuantity(prev + 1, maxAddableQuantity))}
+              disabled={!canIncreaseQuantity}
+              className={`rounded-md px-3 py-1 ${canIncreaseQuantity ? 'border border-neutral-300' : 'border border-neutral-200 bg-neutral-100'}`}
+              accessibilityRole="button"
+              accessibilityLabel={t('product.increaseQuantityA11yLabel', { product: product.name })}
+            >
+              <Text className={`${canIncreaseQuantity ? 'text-neutral-900' : 'text-neutral-400'}`}>+</Text>
+            </Pressable>
+          </View>
+
           <Pressable
-            onPress={() => addItem(product)}
-            disabled={!canAdd}
-            className={`mt-3 w-52 items-center rounded-lg px-3 py-2 ${canAdd ? 'bg-primary-600' : 'bg-neutral-300'}`}
+            onPress={() => addItem(product, clampedSelectedQuantity)}
+            disabled={!canAdd || maxAddableQuantity <= 0}
+            className={`mt-3 w-52 items-center rounded-lg px-3 py-2 ${canAdd && maxAddableQuantity > 0 ? 'bg-primary-600' : 'bg-neutral-300'}`}
             accessibilityRole="button"
             accessibilityLabel={t('cart.addA11yLabel', { product: product.name })}
           >
@@ -203,4 +244,12 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
   );
 }
 
-export { formatOptionalNumber, getLocalizedIngredients, getProductDetailSections, getUnitPricePerKgText, isDesktopWidth };
+export {
+  clampSelectedQuantity,
+  formatOptionalNumber,
+  getLocalizedIngredients,
+  getMaxAddableQuantity,
+  getProductDetailSections,
+  getUnitPricePerKgText,
+  isDesktopWidth,
+};

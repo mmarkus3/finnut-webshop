@@ -26,6 +26,14 @@ describe('cart state helpers and reducer', () => {
     expect(s3.items.p1.quantity).toBe(2);
   });
 
+  it('adds multiple pieces in a single add action', () => {
+    const s1 = cartReducer(initialCartState, { type: 'ADD_ITEM', payload: { product: milk, quantity: 3 } });
+    expect(s1.items.p2.quantity).toBe(3);
+
+    const s2 = cartReducer(s1, { type: 'ADD_ITEM', payload: { product: milk, quantity: 10 } });
+    expect(s2.items.p2.quantity).toBe(5);
+  });
+
   it('increments, decrements and removes items', () => {
     const s1 = cartReducer(initialCartState, { type: 'ADD_ITEM', payload: { product: milk } });
     const s2 = cartReducer(s1, { type: 'INCREMENT', payload: { productId: 'p2' } });

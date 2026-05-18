@@ -1,6 +1,8 @@
 import {
+  clampSelectedQuantity,
   formatOptionalNumber,
   getLocalizedIngredients,
+  getMaxAddableQuantity,
   getProductDetailSections,
   getUnitPricePerKgText,
   isDesktopWidth,
@@ -72,6 +74,14 @@ describe('ProductDetailPage helpers', () => {
 
     expect(getUnitPricePerKgText(productWithUnitPrice, 'en', t)).toBe('Unit price: 3.20 €/kg');
     expect(getUnitPricePerKgText(productWithoutUnitPrice, 'en', t)).toBeNull();
+  });
+
+  it('provides quantity helper behavior for multi-add selection', () => {
+    const product: Product = { id: 'p9', name: 'Beans', amount: 7, ean: 'ean-9', images: [] };
+    expect(getMaxAddableQuantity(product)).toBe(7);
+    expect(clampSelectedQuantity(0, 7)).toBe(1);
+    expect(clampSelectedQuantity(8, 7)).toBe(7);
+    expect(clampSelectedQuantity(3, 7)).toBe(3);
   });
 
   it('builds complete product detail sections with safe fallbacks', () => {

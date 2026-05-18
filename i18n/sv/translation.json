@@ -50,7 +50,9 @@
     "saltLabel": "Salt:",
     "fiberLabel": "Fiber:",
     "unavailableValue": "Inte tillganglig",
-    "unitPricePerKgLabel": "{{price}}/kg"
+    "unitPricePerKgLabel": "{{price}}/kg",
+    "decreaseQuantityA11yLabel": "Minska antal för {{product}}",
+    "increaseQuantityA11yLabel": "Öka antal för {{product}}"
   },
   "search": {
     "modalTitle": "Sök produkter",
