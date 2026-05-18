@@ -22,7 +22,7 @@
     "loading": "Loading products...",
     "productCount": "{{count}} products",
     "noProducts": "No products found in this category.",
-    "priceLabel": "Price: {{price}}",
+    "priceLabel": "{{price}}",
     "priceUnavailable": "N/A",
     "availabilityLabel": "Availability: {{amount}}",
     "descriptionUnavailable": "No description available.",
@@ -49,7 +49,8 @@
     "proteinLabel": "Protein:",
     "saltLabel": "Salt:",
     "fiberLabel": "Fiber:",
-    "unavailableValue": "Not available"
+    "unavailableValue": "Not available",
+    "unitPricePerKgLabel": "{{price}}/kg"
   },
   "search": {
     "modalTitle": "Search products",

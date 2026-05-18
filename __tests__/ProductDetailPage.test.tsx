@@ -2,13 +2,19 @@ import {
   formatOptionalNumber,
   getLocalizedIngredients,
   getProductDetailSections,
+  getUnitPricePerKgText,
   isDesktopWidth,
 } from '@/components/product/ProductDetailPage';
 import { Product } from '@/types/product';
 import { resolveProductByIdentifier } from '@/components/product/cardUtils';
 import { getAvailabilityStatusMeta, getAvailabilityStatusKey } from '@/components/product/availabilityStatus';
 
-const t = (key: string) => key;
+const t = (key: string, options?: Record<string, unknown>) => {
+  if (key === 'product.unitPricePerKgLabel') {
+    return `Unit price: ${options?.price}/kg`;
+  }
+  return key;
+};
 
 describe('ProductDetailPage helpers', () => {
   it('detects desktop and mobile breakpoints', () => {
@@ -44,6 +50,28 @@ describe('ProductDetailPage helpers', () => {
     expect(getLocalizedIngredients(product, 'en')).toBe('milk');
     expect(getLocalizedIngredients(product, 'sv')).toBe('maito');
     expect(getLocalizedIngredients(product, 'fi')).toBe('maito');
+  });
+
+  it('returns localized unit price per kg text when unitPrice exists and null otherwise', () => {
+    const productWithUnitPrice: Product = {
+      id: 'p3',
+      name: 'Flour',
+      amount: 1,
+      ean: 'ean-3',
+      images: [],
+      unitPrice: 3.2,
+    };
+
+    const productWithoutUnitPrice: Product = {
+      id: 'p4',
+      name: 'Sugar',
+      amount: 1,
+      ean: 'ean-4',
+      images: [],
+    };
+
+    expect(getUnitPricePerKgText(productWithUnitPrice, 'en', t)).toBe('Unit price: 3.20 €/kg');
+    expect(getUnitPricePerKgText(productWithoutUnitPrice, 'en', t)).toBeNull();
   });
 
   it('builds complete product detail sections with safe fallbacks', () => {

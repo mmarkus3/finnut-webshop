@@ -22,7 +22,7 @@
     "loading": "Ladataan tuotteita...",
     "productCount": "{{count}} tuotetta",
     "noProducts": "Tässä kategoriassa ei ole tuotteita.",
-    "priceLabel": "Hinta: {{price}}",
+    "priceLabel": "{{price}}",
     "priceUnavailable": "Ei saatavilla",
     "availabilityLabel": "Saatavuus: {{amount}}",
     "descriptionUnavailable": "Kuvausta ei ole saatavilla.",
@@ -33,7 +33,7 @@
     "notFoundTitle": "Tuotetta ei löytynyt",
     "notFoundDescription": "Tätä tuotetta ei löytynyt.",
     "imageA11yLabel": "Tuotekuva tuotteelle {{product}}",
-    "eanLabel": "EAN: {{ean}}",
+    "eanLabel": "Tuotenumero: {{ean}}",
     "originSectionTitle": "Alkuperä",
     "ingredientsSectionTitle": "Ainesosat ja kuvaus",
     "nutritionSectionTitle": "Ravintosisaltö",
@@ -49,7 +49,8 @@
     "proteinLabel": "Proteiini:",
     "saltLabel": "Suola:",
     "fiberLabel": "Kuitu:",
-    "unavailableValue": "Ei saatavilla"
+    "unavailableValue": "Ei saatavilla",
+    "unitPricePerKgLabel": "{{price}}/kg"
   },
   "search": {
     "modalTitle": "Hae tuotteita",

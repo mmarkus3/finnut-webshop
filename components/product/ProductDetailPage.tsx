@@ -50,6 +50,15 @@ const getLocalizedIngredients = (product: Product, language: string): string | n
   return product.ingredients_fi ?? product.ingredients_en ?? product.ingredients_sv ?? null;
 };
 
+const getUnitPricePerKgText = (product: Product, language: string, t: (key: string, options?: Record<string, unknown>) => string): string | null => {
+  if (!Number.isFinite(product.unitPrice)) {
+    return null;
+  }
+
+  const formattedUnitPrice = formatPriceWithCurrency(product.unitPrice!, language);
+  return t('product.unitPricePerKgLabel', { price: formattedUnitPrice });
+};
+
 const getProductDetailSections = (product: Product, language: string, t: (key: string, options?: Record<string, unknown>) => string): ProductDetailSection[] => {
   const description = getProductDescription(product, language);
 
@@ -132,6 +141,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
 
   const imageUri = getFirstUsableProductImage(product);
   const price = getProductPrice(product);
+  const unitPricePerKg = getUnitPricePerKgText(product, i18n.language, t);
   const canAdd = canAddItem(product);
   const sections = getProductDetailSections(product, i18n.language, t);
   const availabilityStatus = getAvailabilityStatusMeta(product.amount);
@@ -152,11 +162,12 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
 
         <View className={isDesktop ? 'w-1/2 gap-2' : 'w-full gap-2'}>
           <Text className="text-2xl font-semibold text-neutral-900">{product.name}</Text>
-          <Text className="text-sm text-neutral-700">
+          <Text className="text-xl text-neutral-600 font-semibold">
             {t('category.priceLabel', {
               price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
             })}
           </Text>
+          {unitPricePerKg ? <Text className="text-xs text-neutral-600">{unitPricePerKg}</Text> : null}
           <View className={`mt-1 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
             <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
           </View>
@@ -192,4 +203,4 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
   );
 }
 
-export { formatOptionalNumber, getLocalizedIngredients, getProductDetailSections, isDesktopWidth };
+export { formatOptionalNumber, getLocalizedIngredients, getProductDetailSections, getUnitPricePerKgText, isDesktopWidth };
