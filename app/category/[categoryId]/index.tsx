@@ -1,4 +1,5 @@
 import { CategoryProductGrid } from '@/components/category/CategoryProductGrid';
+import { AppPageWithInfoLink } from '@/components/layout/AppPageWithInfoLink';
 import { useCategories } from '@/hooks/categories';
 import { useProducts } from '@/hooks/products';
 import { useLocalSearchParams } from 'expo-router';
@@ -10,11 +11,13 @@ export default function CategoryListingScreen() {
   const { products, isLoading } = useProducts();
 
   return (
-    <CategoryProductGrid
-      categories={categories}
-      categoryId={categoryId}
-      products={products}
-      isLoading={isLoading}
-    />
+    <AppPageWithInfoLink>
+      <CategoryProductGrid
+        categories={categories}
+        categoryId={categoryId}
+        products={products}
+        isLoading={isLoading}
+      />
+    </AppPageWithInfoLink>
   );
 }

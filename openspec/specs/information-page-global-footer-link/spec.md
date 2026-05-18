@@ -11,11 +11,11 @@ The system SHALL expose a navigable information page route with heading/content 
 - **THEN** the page renders the delivery terms title "Toimitusehdot" and full terms content sections including contact details, ordering, payment provider, payment methods, delivery, returns, and cancellation/complaints information
 
 ### Requirement: System SHALL show global bottom information link area on all pages
-The system SHALL render a bottom area across app pages that includes a link to the information page.
+The system SHALL append an information-page link area to page content flow on all core app pages, rather than rendering it as a fixed/global layout footer element.
 
-#### Scenario: Bottom information link is visible globally
-- **WHEN** user views any app page using shared layout
-- **THEN** a bottom area with information-page link is visible
+#### Scenario: Bottom information link is appended in page flow
+- **WHEN** user scrolls through a page using shared app chrome
+- **THEN** information-page link area appears after page content within normal scroll flow
 
 ### Requirement: Bottom information link area SHALL match header background color
 The system SHALL style the global bottom link area with the same background color used by header background.

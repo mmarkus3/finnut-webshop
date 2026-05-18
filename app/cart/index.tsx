@@ -1,5 +1,10 @@
 import { CartPage } from '@/components/cart/CartPage';
+import { AppPageWithInfoLink } from '@/components/layout/AppPageWithInfoLink';
 
 export default function CartScreen() {
-  return <CartPage />;
+  return (
+    <AppPageWithInfoLink>
+      <CartPage />
+    </AppPageWithInfoLink>
+  );
 }

@@ -1,5 +1,4 @@
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
-import { GlobalBottomInfoLink } from '@/components/layout/GlobalBottomInfoLink';
 import { SearchModal } from '@/components/search/SearchModal';
 import { CartProvider, useCart } from '@/hooks/cart';
 import { DeliveryPricingProvider, useDeliveryPricing } from '@/hooks/deliveryPricing';
@@ -105,7 +104,6 @@ function RootStack() {
         <Stack.Screen name="checkout/index" />
         <Stack.Screen name="information/index" />
       </Stack>
-      <GlobalBottomInfoLink />
       <SearchModal
         isVisible={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
