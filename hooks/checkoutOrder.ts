@@ -1,9 +1,9 @@
 import { getProductIdentifier } from '@/components/product/cardUtils';
 import { CartItem } from '@/types/cart';
-import { Order } from '@/types/order';
+import { Order, OrderCustomer } from '@/types/order';
 import { OrdersService } from '@/services/order';
 
-const buildCheckoutOrderPayload = (items: CartItem[]): Order => {
+const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer): Order => {
   return {
     status: 'draft',
     products: items.map((item) => ({
@@ -11,6 +11,7 @@ const buildCheckoutOrderPayload = (items: CartItem[]): Order => {
       name: item.product.name,
       amount: item.quantity,
     })),
+    ...(customer ? { customer } : {}),
   };
 };
 
@@ -20,9 +21,10 @@ const buildOrdersService = (): OrdersService => {
 
 const createOrderForCheckout = async (
   items: CartItem[],
+  customer?: OrderCustomer,
   service: Pick<OrdersService, 'save'> = buildOrdersService()
 ): Promise<Order> => {
-  const payload = buildCheckoutOrderPayload(items);
+  const payload = buildCheckoutOrderPayload(items, customer);
   return service.save(payload);
 };
 
@@ -39,9 +41,10 @@ const shouldFallbackToCreate = (error: unknown): boolean => {
 const syncOrderForCheckout = async (
   items: CartItem[],
   activeOrderId: string | null,
+  customer?: OrderCustomer,
   service: Pick<OrdersService, 'save'> = buildOrdersService()
 ): Promise<Order> => {
-  const payload = buildCheckoutOrderPayload(items);
+  const payload = buildCheckoutOrderPayload(items, customer);
 
   if (!activeOrderId) {
     return service.save(payload);

@@ -51,6 +51,7 @@ jest.mock('react-i18next', () => ({
       if (key === 'checkout.firstnameLabel') return 'First name';
       if (key === 'checkout.lastnameLabel') return 'Last name';
       if (key === 'checkout.emailLabel') return 'Email';
+      if (key === 'checkout.phoneLabel') return 'Phone number';
       if (key === 'checkout.addressStreetLabel') return 'Street address';
       if (key === 'checkout.addressCityLabel') return 'City';
       if (key === 'checkout.addressZipLabel') return 'ZIP code';
@@ -99,7 +100,8 @@ describe('CheckoutPage', () => {
     expect(textNodes.some((node) => node.props.children === '7.90 €')).toBe(true);
 
     const inputs = tree!.root.findAllByType('TextInput');
-    expect(inputs.length).toBe(6);
+    expect(inputs.length).toBe(7);
+    expect(inputs.some((input) => input.props.placeholder === 'Phone number')).toBe(true);
   });
 
   it('uses responsive layout helpers for desktop and mobile', () => {

@@ -112,6 +112,7 @@
     "firstnameLabel": "Etunimi",
     "lastnameLabel": "Sukunimi",
     "emailLabel": "Sähköposti",
+    "phoneLabel": "Puhelinnumero",
     "addressStreetLabel": "Katuosoite",
     "addressCityLabel": "Kaupunki",
     "addressZipLabel": "Postinumero",

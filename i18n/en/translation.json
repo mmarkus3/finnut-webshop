@@ -112,6 +112,7 @@
     "firstnameLabel": "First name",
     "lastnameLabel": "Last name",
     "emailLabel": "Email",
+    "phoneLabel": "Phone number",
     "addressStreetLabel": "Street address",
     "addressCityLabel": "City",
     "addressZipLabel": "ZIP code",

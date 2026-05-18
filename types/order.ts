@@ -21,4 +21,5 @@ export interface OrderCustomer {
   address_street: string;
   address_city: string;
   address_zip: string;
+  phone: string;
 }

@@ -27,6 +27,7 @@ export function CheckoutPage() {
     address_street: '',
     address_city: '',
     address_zip: '',
+    phone: '',
   });
   const [deliveryPoints, setDeliveryPoints] = useState<DeliveryPoint[]>([]);
   const [selectedDeliveryPointId, setSelectedDeliveryPointId] = useState<string | null>(null);
@@ -85,6 +86,7 @@ export function CheckoutPage() {
           <TextInput autoComplete="given-name" value={customer.firstname} onChangeText={(v) => setCustomer((p) => ({ ...p, firstname: v }))} placeholder={t('checkout.firstnameLabel')} className="mt-3 rounded-lg border border-neutral-300 px-3 py-2" />
           <TextInput autoComplete="family-name" value={customer.lastname} onChangeText={(v) => setCustomer((p) => ({ ...p, lastname: v }))} placeholder={t('checkout.lastnameLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
           <TextInput autoComplete="email" value={customer.email} onChangeText={(v) => setCustomer((p) => ({ ...p, email: v }))} placeholder={t('checkout.emailLabel')} keyboardType="email-address" className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
+          <TextInput autoComplete="tel" value={customer.phone} onChangeText={(v) => setCustomer((p) => ({ ...p, phone: v }))} placeholder={t('checkout.phoneLabel')} keyboardType="phone-pad" className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
           <TextInput autoComplete="street-address" value={customer.address_street} onChangeText={(v) => setCustomer((p) => ({ ...p, address_street: v }))} placeholder={t('checkout.addressStreetLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
           <TextInput autoComplete="postal-code" value={customer.address_zip} onChangeText={(v) => setCustomer((p) => ({ ...p, address_zip: v }))} placeholder={t('checkout.addressZipLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />
           <TextInput autoComplete="postal-address-locality" value={customer.address_city} onChangeText={(v) => setCustomer((p) => ({ ...p, address_city: v }))} placeholder={t('checkout.addressCityLabel')} className="mt-2 rounded-lg border border-neutral-300 px-3 py-2" />

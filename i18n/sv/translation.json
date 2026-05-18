@@ -112,6 +112,7 @@
     "firstnameLabel": "Förnamn",
     "lastnameLabel": "Efternamn",
     "emailLabel": "E-post",
+    "phoneLabel": "Telefonnummer",
     "addressStreetLabel": "Gatuadress",
     "addressCityLabel": "Stad",
     "addressZipLabel": "Postnummer",
