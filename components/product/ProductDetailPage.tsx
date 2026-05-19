@@ -2,9 +2,9 @@ import {
   getAvailabilityStatusMeta,
 } from '@/components/product/availabilityStatus';
 import {
-  getFirstUsableProductImage,
   getProductDescription,
   getProductPrice,
+  getUsableProductImages,
   resolveProductByIdentifier,
 } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
@@ -15,7 +15,7 @@ import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Image, NativeScrollEvent, NativeSyntheticEvent, Pressable, ScrollView, Text, useWindowDimensions, View } from 'react-native';
 
 interface ProductDetailPageProps {
   productId: string;
@@ -123,6 +123,10 @@ const clampSelectedQuantity = (quantity: number, max: number): number => {
   return Math.min(max, Math.max(1, Math.floor(quantity)));
 };
 
+const getProductImageSlides = (imageUris: string[]): string[] => {
+  return imageUris.length > 0 ? imageUris : [placeholderImageSource.uri];
+};
+
 export function ProductDetailPage({ productId, products, isLoading }: ProductDetailPageProps) {
   const { t, i18n } = useTranslation();
   const { addItem, canAddItem } = useCart();
@@ -131,10 +135,20 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
 
   const product = useMemo(() => resolveProductByIdentifier(products, productId), [productId, products]);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [carouselWidth, setCarouselWidth] = useState(0);
 
   useEffect(() => {
     setSelectedQuantity(1);
   }, [productId]);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [productId]);
+
+  useEffect(() => {
+    setCarouselWidth(0);
+  }, [isDesktop, width]);
 
   if (isLoading) {
     return (
@@ -153,7 +167,8 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
     );
   }
 
-  const imageUri = getFirstUsableProductImage(product);
+  const imageUris = getUsableProductImages(product);
+  const imageSlides = getProductImageSlides(imageUris);
   const price = getProductPrice(product);
   const unitPricePerKg = getUnitPricePerKgText(product, i18n.language, t);
   const canAdd = canAddItem(product);
@@ -163,19 +178,67 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
   const clampedSelectedQuantity = clampSelectedQuantity(selectedQuantity, maxAddableQuantity);
   const canDecreaseQuantity = clampedSelectedQuantity > 1;
   const canIncreaseQuantity = clampedSelectedQuantity < maxAddableQuantity;
+  const showPagination = imageSlides.length > 1;
+
+  const handleCarouselScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const viewportWidth = event.nativeEvent.layoutMeasurement.width;
+    if (!viewportWidth) {
+      return;
+    }
+    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / viewportWidth);
+    setActiveImageIndex(Math.max(0, Math.min(nextIndex, imageSlides.length - 1)));
+  };
 
   return (
     <ScrollView className="flex-1 bg-white" contentContainerStyle={{ padding: 16 }}>
       <View className={isDesktop ? 'flex-row gap-6' : 'flex-col gap-4'}>
         <View className={isDesktop ? 'w-1/2' : 'w-full'}>
-          <Image
-            source={imageUri ? { uri: imageUri } : placeholderImageSource}
-            defaultSource={placeholderImageSource}
-            style={{ resizeMode: 'contain' }}
-            className={isDesktop ? 'h-[520px] w-full rounded-xl bg-neutral-100' : 'h-80 w-full rounded-xl bg-neutral-100'}
-            accessibilityRole="image"
-            accessibilityLabel={t('product.imageA11yLabel', { product: product.name })}
-          />
+          <View
+            className="gap-3 w-full"
+            onLayout={(event) => {
+              const nextWidth = Math.round(event.nativeEvent.layout.width);
+              if (nextWidth > 0 && nextWidth !== carouselWidth) {
+                setCarouselWidth(nextWidth);
+              }
+            }}
+          >
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={true}
+              onScroll={handleCarouselScroll}
+              scrollEventThrottle={16}
+              className="w-full"
+            >
+              {imageSlides.map((imageUri, index) => (
+                <View
+                  key={`${imageUri}-${index}`}
+                  style={{ width: carouselWidth || undefined }}
+                  className={carouselWidth ? '' : 'w-full'}
+                >
+                  <Image
+                    source={imageUri === placeholderImageSource.uri ? placeholderImageSource : { uri: imageUri }}
+                    defaultSource={placeholderImageSource}
+                    style={{ resizeMode: 'contain' }}
+                    className={isDesktop ? 'h-[520px] w-full rounded-xl bg-neutral-100' : 'h-80 w-full rounded-xl bg-neutral-100'}
+                    accessibilityRole="image"
+                    accessibilityLabel={t('product.imageA11yLabel', { product: product.name })}
+                  />
+                </View>
+              ))}
+            </ScrollView>
+            {showPagination ? (
+              <View className="flex-row items-center justify-center gap-2">
+                {imageSlides.map((_, index) => (
+                  <View
+                    key={`dot-${index}`}
+                    className={`h-2 w-2 rounded-full ${index === activeImageIndex ? 'bg-neutral-800' : 'bg-neutral-300'}`}
+                    accessibilityRole="none"
+                  />
+                ))}
+              </View>
+            ) : null}
+          </View>
         </View>
 
         <View className={isDesktop ? 'w-1/2 gap-2' : 'w-full gap-2'}>
@@ -250,6 +313,7 @@ export {
   getLocalizedIngredients,
   getMaxAddableQuantity,
   getProductDetailSections,
+  getProductImageSlides,
   getUnitPricePerKgText,
-  isDesktopWidth,
+  isDesktopWidth
 };

@@ -57,3 +57,36 @@ The system SHALL provide quantity controls on product detail page so user can ch
 - **WHEN** user selects quantity N on product detail and taps add-to-cart
 - **THEN** cart receives N pieces for that product in one add action, respecting stock limits
 
+### Requirement: Product Detail Shows All Product Images
+The product detail page SHALL render all available product images for the selected product. The system MUST preserve image order from the product image list and MUST render a fallback image when no valid product images are available.
+
+#### Scenario: Product has multiple images
+- **WHEN** a selected product contains more than one valid image URL
+- **THEN** the product detail page displays all of those images in the image section
+- **AND** images appear in the same order as provided by the product data
+
+#### Scenario: Product has one image
+- **WHEN** a selected product contains exactly one valid image URL
+- **THEN** the product detail page displays that image in the image section
+
+#### Scenario: Product has no valid images
+- **WHEN** a selected product has no valid image URLs
+- **THEN** the product detail page displays the existing fallback image
+
+### Requirement: Product Detail Supports Swiper Carousel For Images
+The product detail page SHALL present product images in a swipeable carousel when one or more valid product image URLs are available. The system MUST preserve product image order and MUST show fallback content when no valid images exist.
+
+#### Scenario: Multiple product images are available
+- **WHEN** a selected product has two or more valid image URLs
+- **THEN** the product detail page shows images in a swiper carousel
+- **AND** the user can navigate between images by swiping
+- **AND** images are shown in the same order as provided by product data
+
+#### Scenario: Single product image is available
+- **WHEN** a selected product has exactly one valid image URL
+- **THEN** the product detail page shows that image in the carousel image area
+
+#### Scenario: No valid product images are available
+- **WHEN** a selected product has no valid image URLs
+- **THEN** the product detail page shows the existing fallback image in the image area
+

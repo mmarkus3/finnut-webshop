@@ -4,11 +4,12 @@ import {
   getLocalizedIngredients,
   getMaxAddableQuantity,
   getProductDetailSections,
+  getProductImageSlides,
   getUnitPricePerKgText,
   isDesktopWidth,
 } from '@/components/product/ProductDetailPage';
 import { Product } from '@/types/product';
-import { resolveProductByIdentifier } from '@/components/product/cardUtils';
+import { getUsableProductImages, resolveProductByIdentifier } from '@/components/product/cardUtils';
 import { getAvailabilityStatusMeta, getAvailabilityStatusKey } from '@/components/product/availabilityStatus';
 
 const t = (key: string, options?: Record<string, unknown>) => {
@@ -33,6 +34,26 @@ describe('ProductDetailPage helpers', () => {
     expect(resolveProductByIdentifier(products, 'p1')?.name).toBe('Apple');
     expect(resolveProductByIdentifier(products, 'ean-2')?.name).toBe('Milk');
     expect(resolveProductByIdentifier(products, 'unknown')).toBeNull();
+  });
+
+  it('normalizes product image list for zero, single, and multiple images', () => {
+    const noImages: Product = { id: 'p0', name: 'NoImg', amount: 1, ean: 'ean-0', images: [] };
+    const singleImage: Product = { id: 'p1', name: 'OneImg', amount: 1, ean: 'ean-1', images: ['  https://img/one.jpg  '] };
+    const multipleImages: Product = {
+      id: 'p2',
+      name: 'ManyImg',
+      amount: 1,
+      ean: 'ean-2',
+      images: ['https://img/1.jpg', '   ', 'https://img/2.jpg'],
+    };
+
+    expect(getUsableProductImages(noImages)).toEqual([]);
+    expect(getUsableProductImages(singleImage)).toEqual(['https://img/one.jpg']);
+    expect(getUsableProductImages(multipleImages)).toEqual(['https://img/1.jpg', 'https://img/2.jpg']);
+
+    expect(getProductImageSlides(getUsableProductImages(noImages))).toHaveLength(1);
+    expect(getProductImageSlides(getUsableProductImages(singleImage))).toEqual(['https://img/one.jpg']);
+    expect(getProductImageSlides(getUsableProductImages(multipleImages))).toEqual(['https://img/1.jpg', 'https://img/2.jpg']);
   });
 
   it('formats optional numbers and localizes ingredient fallback', () => {

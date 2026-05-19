@@ -1,12 +1,17 @@
 import { Product } from '@/types/product';
 
-const getFirstUsableProductImage = (product: Product): string | null => {
+const getUsableProductImages = (product: Product): string[] => {
   if (!Array.isArray(product.images) || product.images.length === 0) {
-    return null;
+    return [];
   }
 
-  const firstImage = product.images[0]?.trim();
-  return firstImage ? firstImage : null;
+  return product.images
+    .map((image) => image?.trim())
+    .filter((image): image is string => Boolean(image));
+};
+
+const getFirstUsableProductImage = (product: Product): string | null => {
+  return getUsableProductImages(product)[0] ?? null;
 };
 
 const getProductDescription = (product: Product, language: string): string => {
@@ -34,6 +39,7 @@ const resolveProductByIdentifier = (products: Product[], productId: string): Pro
 };
 
 export {
+  getUsableProductImages,
   getFirstUsableProductImage,
   getProductDescription,
   getProductPrice,
