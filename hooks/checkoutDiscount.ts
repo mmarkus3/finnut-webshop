@@ -1,4 +1,5 @@
 import { useCampaignLookup } from '@/hooks/campaignLookup';
+import { CampaignProductDiscount } from '@/types/campaign';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const CHECKOUT_DISCOUNT_CODE_STORAGE_KEY = 'finnut.checkoutDiscountCode.v1';
@@ -50,6 +51,29 @@ const clearPersistedDiscountCode = (): void => {
   storage.removeItem(CHECKOUT_DISCOUNT_CODE_STORAGE_KEY);
 };
 
+const mapCampaignDiscountPercentagesByProduct = (
+  campaign: { products?: CampaignProductDiscount[] } | null
+): Record<string, number> => {
+  const byProductId: Record<string, number> = {};
+  const campaignProducts = Array.isArray(campaign?.products) ? campaign.products : [];
+
+  campaignProducts.forEach((productDiscount: CampaignProductDiscount) => {
+    const rawId = productDiscount.id;
+    const id = typeof rawId === 'string' ? rawId.trim() : '';
+    const percentage = Number.isFinite(productDiscount.discountPercentage)
+      ? Number(productDiscount.discountPercentage)
+      : NaN;
+
+    if (!id || !Number.isFinite(percentage)) {
+      return;
+    }
+
+    byProductId[id] = percentage;
+  });
+
+  return byProductId;
+};
+
 const useCheckoutDiscount = () => {
   const { campaign, isLoading, error, fetchCampaignByCode, reset } = useCampaignLookup();
   const [discountCodeInput, setDiscountCodeInput] = useState('');
@@ -92,9 +116,8 @@ const useCheckoutDiscount = () => {
     reset();
   }, [reset]);
 
-  const discountPercentage = useMemo(() => {
-    const rawValue = (campaign as { discountPercentage?: unknown } | null)?.discountPercentage;
-    return Number.isFinite(rawValue) ? Number(rawValue) : null;
+  const discountPercentagesByProduct = useMemo(() => {
+    return mapCampaignDiscountPercentagesByProduct(campaign);
   }, [campaign]);
 
   return {
@@ -104,7 +127,7 @@ const useCheckoutDiscount = () => {
     applyDiscountCode,
     clearDiscountCode,
     campaign,
-    discountPercentage,
+    discountPercentagesByProduct,
     isApplyingDiscount: isLoading,
     discountError: error,
   };
@@ -114,6 +137,8 @@ export {
   CHECKOUT_DISCOUNT_CODE_STORAGE_KEY,
   clearPersistedDiscountCode,
   getPersistedDiscountCode,
+  mapCampaignDiscountPercentagesByProduct,
   persistDiscountCode,
-  useCheckoutDiscount,
+  useCheckoutDiscount
 };
+

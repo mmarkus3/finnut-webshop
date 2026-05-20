@@ -1,8 +1,8 @@
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
-import { syncOrderForCheckout } from '@/hooks/checkoutOrder';
 import { useCheckoutDiscount } from '@/hooks/checkoutDiscount';
+import { syncOrderForCheckout } from '@/hooks/checkoutOrder';
 import { saveDeliveryMethodToOrder } from '@/hooks/deliveryMethodPersistence';
 import { DeliveryPoint, fetchDeliveryPointsByPostalCode } from '@/hooks/deliveryPoints';
 import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
@@ -48,7 +48,7 @@ export function CheckoutPage() {
     activeDiscountCode,
     applyDiscountCode,
     clearDiscountCode,
-    discountPercentage,
+    discountPercentagesByProduct,
     isApplyingDiscount,
     discountError,
   } = useCheckoutDiscount();
@@ -74,8 +74,8 @@ export function CheckoutPage() {
   const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
 
-  const discountTotals = getCartDiscountTotals(items, discountPercentage);
-  const hasActiveDiscount = activeDiscountCode !== null && discountPercentage !== null;
+  const discountTotals = getCartDiscountTotals(items, discountPercentagesByProduct);
+  const hasActiveDiscount = activeDiscountCode !== null && Object.keys(discountPercentagesByProduct).length > 0;
   const subtotalToUse = hasActiveDiscount ? discountTotals.subtotalDiscounted : totalPrice;
   const vatToUse = hasActiveDiscount ? discountTotals.vatDiscounted : vatAmount;
   const summaryWithoutVat = Math.max(0, subtotalToUse - vatToUse);
@@ -258,42 +258,10 @@ export function CheckoutPage() {
 
         <View className={isDesktop ? 'w-96 rounded-xl bg-neutral-50 p-4' : 'rounded-xl bg-neutral-50 p-4'}>
           <Text className="text-lg font-semibold text-neutral-900">{t('cart.orderSummaryTitle')}</Text>
-          <View className="mt-3">
-            <Text className="mb-1 text-sm text-neutral-700">{t('discount.codeLabel')}</Text>
-            <TextInput
-              value={discountCodeInput}
-              onChangeText={setDiscountCodeInput}
-              placeholder={t('discount.codePlaceholder')}
-              className="rounded-lg border border-neutral-300 bg-white px-3 py-2"
-            />
-            <View className="mt-2 flex-row gap-2">
-              <Pressable
-                onPress={applyDiscountAndSyncOrder}
-                disabled={isApplyingDiscount}
-                className={`rounded-lg px-3 py-2 ${isApplyingDiscount ? 'bg-neutral-300' : 'bg-primary-600'}`}
-                accessibilityRole="button"
-                accessibilityLabel={t('discount.applyButton')}
-              >
-                <Text className="text-sm font-medium text-white">{t('discount.applyButton')}</Text>
-              </Pressable>
-              {activeDiscountCode ? (
-                <Pressable
-                  onPress={clearDiscountAndSyncOrder}
-                  className="rounded-lg border border-neutral-300 px-3 py-2"
-                  accessibilityRole="button"
-                  accessibilityLabel={t('discount.clearButton')}
-                >
-                  <Text className="text-sm text-neutral-800">{t('discount.clearButton')}</Text>
-                </Pressable>
-              ) : null}
-            </View>
-            {activeDiscountCode ? <Text className="mt-1 text-xs text-green-700">{t('discount.activeCodeLabel', { code: activeDiscountCode })}</Text> : null}
-            {discountError ? <Text className="mt-1 text-xs text-red-600">{t('discount.invalidCodeError')}</Text> : null}
-          </View>
 
           <View className="mt-3 gap-2">
             {items.map((item, index) => {
-              const linePricing = getDiscountLinePricing(item, discountPercentage);
+              const linePricing = getDiscountLinePricing(item, discountPercentagesByProduct);
               return (
                 <View key={`${item.product.id ?? item.product.ean}-${index}`} className="flex-row items-center justify-between">
                   <Text className="text-sm text-neutral-800">{item.product.name} x {item.quantity}</Text>
@@ -348,6 +316,44 @@ export function CheckoutPage() {
               </View>
             </View>
           </View>
+
+          <View className="my-4 h-px bg-neutral-200" />
+
+          <View>
+            <Text className="mb-1 text-sm text-neutral-700">{t('discount.codeLabel')}</Text>
+            <View className="flex-row gap-2">
+              <TextInput
+                value={discountCodeInput}
+                onChangeText={setDiscountCodeInput}
+                placeholder={t('discount.codePlaceholder')}
+                className="rounded-lg border border-neutral-300 bg-white px-3 py-2 w-full"
+              />
+              <View className="flex-row gap-2">
+                <Pressable
+                  onPress={applyDiscountAndSyncOrder}
+                  disabled={isApplyingDiscount}
+                  className={`rounded-lg px-3 py-2 ${isApplyingDiscount ? 'bg-neutral-300' : 'bg-primary-600'}`}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('discount.applyButton')}
+                >
+                  <Text className="text-sm font-medium text-white">{t('discount.applyButton')}</Text>
+                </Pressable>
+                {activeDiscountCode ? (
+                  <Pressable
+                    onPress={clearDiscountAndSyncOrder}
+                    className="rounded-lg border border-neutral-300 px-3 py-2"
+                    accessibilityRole="button"
+                    accessibilityLabel={t('discount.clearButton')}
+                  >
+                    <Text className="text-sm text-neutral-800">{t('discount.clearButton')}</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+            </View>
+            {activeDiscountCode ? <Text className="mt-1 text-xs text-green-700">{t('discount.activeCodeLabel', { code: activeDiscountCode })}</Text> : null}
+            {discountError ? <Text className="mt-1 text-xs text-red-600">{t('discount.invalidCodeError')}</Text> : null}
+          </View>
+
           <Pressable
             onPress={goToPaymentStep}
             disabled={!canProceedToPayment || isLoadingPaymentMethods}
@@ -359,7 +365,7 @@ export function CheckoutPage() {
           </Pressable>
         </View>
       </View>
-    </ScrollView>
+    </ScrollView >
   );
 }
 

@@ -21,7 +21,7 @@ describe('discount pricing helpers', () => {
   });
 
   it('returns line pricing with original and discounted prices', () => {
-    const line = getDiscountLinePricing(items[0], 10);
+    const line = getDiscountLinePricing(items[0], { p1: 10 });
     expect(line.unitOriginal).toBe(10);
     expect(line.unitDiscounted).toBe(9);
     expect(line.lineOriginal).toBe(20);
@@ -29,10 +29,10 @@ describe('discount pricing helpers', () => {
   });
 
   it('returns cart totals for original and discounted subtotals and vat', () => {
-    const totals = getCartDiscountTotals(items, 10);
+    const totals = getCartDiscountTotals(items, { p1: 10 });
     expect(totals.subtotalOriginal).toBe(25);
-    expect(totals.subtotalDiscounted).toBe(22.5);
+    expect(totals.subtotalDiscounted).toBe(23);
     expect(totals.vatOriginal).toBeCloseTo((20 * 0.255) + (5 * 0.14), 6);
-    expect(totals.vatDiscounted).toBeCloseTo((18 * 0.255) + (4.5 * 0.14), 6);
+    expect(totals.vatDiscounted).toBeCloseTo((18 * 0.255) + (5 * 0.14), 6);
   });
 });

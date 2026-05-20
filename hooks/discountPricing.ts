@@ -16,6 +16,8 @@ interface CartDiscountTotals {
   vatDiscounted: number;
 }
 
+type DiscountPercentagesByProduct = Record<string, number>;
+
 const roundCurrency = (value: number): number => Math.round((value + Number.EPSILON) * 100) / 100;
 
 const normalizeDiscountPercentage = (discountPercentage: number | null): number | null => {
@@ -49,9 +51,10 @@ const calculateDiscountedUnitPrice = (unitOriginal: number | null, discountPerce
   return roundCurrency(unitOriginal * (1 - normalized));
 };
 
-const getDiscountLinePricing = (item: CartItem, discountPercentage: number | null): DiscountLinePricing => {
+const getDiscountLinePricing = (item: CartItem, discountPercentagesByProduct: DiscountPercentagesByProduct): DiscountLinePricing => {
   const productId = getProductIdentifier(item.product);
   const unitOriginal = getProductPrice(item.product);
+  const discountPercentage = discountPercentagesByProduct[productId] ?? null;
   const unitDiscounted = calculateDiscountedUnitPrice(unitOriginal, discountPercentage);
 
   return {
@@ -63,9 +66,9 @@ const getDiscountLinePricing = (item: CartItem, discountPercentage: number | nul
   };
 };
 
-const getCartDiscountTotals = (items: CartItem[], discountPercentage: number | null): CartDiscountTotals => {
+const getCartDiscountTotals = (items: CartItem[], discountPercentagesByProduct: DiscountPercentagesByProduct): CartDiscountTotals => {
   return items.reduce<CartDiscountTotals>((totals, item) => {
-    const linePricing = getDiscountLinePricing(item, discountPercentage);
+    const linePricing = getDiscountLinePricing(item, discountPercentagesByProduct);
     const taxRate = Number.isFinite(item.product.tax) ? item.product.tax! : 0;
 
     if (linePricing.lineOriginal !== null) {
@@ -93,6 +96,7 @@ export {
   getDiscountLinePricing,
   normalizeDiscountPercentage,
   roundCurrency,
+  type DiscountPercentagesByProduct,
   type CartDiscountTotals,
-  type DiscountLinePricing,
+  type DiscountLinePricing
 };

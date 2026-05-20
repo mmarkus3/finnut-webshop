@@ -27,7 +27,7 @@ const mockCheckoutDiscount = {
   activeDiscountCode: null as string | null,
   applyDiscountCode: jest.fn(),
   clearDiscountCode: jest.fn(),
-  discountPercentage: null as number | null,
+  discountPercentagesByProduct: {} as Record<string, number>,
   isApplyingDiscount: false,
   discountError: null as string | null,
 };
@@ -122,7 +122,7 @@ describe('CartPage', () => {
     mockSyncOrderForCheckout.mockResolvedValue({ id: 'order-created' });
     mockCheckoutDiscount.discountCodeInput = '';
     mockCheckoutDiscount.activeDiscountCode = null;
-    mockCheckoutDiscount.discountPercentage = null;
+    mockCheckoutDiscount.discountPercentagesByProduct = {};
     mockCheckoutDiscount.discountError = null;
     mockCheckoutDiscount.isApplyingDiscount = false;
   });

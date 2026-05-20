@@ -1,8 +1,11 @@
-export interface Campaign {
-  id?: string;
-  code?: string;
-  name?: string;
+export interface CampaignProductDiscount {
+  id: string;
+  name: string;
   discountPercentage?: number;
-  discountAmount?: number;
-  [key: string]: unknown;
+  discountFixed?: number;
+}
+
+export interface Campaign {
+  code: string;
+  products: CampaignProductDiscount[];
 }
