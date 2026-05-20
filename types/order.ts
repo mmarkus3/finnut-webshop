@@ -6,6 +6,7 @@ export interface Order {
   deliveryMethod?: string;
   discount?: string;
   returnUrl?: string;
+  country: string;
 }
 
 export interface OrderProduct {

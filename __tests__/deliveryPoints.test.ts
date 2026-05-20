@@ -18,7 +18,7 @@ describe('delivery points helper', () => {
 
     expect(request).toHaveBeenCalledWith({
       method: 'GET',
-      params: { postalCode: '00100' },
+      params: { postalCode: '00100', country: 'FI' },
     });
     expect(points).toHaveLength(DELIVERY_POINTS_LIMIT);
     expect(points[0].id).toBe('p-1');

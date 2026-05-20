@@ -1,10 +1,13 @@
 import { getProductIdentifier } from '@/components/product/cardUtils';
+import { OrdersService } from '@/services/order';
 import { CartItem } from '@/types/cart';
 import { Order, OrderCustomer } from '@/types/order';
-import { OrdersService } from '@/services/order';
+import { resolveWebshopCountry } from './countryConfig';
 
 const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer, discount?: string): Order => {
   const normalizedDiscount = discount?.trim();
+  const country = resolveWebshopCountry();
+
   return {
     status: 'draft',
     products: items.map((item) => ({
@@ -14,6 +17,7 @@ const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer, 
     })),
     ...(customer ? { customer } : {}),
     ...(normalizedDiscount ? { discount: normalizedDiscount } : {}),
+    country,
   };
 };
 
@@ -70,5 +74,6 @@ export {
   buildOrdersService,
   createOrderForCheckout,
   shouldFallbackToCreate,
-  syncOrderForCheckout,
+  syncOrderForCheckout
 };
+

@@ -1,4 +1,5 @@
 import { getJson, HttpRequester } from '@/hooks/httpFetch';
+import { resolveWebshopCountry } from '@/hooks/countryConfig';
 
 const DELIVERY_POINTS_LIMIT = 10;
 
@@ -37,10 +38,11 @@ const fetchDeliveryPointsByPostalCode = async (
   if (!normalizedPostalCode) {
     return [];
   }
+  const country = resolveWebshopCountry();
 
   const data = await getJson<DeliverPointResponse>(
     `${process.env.EXPO_PUBLIC_FIREBASE_API!}/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/points`,
-    { params: { postalCode: normalizedPostalCode } },
+    { params: { postalCode: normalizedPostalCode, country } },
     requester
   );
 
