@@ -27,7 +27,32 @@ const getProductDescription = (product: Product, language: string): string => {
 };
 
 const getProductPrice = (product: Product): number | null => {
-  return product.retailPrice ?? product.unitPrice ?? null;
+  return product.discountPrice ?? product.retailPrice ?? product.unitPrice ?? null;
+};
+
+interface ProductPriceDisplay {
+  hasDiscount: boolean;
+  discountPrice: number | null;
+  retailPrice: number | null;
+  lowestRetailPriceLast30Days: number | null;
+}
+
+const toFiniteNumberOrNull = (value: number | undefined): number | null => {
+  return Number.isFinite(value) ? value! : null;
+};
+
+const getProductPriceDisplay = (product: Product): ProductPriceDisplay => {
+  const discountPrice = toFiniteNumberOrNull(product.discountPrice);
+  const retailPrice = toFiniteNumberOrNull(product.retailPrice) ?? toFiniteNumberOrNull(product.unitPrice);
+  const lowestRetailPriceLast30Days = toFiniteNumberOrNull(product.lowestRetailPriceLast30Days);
+  const hasDiscount = discountPrice !== null;
+
+  return {
+    hasDiscount,
+    discountPrice,
+    retailPrice,
+    lowestRetailPriceLast30Days: hasDiscount ? lowestRetailPriceLast30Days : null,
+  };
 };
 
 const getProductIdentifier = (product: Product): string => {
@@ -43,6 +68,7 @@ export {
   getFirstUsableProductImage,
   getProductDescription,
   getProductPrice,
+  getProductPriceDisplay,
   getProductIdentifier,
   resolveProductByIdentifier,
 };

@@ -5,6 +5,7 @@ import {
   getProductDescription,
   getProductIdentifier,
   getProductPrice,
+  getProductPriceDisplay,
   resolveProductByIdentifier,
 } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
@@ -40,6 +41,7 @@ jest.mock('react-i18next', () => ({
       if (key === 'category.productCardA11yLabel') return `Product card for ${options?.product}`;
       if (key === 'category.priceLabel') return `Price: ${options?.price}`;
       if (key === 'category.priceUnavailable') return 'N/A';
+      if (key === 'product.lowestRetailPriceLast30DaysLabel') return 'Alin hinta edellisen 30 päivän aikana';
       if (key === 'availability.outOfStock') return 'Loppu varastosta';
       if (key === 'availability.lowStock') return 'Loppuu pian';
       if (key === 'availability.inStock') return 'Varastossa';
@@ -58,7 +60,17 @@ describe('CategoryProductGrid helpers', () => {
   ];
 
   const products: Product[] = [
-    { id: 'p-apple', name: 'Apple', amount: 2, ean: '1', images: ['https://img/apple.jpg'], category: 'fruits', retailPrice: 1.99 },
+    {
+      id: 'p-apple',
+      name: 'Apple',
+      amount: 2,
+      ean: '1',
+      images: ['https://img/apple.jpg'],
+      category: 'fruits',
+      retailPrice: 1.99,
+      discountPrice: 1.49,
+      lowestRetailPriceLast30Days: 1.79,
+    },
     { name: 'Milk', amount: 5, ean: '2', images: [], category: 'dairy', unitPrice: 2.5 },
   ];
 
@@ -92,9 +104,23 @@ describe('CategoryProductGrid helpers', () => {
   });
 
   it('resolves product price priority', () => {
-    expect(getProductPrice(products[0])).toBe(1.99);
+    expect(getProductPrice(products[0])).toBe(1.49);
     expect(getProductPrice(products[1])).toBe(2.5);
     expect(getProductPrice({ ...products[1], retailPrice: undefined, unitPrice: undefined })).toBeNull();
+  });
+
+  it('derives discount display model and 30-day lowest price visibility', () => {
+    const discounted = getProductPriceDisplay(products[0]);
+    expect(discounted.hasDiscount).toBe(true);
+    expect(discounted.discountPrice).toBe(1.49);
+    expect(discounted.retailPrice).toBe(1.99);
+    expect(discounted.lowestRetailPriceLast30Days).toBe(1.79);
+
+    const regular = getProductPriceDisplay(products[1]);
+    expect(regular.hasDiscount).toBe(false);
+    expect(regular.discountPrice).toBeNull();
+    expect(regular.retailPrice).toBe(2.5);
+    expect(regular.lowestRetailPriceLast30Days).toBeNull();
   });
 
   it('returns first image and fallback null for unusable images', () => {

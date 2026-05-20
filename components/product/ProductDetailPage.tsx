@@ -3,7 +3,7 @@ import {
 } from '@/components/product/availabilityStatus';
 import {
   getProductDescription,
-  getProductPrice,
+  getProductPriceDisplay,
   getUsableProductImages,
   resolveProductByIdentifier,
 } from '@/components/product/cardUtils';
@@ -169,7 +169,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
 
   const imageUris = getUsableProductImages(product);
   const imageSlides = getProductImageSlides(imageUris);
-  const price = getProductPrice(product);
+  const priceDisplay = getProductPriceDisplay(product);
   const unitPricePerKg = getUnitPricePerKgText(product, i18n.language, t);
   const canAdd = canAddItem(product);
   const sections = getProductDetailSections(product, i18n.language, t);
@@ -243,11 +243,33 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
 
         <View className={isDesktop ? 'w-1/2 gap-2' : 'w-full gap-2'}>
           <Text className="text-2xl font-semibold text-neutral-900">{product.name}</Text>
-          <Text className="text-xl text-neutral-600 font-semibold">
-            {t('category.priceLabel', {
-              price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
-            })}
-          </Text>
+          <View>
+            {priceDisplay.hasDiscount && priceDisplay.discountPrice !== null ? (
+              <>
+                <Text className="text-xl font-semibold text-red-600">
+                  {formatPriceWithCurrency(priceDisplay.discountPrice, i18n.language)}
+                </Text>
+                {priceDisplay.retailPrice !== null ? (
+                  <Text className="text-sm text-neutral-500 line-through">
+                    {formatPriceWithCurrency(priceDisplay.retailPrice, i18n.language)}
+                  </Text>
+                ) : null}
+                {priceDisplay.lowestRetailPriceLast30Days !== null ? (
+                  <Text className="text-xs text-neutral-600">
+                    {t('product.lowestRetailPriceLast30DaysLabel')}: {formatPriceWithCurrency(priceDisplay.lowestRetailPriceLast30Days, i18n.language)}
+                  </Text>
+                ) : null}
+              </>
+            ) : (
+              <Text className="text-xl text-neutral-600 font-semibold">
+                {t('category.priceLabel', {
+                  price: priceDisplay.retailPrice !== null
+                    ? formatPriceWithCurrency(priceDisplay.retailPrice, i18n.language)
+                    : t('category.priceUnavailable'),
+                })}
+              </Text>
+            )}
+          </View>
           {unitPricePerKg ? <Text className="text-xs text-neutral-600">{unitPricePerKg}</Text> : null}
           <View className={`mt-1 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
             <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>

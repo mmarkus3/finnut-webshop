@@ -52,7 +52,8 @@
     "unavailableValue": "Ei saatavilla",
     "unitPricePerKgLabel": "{{price}}/kg",
     "decreaseQuantityA11yLabel": "Vähennä tuotteen {{product}} määrää",
-    "increaseQuantityA11yLabel": "Lisää tuotteen {{product}} määrää"
+    "increaseQuantityA11yLabel": "Lisää tuotteen {{product}} määrää",
+    "lowestRetailPriceLast30DaysLabel": "Alin hinta edellisen 30 päivän aikana"
   },
   "search": {
     "modalTitle": "Hae tuotteita",

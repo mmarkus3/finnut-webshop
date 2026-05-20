@@ -1,20 +1,10 @@
-import {
-  getAvailabilityStatusMeta,
-} from '@/components/product/availabilityStatus';
-import {
-  getFirstUsableProductImage,
-  getProductDescription,
-  getProductIdentifier,
-  getProductPrice,
-} from '@/components/product/cardUtils';
-import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
-import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import { Asset } from 'expo-asset';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ProductCard } from '../product/ProductCard';
 
 interface HomeCategoryProductSectionsProps {
   categories: Category[];
@@ -50,67 +40,6 @@ const groupProductsByCategory = (categories: Category[], products: Product[]): C
     }))
     .filter((section) => section.products.length > 0);
 };
-
-function ProductCard({ product }: { product: Product }) {
-  const { t, i18n } = useTranslation();
-  const router = useRouter();
-  const { addItem, canAddItem } = useCart();
-  const firstImage = getFirstUsableProductImage(product);
-  const description = getProductDescription(product, i18n.language);
-  const price = getProductPrice(product);
-  const canAdd = canAddItem(product);
-  const availabilityStatus = getAvailabilityStatusMeta(product.amount);
-
-  const openProduct = () => {
-    router.push({
-      pathname: '/product/[productId]',
-      params: { productId: getProductIdentifier(product) },
-    });
-  };
-
-  return (
-    <View className="mr-3 w-64 rounded-xl border border-neutral-200 bg-white p-2">
-      <Pressable
-        onPress={openProduct}
-        accessibilityRole="button"
-        accessibilityLabel={t('home.productCardA11yLabel', { product: product.name })}
-        focusable
-      >
-        <Image
-          source={firstImage ? { uri: firstImage } : placeholderImageSource}
-          defaultSource={placeholderImageSource}
-          style={{ resizeMode: 'contain' }}
-          className="h-32 w-full rounded-lg bg-neutral-100"
-        />
-        <Text numberOfLines={2} className="mt-2 text-sm font-medium text-neutral-900">
-          {product.name}
-        </Text>
-        <Text className="mt-1 text-sm text-neutral-700">
-          {t('category.priceLabel', {
-                    price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
-                  })}
-                </Text>
-        <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
-          <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
-        </View>
-        <View className="mt-1 min-h-[60px]">
-          <Text numberOfLines={3} ellipsizeMode="tail" className="text-sm text-neutral-600">
-            {description || ''}
-          </Text>
-        </View>
-      </Pressable>
-      <Pressable
-        onPress={() => addItem(product)}
-        disabled={!canAdd}
-        className={`mt-3 items-center rounded-lg px-3 py-2 ${canAdd ? 'bg-primary-600' : 'bg-neutral-300'}`}
-        accessibilityRole="button"
-        accessibilityLabel={t('cart.addA11yLabel', { product: product.name })}
-      >
-        <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
-      </Pressable>
-    </View>
-  );
-}
 
 export function HomeCategoryProductSections({ categories, products }: HomeCategoryProductSectionsProps) {
   const { t } = useTranslation();
@@ -152,7 +81,7 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
             horizontal
             nestedScrollEnabled
             directionalLockEnabled
-            contentContainerStyle={{ paddingRight: 8 }}
+            contentContainerStyle={{ paddingRight: 8, gap: 16 }}
             showsHorizontalScrollIndicator={true}
             accessibilityRole="adjustable"
             accessibilityLabel={t('home.categoryCarouselA11yLabel', {
@@ -160,7 +89,7 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
             })}
           >
             {section.products.map((product, index) => (
-              <ProductCard key={`${section.category.id}-${product.id ?? product.name}-${index}`} product={product} />
+              <ProductCard key={`${section.category.id}-${product.id ?? product.name}-${index}`} item={product} width={'w-64'} />
             ))}
           </ScrollView>
         </View>

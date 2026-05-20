@@ -52,7 +52,8 @@
     "unavailableValue": "Inte tillganglig",
     "unitPricePerKgLabel": "{{price}}/kg",
     "decreaseQuantityA11yLabel": "Minska antal för {{product}}",
-    "increaseQuantityA11yLabel": "Öka antal för {{product}}"
+    "increaseQuantityA11yLabel": "Öka antal för {{product}}",
+    "lowestRetailPriceLast30DaysLabel": "Lägsta pris under de senaste 30 dagarna"
   },
   "search": {
     "modalTitle": "Sök produkter",

@@ -1,5 +1,5 @@
 import { HomeCategoryProductSections, groupProductsByCategory } from '@/components/home/HomeCategoryProductSections';
-import { getFirstUsableProductImage, getProductDescription, getProductPrice } from '@/components/product/cardUtils';
+import { getFirstUsableProductImage, getProductDescription, getProductPrice, getProductPriceDisplay } from '@/components/product/cardUtils';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
 import React from 'react';
@@ -38,6 +38,7 @@ jest.mock('react-i18next', () => ({
       if (key === 'cart.addA11yLabel') return `Add ${options?.product ?? ''} to cart`;
       if (key === 'category.priceLabel') return `Price: ${options?.price}`;
       if (key === 'category.priceUnavailable') return 'N/A';
+      if (key === 'product.lowestRetailPriceLast30DaysLabel') return 'Alin hinta edellisen 30 päivän aikana';
       if (key === 'availability.outOfStock') return 'Loppu varastosta';
       if (key === 'availability.lowStock') return 'Loppuu pian';
       if (key === 'availability.inStock') return 'Varastossa';
@@ -65,6 +66,8 @@ describe('HomeCategoryProductSections helpers', () => {
       images: ['https://img/apple.jpg'],
       category: 'fruit',
       retailPrice: 2.35,
+      discountPrice: 1.95,
+      lowestRetailPriceLast30Days: 2.15,
       description_en: 'Fresh apple description',
     },
     {
@@ -88,9 +91,13 @@ describe('HomeCategoryProductSections helpers', () => {
   });
 
   it('derives shared metadata helpers', () => {
-    expect(getProductPrice(products[0])).toBe(2.35);
+    expect(getProductPrice(products[0])).toBe(1.95);
     expect(getProductPrice(products[1])).toBe(3.6);
     expect(getProductDescription(products[0], 'en')).toBe('Fresh apple description');
+
+    const discountDisplay = getProductPriceDisplay(products[0]);
+    expect(discountDisplay.hasDiscount).toBe(true);
+    expect(discountDisplay.lowestRetailPriceLast30Days).toBe(2.15);
   });
 
   it('groups products by existing category in stable category order and skips empty sections', () => {
@@ -119,6 +126,8 @@ describe('HomeCategoryProductSections rendering', () => {
       images: ['https://img/apple.jpg'],
       category: 'fruit',
       retailPrice: 4.2,
+      discountPrice: 3.9,
+      lowestRetailPriceLast30Days: 4.1,
       description_en: 'Apple home card description',
     },
     { name: 'Milk', amount: 0, ean: '2', images: [], category: 'dairy' },
@@ -169,7 +178,9 @@ describe('HomeCategoryProductSections rendering', () => {
       .map((node) => node.props.children)
       .flat();
 
-    expect(textValues).toContain('Price: 4.20 €');
+    expect(textValues).toContain('3.90 €');
+    expect(textValues).toContain('4.20 €');
+    expect(textValues).toContain('Alin hinta edellisen 30 päivän aikana');
     expect(textValues).toContain('Show all');
     expect(textValues).toContain('Loppuu pian');
     expect(textValues).toContain('Loppu varastosta');

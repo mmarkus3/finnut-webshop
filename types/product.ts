@@ -3,8 +3,10 @@ export interface Product {
   amount: number;
   name: string;
   ean: string;
-  retailPrice?: number;
-  unitPrice?: number;
+  retailPrice: number;
+  discountPrice?: number;
+  lowestRetailPriceLast30Days?: number;
+  unitPrice: number;
   images: string[];
   category?: string;
   energyJoule?: number;

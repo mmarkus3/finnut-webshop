@@ -9,7 +9,7 @@ import {
   isDesktopWidth,
 } from '@/components/product/ProductDetailPage';
 import { Product } from '@/types/product';
-import { getUsableProductImages, resolveProductByIdentifier } from '@/components/product/cardUtils';
+import { getProductPriceDisplay, getUsableProductImages, resolveProductByIdentifier } from '@/components/product/cardUtils';
 import { getAvailabilityStatusMeta, getAvailabilityStatusKey } from '@/components/product/availabilityStatus';
 
 const t = (key: string, options?: Record<string, unknown>) => {
@@ -95,6 +95,33 @@ describe('ProductDetailPage helpers', () => {
 
     expect(getUnitPricePerKgText(productWithUnitPrice, 'en', t)).toBe('Unit price: 3.20 €/kg');
     expect(getUnitPricePerKgText(productWithoutUnitPrice, 'en', t)).toBeNull();
+  });
+
+  it('derives detail price display for discount and regular products', () => {
+    const discounted: Product = {
+      id: 'p10',
+      name: 'Chips',
+      amount: 2,
+      ean: 'ean-10',
+      images: [],
+      retailPrice: 4.9,
+      discountPrice: 3.9,
+      lowestRetailPriceLast30Days: 4.2,
+    };
+    const regular: Product = { id: 'p11', name: 'Nuts', amount: 2, ean: 'ean-11', images: [], retailPrice: 2.5 };
+
+    expect(getProductPriceDisplay(discounted)).toEqual({
+      hasDiscount: true,
+      discountPrice: 3.9,
+      retailPrice: 4.9,
+      lowestRetailPriceLast30Days: 4.2,
+    });
+    expect(getProductPriceDisplay(regular)).toEqual({
+      hasDiscount: false,
+      discountPrice: null,
+      retailPrice: 2.5,
+      lowestRetailPriceLast30Days: null,
+    });
   });
 
   it('provides quantity helper behavior for multi-add selection', () => {

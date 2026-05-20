@@ -52,7 +52,8 @@
     "unavailableValue": "Not available",
     "unitPricePerKgLabel": "{{price}}/kg",
     "decreaseQuantityA11yLabel": "Decrease quantity for {{product}}",
-    "increaseQuantityA11yLabel": "Increase quantity for {{product}}"
+    "increaseQuantityA11yLabel": "Increase quantity for {{product}}",
+    "lowestRetailPriceLast30DaysLabel": "Lowest price in the previous 30 days"
   },
   "search": {
     "modalTitle": "Search products",

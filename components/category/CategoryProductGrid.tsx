@@ -1,13 +1,3 @@
-import {
-  getAvailabilityStatusMeta,
-} from '@/components/product/availabilityStatus';
-import {
-  getFirstUsableProductImage,
-  getProductDescription,
-  getProductIdentifier,
-  getProductPrice,
-} from '@/components/product/cardUtils';
-import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { themeColors } from '@/constants/colors';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
@@ -17,7 +7,8 @@ import { Asset } from 'expo-asset';
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Image, Pressable, Text, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, useWindowDimensions, View } from 'react-native';
+import { ProductCard } from '../product/ProductCard';
 
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
@@ -81,57 +72,8 @@ export function CategoryProductGrid({ categories, categoryId, products, isLoadin
           )
         }
         renderItem={({ item }) => {
-          const description = getProductDescription(item, i18n.language);
-          const price = getProductPrice(item);
-          const firstImage = getFirstUsableProductImage(item);
-          const canAdd = canAddItem(item);
-          const availabilityStatus = getAvailabilityStatusMeta(item.amount);
-
-          const openProduct = () => {
-            router.push({
-              pathname: '/product/[productId]',
-              params: { productId: getProductIdentifier(item) },
-            });
-          };
-
           return (
-            <View className="rounded-xl border border-neutral-200 bg-white p-3" style={{ width: numColumns === 4 ? '24%' : '100%' }}>
-              <Pressable
-                onPress={openProduct}
-                accessibilityRole="button"
-                accessibilityLabel={t('category.productCardA11yLabel', { product: item.name })}
-              >
-                <Image
-                  source={firstImage ? { uri: firstImage } : placeholderImageSource}
-                  defaultSource={placeholderImageSource}
-                  style={{ resizeMode: 'contain' }}
-                  className="h-32 w-full rounded-lg bg-neutral-100"
-                />
-                <Text className="mt-2 text-base font-semibold text-neutral-900">{item.name}</Text>
-                <Text className="mt-1 text-sm text-neutral-700">
-                  {t('category.priceLabel', {
-                    price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),
-                  })}
-                </Text>
-                <View className={`mt-2 self-start rounded-full px-2 py-1 ${availabilityStatus.bgClassName}`}>
-                  <Text className={`text-xs font-medium ${availabilityStatus.textClassName}`}>{t(availabilityStatus.labelKey)}</Text>
-                </View>
-                <View className="mt-2 min-h-[60px]">
-                  <Text numberOfLines={3} ellipsizeMode="tail" className="text-sm text-neutral-600">
-                    {description || ''}
-                  </Text>
-                </View>
-              </Pressable>
-              <Pressable
-                onPress={() => addItem(item)}
-                disabled={!canAdd}
-                className={`mt-3 items-center rounded-lg px-3 py-2 ${canAdd ? 'bg-primary-600' : 'bg-neutral-300'}`}
-                accessibilityRole="button"
-                accessibilityLabel={t('cart.addA11yLabel', { product: item.name })}
-              >
-                <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
-              </Pressable>
-            </View>
+            <ProductCard item={item} numColumns={numColumns} />
           );
         }}
       />
