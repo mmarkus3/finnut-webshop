@@ -5,6 +5,17 @@ import renderer from 'react-test-renderer';
 const mockFetchDeliveryPointsByPostalCode = jest.fn();
 const mockSaveDeliveryMethodToOrder = jest.fn();
 const mockFetchPaymentMethods = jest.fn();
+const mockSyncOrderForCheckout = jest.fn();
+const mockCheckoutDiscount = {
+  discountCodeInput: '',
+  setDiscountCodeInput: jest.fn(),
+  activeDiscountCode: null as string | null,
+  applyDiscountCode: jest.fn().mockResolvedValue(false),
+  clearDiscountCode: jest.fn(),
+  discountPercentage: null as number | null,
+  isApplyingDiscount: false,
+  discountError: null as string | null,
+};
 
 const mockCart = {
   items: [
@@ -37,6 +48,15 @@ jest.mock('@/hooks/deliveryPoints', () => ({
 
 jest.mock('@/hooks/paymentMethods', () => ({
   fetchPaymentMethods: () => mockFetchPaymentMethods(),
+}));
+
+jest.mock('@/hooks/checkoutOrder', () => ({
+  syncOrderForCheckout: (items: unknown[], activeOrderId: string | null, _customer?: unknown, discount?: string) =>
+    mockSyncOrderForCheckout(items, activeOrderId, discount),
+}));
+
+jest.mock('@/hooks/checkoutDiscount', () => ({
+  useCheckoutDiscount: () => mockCheckoutDiscount,
 }));
 
 jest.mock('expo-router', () => ({
@@ -82,6 +102,12 @@ jest.mock('react-i18next', () => ({
       if (key === 'cart.deliveryLabel') return 'Delivery';
       if (key === 'delivery.free') return 'Free';
       if (key === 'category.priceUnavailable') return 'N/A';
+      if (key === 'discount.codeLabel') return 'Discount code';
+      if (key === 'discount.codePlaceholder') return 'Enter discount code';
+      if (key === 'discount.applyButton') return 'Apply';
+      if (key === 'discount.clearButton') return 'Clear';
+      if (key === 'discount.activeCodeLabel') return `Active: ${options?.code}`;
+      if (key === 'discount.invalidCodeError') return 'Invalid discount code';
       return key;
     },
     i18n: { language: 'en' },
@@ -96,6 +122,13 @@ describe('CheckoutPage', () => {
     mockSaveDeliveryMethodToOrder.mockResolvedValue(undefined);
     mockFetchPaymentMethods.mockReset();
     mockFetchPaymentMethods.mockResolvedValue([]);
+    mockSyncOrderForCheckout.mockReset();
+    mockCheckoutDiscount.discountCodeInput = '';
+    mockCheckoutDiscount.activeDiscountCode = null;
+    mockCheckoutDiscount.discountPercentage = null;
+    mockCheckoutDiscount.discountError = null;
+    mockCheckoutDiscount.isApplyingDiscount = false;
+    mockCheckoutDiscount.applyDiscountCode.mockResolvedValue(false);
   });
 
   it('renders customer form and summary', () => {
@@ -113,7 +146,7 @@ describe('CheckoutPage', () => {
     expect(textNodes.some((node) => node.props.children === '7.90 €')).toBe(true);
 
     const inputs = tree!.root.findAllByType('TextInput');
-    expect(inputs.length).toBe(7);
+    expect(inputs.length).toBe(8);
     expect(inputs.some((input) => input.props.placeholder === 'Phone number')).toBe(true);
   });
 

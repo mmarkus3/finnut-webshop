@@ -37,10 +37,15 @@ describe('checkout order helpers', () => {
     expect(payload.customer).toMatchObject({ phone: '+358401234567' });
   });
 
+  it('includes discount code in order payload when provided', () => {
+    const payload = buildCheckoutOrderPayload(items, undefined, ' SAVE10 ');
+    expect(payload.discount).toBe('SAVE10');
+  });
+
   it('invokes service save with mapped payload', async () => {
     const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
 
-    await createOrderForCheckout(items, undefined, { save });
+    await createOrderForCheckout(items, undefined, undefined, { save });
 
     expect(save).toHaveBeenCalledTimes(1);
     expect(save.mock.calls[0][0]).toMatchObject({
@@ -55,7 +60,7 @@ describe('checkout order helpers', () => {
   it('updates existing active order when id exists', async () => {
     const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
 
-    await syncOrderForCheckout(items, 'order-1', undefined, { save });
+    await syncOrderForCheckout(items, 'order-1', undefined, undefined, { save });
 
     expect(save).toHaveBeenCalledTimes(1);
     expect(save.mock.calls[0][0]).toMatchObject({
@@ -74,7 +79,7 @@ describe('checkout order helpers', () => {
       .mockRejectedValueOnce({ response: { status: 404 } })
       .mockResolvedValueOnce({ id: 'new-order', status: 'draft', products: [] });
 
-    await syncOrderForCheckout(items, 'stale-order', undefined, { save });
+    await syncOrderForCheckout(items, 'stale-order', undefined, undefined, { save });
 
     expect(save).toHaveBeenCalledTimes(2);
     expect(save.mock.calls[0][0]).toMatchObject({ id: 'stale-order' });
@@ -84,12 +89,23 @@ describe('checkout order helpers', () => {
   it('passes customer phone during sync payload mapping', async () => {
     const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
 
-    await syncOrderForCheckout(items, 'order-1', customer, { save });
+    await syncOrderForCheckout(items, 'order-1', customer, undefined, { save });
 
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'order-1',
         customer: expect.objectContaining({ phone: '+358401234567' }),
+      })
+    );
+  });
+
+  it('passes discount code during sync payload mapping', async () => {
+    const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
+    await syncOrderForCheckout(items, 'order-1', undefined, 'VIP20', { save });
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'order-1',
+        discount: 'VIP20',
       })
     );
   });

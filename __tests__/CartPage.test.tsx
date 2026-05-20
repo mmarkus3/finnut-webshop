@@ -21,6 +21,16 @@ const mockGetActiveOrderId = jest.fn(() => null);
 const mockSaveActiveOrderId = jest.fn();
 const mockClearActiveOrderId = jest.fn();
 const mockSyncOrderForCheckout = jest.fn();
+const mockCheckoutDiscount = {
+  discountCodeInput: '',
+  setDiscountCodeInput: jest.fn(),
+  activeDiscountCode: null as string | null,
+  applyDiscountCode: jest.fn(),
+  clearDiscountCode: jest.fn(),
+  discountPercentage: null as number | null,
+  isApplyingDiscount: false,
+  discountError: null as string | null,
+};
 
 jest.mock('@/hooks/cart', () => ({
   useCart: () => mockCart,
@@ -46,7 +56,12 @@ jest.mock('@/hooks/activeOrder', () => ({
 }));
 
 jest.mock('@/hooks/checkoutOrder', () => ({
-  syncOrderForCheckout: (items: unknown[], activeOrderId: string | null) => mockSyncOrderForCheckout(items, activeOrderId),
+  syncOrderForCheckout: (items: unknown[], activeOrderId: string | null, _customer?: unknown, discount?: string) =>
+    mockSyncOrderForCheckout(items, activeOrderId, discount),
+}));
+
+jest.mock('@/hooks/checkoutDiscount', () => ({
+  useCheckoutDiscount: () => mockCheckoutDiscount,
 }));
 
 jest.mock('expo-router', () => ({
@@ -80,6 +95,12 @@ jest.mock('react-i18next', () => ({
       if (key === 'cart.priceLabel') return `Price: ${options?.price}`;
       if (key === 'category.priceUnavailable') return 'N/A';
       if (key === 'delivery.free') return 'Free';
+      if (key === 'discount.codeLabel') return 'Discount code';
+      if (key === 'discount.codePlaceholder') return 'Enter discount code';
+      if (key === 'discount.applyButton') return 'Apply';
+      if (key === 'discount.clearButton') return 'Clear';
+      if (key === 'discount.activeCodeLabel') return `Active: ${options?.code}`;
+      if (key === 'discount.invalidCodeError') return 'Invalid discount code';
       return key;
     },
     i18n: mockI18n,
@@ -99,6 +120,11 @@ describe('CartPage', () => {
     mockClearActiveOrderId.mockReset();
     mockSyncOrderForCheckout.mockReset();
     mockSyncOrderForCheckout.mockResolvedValue({ id: 'order-created' });
+    mockCheckoutDiscount.discountCodeInput = '';
+    mockCheckoutDiscount.activeDiscountCode = null;
+    mockCheckoutDiscount.discountPercentage = null;
+    mockCheckoutDiscount.discountError = null;
+    mockCheckoutDiscount.isApplyingDiscount = false;
   });
 
   it('renders empty state', () => {
@@ -228,7 +254,7 @@ describe('CartPage', () => {
       await checkoutButton.props.onPress();
     });
 
-    expect(mockSyncOrderForCheckout).toHaveBeenCalledWith(mockCart.items, 'order-123');
+    expect(mockSyncOrderForCheckout).toHaveBeenCalledWith(mockCart.items, 'order-123', undefined);
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/checkout',
       params: { orderId: 'order-123' },
@@ -257,7 +283,7 @@ describe('CartPage', () => {
       await checkoutButton.props.onPress();
     });
 
-    expect(mockSyncOrderForCheckout).toHaveBeenCalledWith(mockCart.items, null);
+    expect(mockSyncOrderForCheckout).toHaveBeenCalledWith(mockCart.items, null, undefined);
     expect(mockSaveActiveOrderId).toHaveBeenCalledWith('new-order-1');
     expect(mockPush).toHaveBeenCalledWith({
       pathname: '/checkout',

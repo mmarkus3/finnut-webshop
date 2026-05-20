@@ -210,5 +210,13 @@
   "delivery": {
     "bannerFreeOver": "Fri leverans för beställningar över {{over}}",
     "free": "Gratis"
+  },
+  "discount": {
+    "codeLabel": "Rabattkod",
+    "codePlaceholder": "Ange rabattkod",
+    "applyButton": "Använd",
+    "clearButton": "Rensa",
+    "activeCodeLabel": "Aktiv: {{code}}",
+    "invalidCodeError": "Ogiltig rabattkod"
   }
 }

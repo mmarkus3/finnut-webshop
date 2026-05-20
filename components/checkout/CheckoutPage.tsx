@@ -1,10 +1,12 @@
-import { getProductPrice } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { useCart } from '@/hooks/cart';
+import { syncOrderForCheckout } from '@/hooks/checkoutOrder';
+import { useCheckoutDiscount } from '@/hooks/checkoutDiscount';
 import { saveDeliveryMethodToOrder } from '@/hooks/deliveryMethodPersistence';
 import { DeliveryPoint, fetchDeliveryPointsByPostalCode } from '@/hooks/deliveryPoints';
 import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
+import { getCartDiscountTotals, getDiscountLinePricing } from '@/hooks/discountPricing';
 import { fetchPaymentMethods, PaymentMethod } from '@/hooks/paymentMethods';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
@@ -40,6 +42,16 @@ export function CheckoutPage() {
   const { width } = useWindowDimensions();
   const isDesktop = isDesktopWidth(width);
   const { items, totalPrice, vatAmount } = useCart();
+  const {
+    discountCodeInput,
+    setDiscountCodeInput,
+    activeDiscountCode,
+    applyDiscountCode,
+    clearDiscountCode,
+    discountPercentage,
+    isApplyingDiscount,
+    discountError,
+  } = useCheckoutDiscount();
   const { pricing } = useDeliveryPricing();
   const [customer, setCustomer] = useState({
     firstname: '',
@@ -62,8 +74,12 @@ export function CheckoutPage() {
   const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
 
-  const summaryWithoutVat = Math.max(0, totalPrice - vatAmount);
-  const deliveryCost = getDeliveryCost(totalPrice, pricing);
+  const discountTotals = getCartDiscountTotals(items, discountPercentage);
+  const hasActiveDiscount = activeDiscountCode !== null && discountPercentage !== null;
+  const subtotalToUse = hasActiveDiscount ? discountTotals.subtotalDiscounted : totalPrice;
+  const vatToUse = hasActiveDiscount ? discountTotals.vatDiscounted : vatAmount;
+  const summaryWithoutVat = Math.max(0, subtotalToUse - vatToUse);
+  const deliveryCost = getDeliveryCost(subtotalToUse, pricing);
 
   const loadDeliveryPoints = async () => {
     try {
@@ -123,6 +139,32 @@ export function CheckoutPage() {
 
     setIsPaymentStep(true);
     await loadPaymentMethods();
+  };
+
+  const applyDiscountAndSyncOrder = async () => {
+    const applied = await applyDiscountCode();
+    if (!orderId) {
+      return;
+    }
+
+    const nextDiscount = applied ? discountCodeInput.trim() : undefined;
+    try {
+      await syncOrderForCheckout(items, orderId, undefined, nextDiscount);
+    } catch {
+      // Keep UI non-blocking: lookup result feedback is handled by hook error state.
+    }
+  };
+
+  const clearDiscountAndSyncOrder = async () => {
+    clearDiscountCode();
+    if (!orderId) {
+      return;
+    }
+    try {
+      await syncOrderForCheckout(items, orderId, undefined, undefined);
+    } catch {
+      // Keep UI non-blocking for clear path as well.
+    }
   };
 
   return (
@@ -216,14 +258,55 @@ export function CheckoutPage() {
 
         <View className={isDesktop ? 'w-96 rounded-xl bg-neutral-50 p-4' : 'rounded-xl bg-neutral-50 p-4'}>
           <Text className="text-lg font-semibold text-neutral-900">{t('cart.orderSummaryTitle')}</Text>
+          <View className="mt-3">
+            <Text className="mb-1 text-sm text-neutral-700">{t('discount.codeLabel')}</Text>
+            <TextInput
+              value={discountCodeInput}
+              onChangeText={setDiscountCodeInput}
+              placeholder={t('discount.codePlaceholder')}
+              className="rounded-lg border border-neutral-300 bg-white px-3 py-2"
+            />
+            <View className="mt-2 flex-row gap-2">
+              <Pressable
+                onPress={applyDiscountAndSyncOrder}
+                disabled={isApplyingDiscount}
+                className={`rounded-lg px-3 py-2 ${isApplyingDiscount ? 'bg-neutral-300' : 'bg-primary-600'}`}
+                accessibilityRole="button"
+                accessibilityLabel={t('discount.applyButton')}
+              >
+                <Text className="text-sm font-medium text-white">{t('discount.applyButton')}</Text>
+              </Pressable>
+              {activeDiscountCode ? (
+                <Pressable
+                  onPress={clearDiscountAndSyncOrder}
+                  className="rounded-lg border border-neutral-300 px-3 py-2"
+                  accessibilityRole="button"
+                  accessibilityLabel={t('discount.clearButton')}
+                >
+                  <Text className="text-sm text-neutral-800">{t('discount.clearButton')}</Text>
+                </Pressable>
+              ) : null}
+            </View>
+            {activeDiscountCode ? <Text className="mt-1 text-xs text-green-700">{t('discount.activeCodeLabel', { code: activeDiscountCode })}</Text> : null}
+            {discountError ? <Text className="mt-1 text-xs text-red-600">{t('discount.invalidCodeError')}</Text> : null}
+          </View>
 
           <View className="mt-3 gap-2">
             {items.map((item, index) => {
-              const price = getProductPrice(item.product);
+              const linePricing = getDiscountLinePricing(item, discountPercentage);
               return (
                 <View key={`${item.product.id ?? item.product.ean}-${index}`} className="flex-row items-center justify-between">
                   <Text className="text-sm text-neutral-800">{item.product.name} x {item.quantity}</Text>
-                  <Text className="text-sm text-neutral-700">{price !== null ? formatPriceWithCurrency(price * item.quantity, i18n.language) : t('category.priceUnavailable')}</Text>
+                  <View className="items-end">
+                    <Text className={`text-sm ${hasActiveDiscount ? 'text-red-600' : 'text-neutral-700'}`}>
+                      {linePricing.lineDiscounted !== null ? formatPriceWithCurrency(linePricing.lineDiscounted, i18n.language) : t('category.priceUnavailable')}
+                    </Text>
+                    {hasActiveDiscount ? (
+                      <Text className="text-xs text-neutral-500 line-through">
+                        {linePricing.lineOriginal !== null ? formatPriceWithCurrency(linePricing.lineOriginal, i18n.language) : t('category.priceUnavailable')}
+                      </Text>
+                    ) : null}
+                  </View>
                 </View>
               );
             })}
@@ -234,11 +317,14 @@ export function CheckoutPage() {
           <View className="gap-2">
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-neutral-700">{t('cart.subtotalLabel')}</Text>
-              <Text className="text-sm text-neutral-900">{formatPriceWithCurrency(totalPrice, i18n.language)}</Text>
+              <View className="items-end">
+                <Text className="text-sm text-neutral-900">{formatPriceWithCurrency(subtotalToUse, i18n.language)}</Text>
+                {hasActiveDiscount ? <Text className="text-xs text-neutral-500 line-through">{formatPriceWithCurrency(discountTotals.subtotalOriginal, i18n.language)}</Text> : null}
+              </View>
             </View>
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-neutral-700">{t('cart.vatIncludedLabel')}</Text>
-              <Text className="text-sm text-neutral-900">{formatPriceWithCurrency(vatAmount, i18n.language)}</Text>
+              <Text className="text-sm text-neutral-900">{formatPriceWithCurrency(vatToUse, i18n.language)}</Text>
             </View>
             <View className="flex-row items-center justify-between">
               <Text className="text-sm text-neutral-700">{t('cart.deliveryLabel')}</Text>
@@ -256,7 +342,10 @@ export function CheckoutPage() {
             </View>
             <View className="flex-row items-center justify-between">
               <Text className="text-sm font-semibold text-neutral-900">{t('cart.totalLabelText')}</Text>
-              <Text className="text-sm font-semibold text-neutral-900">{formatPriceWithCurrency(totalPrice, i18n.language)}</Text>
+              <View className="items-end">
+                <Text className="text-sm font-semibold text-neutral-900">{formatPriceWithCurrency(subtotalToUse, i18n.language)}</Text>
+                {hasActiveDiscount ? <Text className="text-xs text-neutral-500 line-through">{formatPriceWithCurrency(discountTotals.subtotalOriginal, i18n.language)}</Text> : null}
+              </View>
             </View>
           </View>
           <Pressable

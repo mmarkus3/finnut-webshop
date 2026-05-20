@@ -210,5 +210,13 @@
   "delivery": {
     "bannerFreeOver": "Ilmainen toimitus yli {{over}} tilauksille",
     "free": "Ilmainen"
+  },
+  "discount": {
+    "codeLabel": "Alennuskoodi",
+    "codePlaceholder": "Syötä alennuskoodi",
+    "applyButton": "Käytä",
+    "clearButton": "Poista",
+    "activeCodeLabel": "Käytössä: {{code}}",
+    "invalidCodeError": "Virheellinen alennuskoodi"
   }
 }

@@ -3,7 +3,8 @@ import { CartItem } from '@/types/cart';
 import { Order, OrderCustomer } from '@/types/order';
 import { OrdersService } from '@/services/order';
 
-const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer): Order => {
+const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer, discount?: string): Order => {
+  const normalizedDiscount = discount?.trim();
   return {
     status: 'draft',
     products: items.map((item) => ({
@@ -12,6 +13,7 @@ const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer):
       amount: item.quantity,
     })),
     ...(customer ? { customer } : {}),
+    ...(normalizedDiscount ? { discount: normalizedDiscount } : {}),
   };
 };
 
@@ -22,9 +24,10 @@ const buildOrdersService = (): OrdersService => {
 const createOrderForCheckout = async (
   items: CartItem[],
   customer?: OrderCustomer,
+  discount?: string,
   service: Pick<OrdersService, 'save'> = buildOrdersService()
 ): Promise<Order> => {
-  const payload = buildCheckoutOrderPayload(items, customer);
+  const payload = buildCheckoutOrderPayload(items, customer, discount);
   return service.save(payload);
 };
 
@@ -42,9 +45,10 @@ const syncOrderForCheckout = async (
   items: CartItem[],
   activeOrderId: string | null,
   customer?: OrderCustomer,
+  discount?: string,
   service: Pick<OrdersService, 'save'> = buildOrdersService()
 ): Promise<Order> => {
-  const payload = buildCheckoutOrderPayload(items, customer);
+  const payload = buildCheckoutOrderPayload(items, customer, discount);
 
   if (!activeOrderId) {
     return service.save(payload);

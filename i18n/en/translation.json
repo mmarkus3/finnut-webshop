@@ -210,5 +210,13 @@
   "delivery": {
     "bannerFreeOver": "Free delivery for orders over {{over}}",
     "free": "Free"
+  },
+  "discount": {
+    "codeLabel": "Discount code",
+    "codePlaceholder": "Enter discount code",
+    "applyButton": "Apply",
+    "clearButton": "Clear",
+    "activeCodeLabel": "Active: {{code}}",
+    "invalidCodeError": "Invalid discount code"
   }
 }
