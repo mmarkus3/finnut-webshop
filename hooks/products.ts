@@ -1,4 +1,5 @@
 import { ProductsService } from '@/services/product';
+import { resolveWebshopCountry } from '@/hooks/countryConfig';
 import { Product } from '@/types/product';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -15,7 +16,8 @@ export const useProducts = () => {
     setError(null);
 
     const fetch = async () => {
-      const items = await service.getList();
+      const country = resolveWebshopCountry();
+      const items = await service.getListByCountry(country);
       setProducts(items);
       setIsLoading(false);
     }

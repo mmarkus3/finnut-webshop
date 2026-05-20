@@ -105,9 +105,9 @@
     "mobileLayoutA11yLabel": "Mobil layout"
   },
   "availability": {
-    "outOfStock": "Loppu varastosta",
-    "lowStock": "Loppuu pian",
-    "inStock": "Varastossa"
+    "outOfStock": "Slut i lager",
+    "lowStock": "Lite lager",
+    "inStock": "I lager"
   },
   "checkout": {
     "title": "Kassa",
