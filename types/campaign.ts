@@ -1,5 +1,8 @@
 export interface Campaign {
-  id: string;
-  code: string;
-  products: { id: string; name: string; discountFixed?: number; discountPercentage?: number }[];
+  id?: string;
+  code?: string;
+  name?: string;
+  discountPercentage?: number;
+  discountAmount?: number;
+  [key: string]: unknown;
 }
