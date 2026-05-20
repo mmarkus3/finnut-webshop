@@ -205,7 +205,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
             <ScrollView
               horizontal
               pagingEnabled
-              showsHorizontalScrollIndicator={true}
+              showsHorizontalScrollIndicator={isDesktop}
               onScroll={handleCarouselScroll}
               scrollEventThrottle={16}
               className="w-full"
