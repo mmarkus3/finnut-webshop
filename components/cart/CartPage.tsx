@@ -42,6 +42,9 @@ export function CartPage() {
   const vatToUse = hasActiveDiscount ? discountTotals.vatDiscounted : vatAmount;
   const summaryWithoutVat = Math.max(0, subtotalToUse - vatToUse);
   const deliveryCost = getDeliveryCost(subtotalToUse, pricing);
+  const summaryTotalWithDelivery = deliveryCost.cost === null
+    ? subtotalToUse
+    : subtotalToUse + deliveryCost.cost;
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
@@ -198,7 +201,7 @@ export function CartPage() {
             <View className="flex-row items-center justify-between">
               <Text className="text-sm font-semibold text-neutral-900">{t('cart.totalLabelText')}</Text>
               <View className="items-end">
-                <Text className="text-sm font-semibold text-neutral-900">{formatPriceWithCurrency(subtotalToUse, i18n.language)}</Text>
+                <Text className="text-sm font-semibold text-neutral-900">{formatPriceWithCurrency(summaryTotalWithDelivery, i18n.language)}</Text>
                 {hasActiveDiscount ? <Text className="text-xs text-neutral-500 line-through">{formatPriceWithCurrency(discountTotals.subtotalOriginal, i18n.language)}</Text> : null}
               </View>
             </View>
