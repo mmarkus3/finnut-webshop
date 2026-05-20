@@ -16,7 +16,12 @@ interface CartDiscountTotals {
   vatDiscounted: number;
 }
 
-type DiscountPercentagesByProduct = Record<string, number>;
+interface ProductDiscountValue {
+  discountPercentage?: number | null;
+  discountFixed?: number | null;
+}
+
+type DiscountsByProduct = Record<string, ProductDiscountValue>;
 
 const roundCurrency = (value: number): number => Math.round((value + Number.EPSILON) * 100) / 100;
 
@@ -51,11 +56,20 @@ const calculateDiscountedUnitPrice = (unitOriginal: number | null, discountPerce
   return roundCurrency(unitOriginal * (1 - normalized));
 };
 
-const getDiscountLinePricing = (item: CartItem, discountPercentagesByProduct: DiscountPercentagesByProduct): DiscountLinePricing => {
+const calculateFixedDiscountedUnitPrice = (discountFixed: number | null): number | null => {
+  if (!Number.isFinite(discountFixed)) {
+    return null;
+  }
+
+  return Math.max(0, roundCurrency(discountFixed!));
+};
+
+const getDiscountLinePricing = (item: CartItem, discountPercentagesByProduct: DiscountsByProduct): DiscountLinePricing => {
   const productId = getProductIdentifier(item.product);
   const unitOriginal = getProductPrice(item.product);
-  const discountPercentage = discountPercentagesByProduct[productId] ?? null;
-  const unitDiscounted = calculateDiscountedUnitPrice(unitOriginal, discountPercentage);
+  const productDiscount = discountPercentagesByProduct[productId];
+  const fixedDiscountedUnitPrice = calculateFixedDiscountedUnitPrice(productDiscount?.discountFixed ?? null);
+  const unitDiscounted = fixedDiscountedUnitPrice ?? calculateDiscountedUnitPrice(unitOriginal, productDiscount?.discountPercentage ?? null);
 
   return {
     productId,
@@ -66,7 +80,7 @@ const getDiscountLinePricing = (item: CartItem, discountPercentagesByProduct: Di
   };
 };
 
-const getCartDiscountTotals = (items: CartItem[], discountPercentagesByProduct: DiscountPercentagesByProduct): CartDiscountTotals => {
+const getCartDiscountTotals = (items: CartItem[], discountPercentagesByProduct: DiscountsByProduct): CartDiscountTotals => {
   return items.reduce<CartDiscountTotals>((totals, item) => {
     const linePricing = getDiscountLinePricing(item, discountPercentagesByProduct);
     const taxRate = Number.isFinite(item.product.tax) ? item.product.tax! : 0;
@@ -91,12 +105,14 @@ const getCartDiscountTotals = (items: CartItem[], discountPercentagesByProduct: 
 };
 
 export {
+  calculateFixedDiscountedUnitPrice,
   calculateDiscountedUnitPrice,
   getCartDiscountTotals,
   getDiscountLinePricing,
   normalizeDiscountPercentage,
   roundCurrency,
-  type DiscountPercentagesByProduct,
+  type DiscountsByProduct,
+  type ProductDiscountValue,
   type CartDiscountTotals,
   type DiscountLinePricing
 };

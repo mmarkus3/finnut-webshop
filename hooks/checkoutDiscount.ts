@@ -53,22 +53,32 @@ const clearPersistedDiscountCode = (): void => {
 
 const mapCampaignDiscountPercentagesByProduct = (
   campaign: { products?: CampaignProductDiscount[] } | null
-): Record<string, number> => {
-  const byProductId: Record<string, number> = {};
+): Record<string, { discountPercentage?: number; discountFixed?: number }> => {
+  const byProductId: Record<string, { discountPercentage?: number; discountFixed?: number }> = {};
   const campaignProducts = Array.isArray(campaign?.products) ? campaign.products : [];
 
   campaignProducts.forEach((productDiscount: CampaignProductDiscount) => {
     const rawId = productDiscount.id;
     const id = typeof rawId === 'string' ? rawId.trim() : '';
-    const percentage = Number.isFinite(productDiscount.discountPercentage)
+    const discountPercentage = Number.isFinite(productDiscount.discountPercentage)
       ? Number(productDiscount.discountPercentage)
       : NaN;
+    const discountFixed = Number.isFinite(productDiscount.discountFixed)
+      ? Number(productDiscount.discountFixed)
+      : NaN;
 
-    if (!id || !Number.isFinite(percentage)) {
+    if (!id) {
       return;
     }
 
-    byProductId[id] = percentage;
+    if (!Number.isFinite(discountPercentage) && !Number.isFinite(discountFixed)) {
+      return;
+    }
+
+    byProductId[id] = {
+      ...(Number.isFinite(discountPercentage) ? { discountPercentage } : {}),
+      ...(Number.isFinite(discountFixed) ? { discountFixed } : {}),
+    };
   });
 
   return byProductId;
@@ -141,4 +151,3 @@ export {
   persistDiscountCode,
   useCheckoutDiscount
 };
-

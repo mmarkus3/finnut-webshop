@@ -1,4 +1,4 @@
-import { calculateDiscountedUnitPrice, getCartDiscountTotals, getDiscountLinePricing, normalizeDiscountPercentage } from '@/hooks/discountPricing';
+import { calculateDiscountedUnitPrice, calculateFixedDiscountedUnitPrice, getCartDiscountTotals, getDiscountLinePricing, normalizeDiscountPercentage } from '@/hooks/discountPricing';
 import { CartItem } from '@/types/cart';
 
 describe('discount pricing helpers', () => {
@@ -20,8 +20,14 @@ describe('discount pricing helpers', () => {
     expect(calculateDiscountedUnitPrice(null, 10)).toBeNull();
   });
 
+  it('calculates fixed discounted unit price with clamping', () => {
+    expect(calculateFixedDiscountedUnitPrice(3.499)).toBe(3.5);
+    expect(calculateFixedDiscountedUnitPrice(-2)).toBe(0);
+    expect(calculateFixedDiscountedUnitPrice(null)).toBeNull();
+  });
+
   it('returns line pricing with original and discounted prices', () => {
-    const line = getDiscountLinePricing(items[0], { p1: 10 });
+    const line = getDiscountLinePricing(items[0], { p1: { discountPercentage: 10 } });
     expect(line.unitOriginal).toBe(10);
     expect(line.unitDiscounted).toBe(9);
     expect(line.lineOriginal).toBe(20);
@@ -29,10 +35,20 @@ describe('discount pricing helpers', () => {
   });
 
   it('returns cart totals for original and discounted subtotals and vat', () => {
-    const totals = getCartDiscountTotals(items, { p1: 10 });
+    const totals = getCartDiscountTotals(items, { p1: { discountPercentage: 10 } });
     expect(totals.subtotalOriginal).toBe(25);
     expect(totals.subtotalDiscounted).toBe(23);
     expect(totals.vatOriginal).toBeCloseTo((20 * 0.255) + (5 * 0.14), 6);
     expect(totals.vatDiscounted).toBeCloseTo((18 * 0.255) + (5 * 0.14), 6);
+  });
+
+  it('uses fixed discount price with precedence over percentage and supports mixed carts', () => {
+    const totals = getCartDiscountTotals(items, {
+      p1: { discountPercentage: 10, discountFixed: 4 },
+      p2: { discountFixed: 2.5 },
+    });
+    expect(totals.subtotalOriginal).toBe(25);
+    expect(totals.subtotalDiscounted).toBe(10.5);
+    expect(totals.vatDiscounted).toBeCloseTo((8 * 0.255) + (2.5 * 0.14), 6);
   });
 });

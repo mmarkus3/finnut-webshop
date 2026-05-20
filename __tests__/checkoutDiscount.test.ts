@@ -4,13 +4,17 @@ describe('checkout discount campaign mapping', () => {
   it('maps product-level discount percentage by productId, id, and ean', () => {
     const mapped = mapCampaignDiscountPercentagesByProduct({
       products: [
-        { productId: 'p1', discountPercentage: 10 },
-        { id: 'p2', discountPercentage: 15 },
-        { ean: 'ean-3', discountPercentage: 0.2 },
+        { id: 'p1', discountPercentage: 10 },
+        { id: 'p2', discountFixed: 3.5 },
+        { id: 'ean-3', discountPercentage: 0.2, discountFixed: 1.2 },
       ],
     });
 
-    expect(mapped).toEqual({ p1: 10, p2: 15, 'ean-3': 0.2 });
+    expect(mapped).toEqual({
+      p1: { discountPercentage: 10 },
+      p2: { discountFixed: 3.5 },
+      'ean-3': { discountPercentage: 0.2, discountFixed: 1.2 },
+    });
   });
 
   it('skips invalid product entries and returns empty map when missing campaign', () => {
@@ -18,8 +22,8 @@ describe('checkout discount campaign mapping', () => {
     expect(
       mapCampaignDiscountPercentagesByProduct({
         products: [
-          { productId: '  ', discountPercentage: 10 },
-          { productId: 'p1' },
+          { id: '  ', discountPercentage: 10 },
+          { id: 'p1' },
         ],
       })
     ).toEqual({});
