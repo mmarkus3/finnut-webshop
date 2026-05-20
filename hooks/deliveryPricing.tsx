@@ -1,4 +1,5 @@
 import { getJson, HttpRequester } from '@/hooks/httpFetch';
+import { resolveWebshopCountry } from '@/hooks/countryConfig';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
 
 interface DeliveryPricing {
@@ -15,9 +16,13 @@ interface DeliveryPricingContextValue {
 const DeliveryPricingContext = createContext<DeliveryPricingContextValue | null>(null);
 
 const fetchDeliveryPricing = async (requester?: HttpRequester): Promise<DeliveryPricing | null> => {
+  const country = resolveWebshopCountry();
   const data = await getJson<{ over?: number; delivery?: number }>(
     process.env.EXPO_PUBLIC_FIREBASE_API!,
-    { url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/prices` },
+    {
+      url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/prices`,
+      params: { country },
+    },
     requester
   );
 

@@ -8,6 +8,7 @@ describe('fetchDeliveryPricing', () => {
     expect(request).toHaveBeenCalledWith({
       method: 'GET',
       url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/prices`,
+      params: { country: 'FI' },
     });
     expect(pricing).toEqual({ over: 80, delivery: 7.9 });
   });
