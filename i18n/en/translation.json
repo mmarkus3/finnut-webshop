@@ -215,8 +215,26 @@
     "free": "Free"
   },
   "paymentSuccess": {
-    "title": "Kiitos tilauksestanne",
-    "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian",
+    "success": {
+      "title": "Kiitos tilauksestanne",
+      "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian"
+    },
+    "failed": {
+      "title": "Payment failed",
+      "body": "The payment was not completed successfully. You can try paying again."
+    },
+    "unresolved": {
+      "title": "Payment status needs review",
+      "body": "The transaction status could not be updated after returning from the bank. The merchant will resolve the payment status."
+    },
+    "maintenance": {
+      "title": "Payment service maintenance",
+      "body": "The transaction was not created because of a maintenance break. Please try again later."
+    },
+    "unknown": {
+      "title": "Payment status unknown",
+      "body": "The payment status could not be confirmed. Please contact customer service if needed."
+    },
     "homeButton": "Back to home"
   },
   "discount": {

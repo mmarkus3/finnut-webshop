@@ -215,8 +215,26 @@
     "free": "Gratis"
   },
   "paymentSuccess": {
-    "title": "Kiitos tilauksestanne",
-    "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian",
+    "success": {
+      "title": "Kiitos tilauksestanne",
+      "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian"
+    },
+    "failed": {
+      "title": "Betalningen misslyckades",
+      "body": "Betalningen slutfördes inte. Du kan försöka betala igen."
+    },
+    "unresolved": {
+      "title": "Betalningsstatus behöver kontrolleras",
+      "body": "Transaktionsstatus kunde inte uppdateras efter återkomst från banken. Handlaren kontrollerar betalningsstatusen."
+    },
+    "maintenance": {
+      "title": "Betaltjänsten har serviceavbrott",
+      "body": "Transaktionen skapades inte på grund av ett serviceavbrott. Försök igen senare."
+    },
+    "unknown": {
+      "title": "Betalningsstatus okänd",
+      "body": "Betalningsstatusen kunde inte bekräftas. Kontakta kundservice vid behov."
+    },
     "homeButton": "Till startsidan"
   },
   "discount": {

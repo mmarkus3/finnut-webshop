@@ -215,8 +215,26 @@
     "free": "Ilmainen"
   },
   "paymentSuccess": {
-    "title": "Kiitos tilauksestanne",
-    "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian",
+    "success": {
+      "title": "Kiitos tilauksestanne",
+      "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian"
+    },
+    "failed": {
+      "title": "Maksu epäonnistui",
+      "body": "Maksua ei suoritettu loppuun onnistuneesti. Voitte yrittää maksamista uudelleen."
+    },
+    "unresolved": {
+      "title": "Maksun tila vaatii tarkistuksen",
+      "body": "Maksun tilaa ei voitu päivittää pankin sivulta palaamisen jälkeen. Kauppias tarkistaa maksun tilan."
+    },
+    "maintenance": {
+      "title": "Maksupalvelussa on huoltokatko",
+      "body": "Tapahtumaa ei luotu huoltokatkon vuoksi. Yrittäkää myöhemmin uudelleen."
+    },
+    "unknown": {
+      "title": "Maksun tila on tuntematon",
+      "body": "Maksun tilaa ei voitu varmistaa. Ottakaa tarvittaessa yhteyttä asiakaspalveluun."
+    },
     "homeButton": "Palaa etusivulle"
   },
   "discount": {
