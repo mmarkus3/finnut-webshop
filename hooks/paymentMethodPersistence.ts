@@ -1,5 +1,6 @@
 import { OrdersService } from '@/services/order';
 import { Order } from '@/types/order';
+import * as Linking from 'expo-linking';
 
 interface PaymentMetadataPatch {
   paymentMethod: string;
@@ -23,7 +24,7 @@ const getPaymentSuccessReturnUrl = (origin = getRuntimeOrigin()): string => {
 const savePaymentMethodToOrder = async (
   orderId: string,
   paymentMethodId: string,
-  service: Pick<OrdersService, 'patch'> = buildOrdersService()
+  service: OrdersService = buildOrdersService()
 ): Promise<void> => {
   const payload: PaymentMetadataPatch = {
     paymentMethod: paymentMethodId,
@@ -31,6 +32,8 @@ const savePaymentMethodToOrder = async (
   };
 
   await service.patch(orderId, payload as unknown as Partial<Order>);
+  const res = await service.placeOrder(orderId);
+  Linking.openURL(res.url);
 };
 
 export { getPaymentSuccessReturnUrl, savePaymentMethodToOrder };

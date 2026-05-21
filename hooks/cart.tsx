@@ -2,6 +2,7 @@ import { getProductIdentifier, getProductPrice } from '@/components/product/card
 import { CartItem, CartState } from '@/types/cart';
 import { Product } from '@/types/product';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useReducer } from 'react';
+import { clearActiveOrderId } from './activeOrder';
 
 const MAX_BADGE_COUNT = 99;
 
@@ -232,6 +233,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case 'CLEAR':
+      clearActiveOrderId();
       return initialCartState;
 
     default:

@@ -137,8 +137,8 @@
     "paymentMethodsEmpty": "Inga betalningsmetoder tillgängliga.",
     "paymentMethodOptionA11yLabel": "Välj betalningsmetod {{method}}",
     "payButton": "Betala",
-    "paymentSaving": "Sparar betalningsmetod...",
-    "paymentSaveError": "Kunde inte spara betalningsmetod. Försök igen."
+    "paymentSaving": "Betalande...",
+    "paymentSaveError": "Betalningsfel. Försök igen."
   },
   "information": {
     "linkLabel": "Information",

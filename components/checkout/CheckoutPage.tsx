@@ -174,7 +174,7 @@ export function CheckoutPage() {
     }
   };
 
-  const saveSelectedPaymentMethod = async () => {
+  const placeOrder = async () => {
     if (!canPay || !selectedPaymentMethodId || !orderId) {
       return;
     }
@@ -398,7 +398,7 @@ export function CheckoutPage() {
           </Pressable>
           }
           {isPaymentStep && <Pressable
-            onPress={saveSelectedPaymentMethod}
+            onPress={placeOrder}
             disabled={!canPay}
             className={`mt-4 items-center rounded-lg px-3 py-3 ${!canPay ? 'bg-neutral-300' : 'bg-primary-600'}`}
             accessibilityRole="button"

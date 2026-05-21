@@ -137,8 +137,8 @@
     "paymentMethodsEmpty": "No payment methods available.",
     "paymentMethodOptionA11yLabel": "Select payment method {{method}}",
     "payButton": "Pay",
-    "paymentSaving": "Saving payment method...",
-    "paymentSaveError": "Could not save payment method. Please try again."
+    "paymentSaving": "Paying...",
+    "paymentSaveError": "Payment error. Please try again."
   },
   "information": {
     "linkLabel": "Information",
