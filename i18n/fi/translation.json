@@ -135,7 +135,10 @@
     "paymentMethodsLoading": "Ladataan maksutapoja...",
     "paymentMethodsError": "Maksutapojen haku epäonnistui. Yritä uudelleen.",
     "paymentMethodsEmpty": "Maksutapoja ei ole saatavilla.",
-    "paymentMethodOptionA11yLabel": "Valitse maksutapa {{method}}"
+    "paymentMethodOptionA11yLabel": "Valitse maksutapa {{method}}",
+    "payButton": "Maksa",
+    "paymentSaving": "Tallennetaan maksutapaa...",
+    "paymentSaveError": "Maksutavan tallennus epäonnistui. Yritä uudelleen."
   },
   "information": {
     "linkLabel": "Tietoja",

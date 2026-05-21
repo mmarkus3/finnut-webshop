@@ -135,7 +135,10 @@
     "paymentMethodsLoading": "Laddar betalningsmetoder...",
     "paymentMethodsError": "Kunde inte hämta betalningsmetoder. Försök igen.",
     "paymentMethodsEmpty": "Inga betalningsmetoder tillgängliga.",
-    "paymentMethodOptionA11yLabel": "Välj betalningsmetod {{method}}"
+    "paymentMethodOptionA11yLabel": "Välj betalningsmetod {{method}}",
+    "payButton": "Betala",
+    "paymentSaving": "Sparar betalningsmetod...",
+    "paymentSaveError": "Kunde inte spara betalningsmetod. Försök igen."
   },
   "information": {
     "linkLabel": "Information",

@@ -135,7 +135,10 @@
     "paymentMethodsLoading": "Loading payment methods...",
     "paymentMethodsError": "Could not load payment methods. Please try again.",
     "paymentMethodsEmpty": "No payment methods available.",
-    "paymentMethodOptionA11yLabel": "Select payment method {{method}}"
+    "paymentMethodOptionA11yLabel": "Select payment method {{method}}",
+    "payButton": "Pay",
+    "paymentSaving": "Saving payment method...",
+    "paymentSaveError": "Could not save payment method. Please try again."
   },
   "information": {
     "linkLabel": "Information",

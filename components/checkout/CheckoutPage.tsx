@@ -7,6 +7,7 @@ import { saveDeliveryMethodToOrder } from '@/hooks/deliveryMethodPersistence';
 import { DeliveryPoint, fetchDeliveryPointsByPostalCode } from '@/hooks/deliveryPoints';
 import { getDeliveryCost, useDeliveryPricing } from '@/hooks/deliveryPricing';
 import { getCartDiscountTotals, getDiscountLinePricing } from '@/hooks/discountPricing';
+import { savePaymentMethodToOrder } from '@/hooks/paymentMethodPersistence';
 import { fetchPaymentMethods, PaymentMethod } from '@/hooks/paymentMethods';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
@@ -73,6 +74,8 @@ export function CheckoutPage() {
   const [isLoadingPaymentMethods, setIsLoadingPaymentMethods] = useState(false);
   const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+  const [isSavingPaymentMethod, setIsSavingPaymentMethod] = useState(false);
+  const [paymentMethodSaveError, setPaymentMethodSaveError] = useState<string | null>(null);
 
   const discountTotals = getCartDiscountTotals(items, discountPercentagesByProduct);
   const hasActiveDiscount = activeDiscountCode !== null && Object.keys(discountPercentagesByProduct).length > 0;
@@ -116,6 +119,7 @@ export function CheckoutPage() {
 
   const hasPostalCode = customer.address_zip.trim().length > 0;
   const canProceedToPayment = isCustomerInfoComplete(customer) && selectedDeliveryPointId !== null;
+  const canPay = selectedPaymentMethodId !== null && !!orderId && !isSavingPaymentMethod;
 
   const selectDeliveryPoint = async (pointId: string) => {
     if (!orderId || isSavingDeliveryMethod) {
@@ -167,6 +171,22 @@ export function CheckoutPage() {
       await syncOrderForCheckout(items, orderId, undefined, undefined);
     } catch {
       // Keep UI non-blocking for clear path as well.
+    }
+  };
+
+  const saveSelectedPaymentMethod = async () => {
+    if (!canPay || !selectedPaymentMethodId || !orderId) {
+      return;
+    }
+
+    try {
+      setPaymentMethodSaveError(null);
+      setIsSavingPaymentMethod(true);
+      await savePaymentMethodToOrder(orderId, selectedPaymentMethodId);
+    } catch {
+      setPaymentMethodSaveError(t('checkout.paymentSaveError'));
+    } finally {
+      setIsSavingPaymentMethod(false);
     }
   };
 
@@ -365,7 +385,9 @@ export function CheckoutPage() {
             {discountError ? <Text className="mt-1 text-xs text-red-600">{t('discount.invalidCodeError')}</Text> : null}
           </View>
 
-          <Pressable
+          {paymentMethodSaveError ? <Text className="mt-2 text-sm text-red-600">{paymentMethodSaveError}</Text> : null}
+
+          {!isPaymentStep && <Pressable
             onPress={goToPaymentStep}
             disabled={!canProceedToPayment || isLoadingPaymentMethods}
             className={`mt-4 items-center rounded-lg px-3 py-3 ${!canProceedToPayment || isLoadingPaymentMethods ? 'bg-neutral-300' : 'bg-primary-600'}`}
@@ -374,6 +396,19 @@ export function CheckoutPage() {
           >
             <Text className="text-sm font-medium text-white">{t('checkout.nextToPaymentButton')}</Text>
           </Pressable>
+          }
+          {isPaymentStep && <Pressable
+            onPress={saveSelectedPaymentMethod}
+            disabled={!canPay}
+            className={`mt-4 items-center rounded-lg px-3 py-3 ${!canPay ? 'bg-neutral-300' : 'bg-primary-600'}`}
+            accessibilityRole="button"
+            accessibilityLabel={t('checkout.payButton')}
+          >
+            <Text className="text-sm font-medium text-white">
+              {isSavingPaymentMethod ? t('checkout.paymentSaving') : t('checkout.payButton')}
+            </Text>
+          </Pressable>
+          }
         </View>
       </View>
     </ScrollView >

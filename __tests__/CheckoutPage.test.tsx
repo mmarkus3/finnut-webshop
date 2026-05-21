@@ -4,6 +4,7 @@ import renderer from 'react-test-renderer';
 
 const mockFetchDeliveryPointsByPostalCode = jest.fn();
 const mockSaveDeliveryMethodToOrder = jest.fn();
+const mockSavePaymentMethodToOrder = jest.fn();
 const mockFetchPaymentMethods = jest.fn();
 const mockSyncOrderForCheckout = jest.fn();
 const mockCheckoutDiscount = {
@@ -68,6 +69,11 @@ jest.mock('@/hooks/deliveryMethodPersistence', () => ({
     mockSaveDeliveryMethodToOrder(orderId, deliveryMethodId),
 }));
 
+jest.mock('@/hooks/paymentMethodPersistence', () => ({
+  savePaymentMethodToOrder: (orderId: string, paymentMethodId: string) =>
+    mockSavePaymentMethodToOrder(orderId, paymentMethodId),
+}));
+
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string | number>) => {
@@ -94,6 +100,9 @@ jest.mock('react-i18next', () => ({
       if (key === 'checkout.paymentMethodsError') return 'Could not load payment methods. Please try again.';
       if (key === 'checkout.paymentMethodsEmpty') return 'No payment methods available.';
       if (key === 'checkout.paymentMethodOptionA11yLabel') return `Select payment method ${options?.method}`;
+      if (key === 'checkout.payButton') return 'Pay';
+      if (key === 'checkout.paymentSaving') return 'Saving payment method...';
+      if (key === 'checkout.paymentSaveError') return 'Could not save payment method. Please try again.';
       if (key === 'cart.orderSummaryTitle') return 'Order summary';
       if (key === 'cart.subtotalLabel') return 'Subtotal';
       if (key === 'cart.vatIncludedLabel') return 'VAT (included in price)';
@@ -120,6 +129,8 @@ describe('CheckoutPage', () => {
     mockFetchDeliveryPointsByPostalCode.mockResolvedValue([]);
     mockSaveDeliveryMethodToOrder.mockReset();
     mockSaveDeliveryMethodToOrder.mockResolvedValue(undefined);
+    mockSavePaymentMethodToOrder.mockReset();
+    mockSavePaymentMethodToOrder.mockResolvedValue(undefined);
     mockFetchPaymentMethods.mockReset();
     mockFetchPaymentMethods.mockResolvedValue([]);
     mockSyncOrderForCheckout.mockReset();
@@ -267,6 +278,25 @@ describe('CheckoutPage', () => {
       (node) => node.props.source?.uri === 'https://example.com/card.png'
     );
     expect(paymentMethodImages.length).toBeGreaterThan(0);
+    const payButton = () =>
+      tree!.root.find(
+        (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Pay'
+      );
+    expect(payButton().props.disabled).toBe(true);
+
+    const cardButton = tree!.root.find(
+      (node) => typeof node.props.onPress === 'function' && node.props.accessibilityLabel === 'Select payment method Card'
+    );
+    await renderer.act(async () => {
+      await cardButton.props.onPress();
+    });
+
+    expect(payButton().props.disabled).toBe(false);
+    await renderer.act(async () => {
+      await payButton().props.onPress();
+    });
+
+    expect(mockSavePaymentMethodToOrder).toHaveBeenCalledWith('order-1', 'pm1');
     expect(textNodes.some((node) => node.props.children === 'Order summary')).toBe(true);
   });
 
