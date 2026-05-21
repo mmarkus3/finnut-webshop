@@ -214,6 +214,11 @@
     "bannerFreeOver": "Fri leverans för beställningar över {{over}}",
     "free": "Gratis"
   },
+  "paymentSuccess": {
+    "title": "Kiitos tilauksestanne",
+    "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian",
+    "homeButton": "Till startsidan"
+  },
   "discount": {
     "codeLabel": "Rabattkod",
     "codePlaceholder": "Ange rabattkod",

@@ -21,3 +21,9 @@ The system SHALL attempt to restore cart state from local storage when the cart 
 - **WHEN** no stored payload exists or payload is invalid/corrupted
 - **THEN** the cart provider falls back to an empty cart state without crashing
 
+### Requirement: Cart SHALL be cleared after payment success return
+The system SHALL clear local cart state when the payment success return page is reached.
+
+#### Scenario: Payment success clears cart
+- **WHEN** user opens `/payment/success`
+- **THEN** the cart is cleared using existing cart clearing behavior

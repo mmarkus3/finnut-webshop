@@ -214,6 +214,11 @@
     "bannerFreeOver": "Ilmainen toimitus yli {{over}} tilauksille",
     "free": "Ilmainen"
   },
+  "paymentSuccess": {
+    "title": "Kiitos tilauksestanne",
+    "body": "Tilauksenne on vastaanotettu ja käsitellään mahdollisimman pian",
+    "homeButton": "Palaa etusivulle"
+  },
   "discount": {
     "codeLabel": "Alennuskoodi",
     "codePlaceholder": "Syötä alennuskoodi",

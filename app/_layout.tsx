@@ -102,6 +102,7 @@ function RootStack() {
         <Stack.Screen name="search/index" />
         <Stack.Screen name="cart/index" />
         <Stack.Screen name="checkout/index" />
+        <Stack.Screen name="payment/success/index" />
         <Stack.Screen name="information/index" />
       </Stack>
       <SearchModal

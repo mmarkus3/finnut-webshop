@@ -24,3 +24,9 @@ The system SHALL keep the under-header delivery-threshold banner behavior intact
 - **WHEN** delivery pricing is available and shared layout is rendered
 - **THEN** the under-header delivery banner remains visible and bottom information link area is also visible without overlap
 
+### Requirement: Delivery-pricing fetch implementation SHALL use shared HTTP helper
+The system SHALL execute delivery-pricing API requests through a shared HTTP helper module rather than direct axios usage inside delivery-pricing hook.
+
+#### Scenario: Delivery-pricing hook delegates request to shared helper
+- **WHEN** app loads delivery pricing
+- **THEN** delivery-pricing hook uses shared helper to perform GET request and preserves existing endpoint behavior

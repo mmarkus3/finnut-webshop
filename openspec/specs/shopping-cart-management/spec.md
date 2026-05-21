@@ -53,6 +53,13 @@ The system SHALL create order when no active order id exists and update order wh
 - **WHEN** user proceeds to checkout with stored active order id
 - **THEN** system updates that backend order using latest cart payload
 
+### Requirement: Cart-to-checkout flow SHALL persist and reuse active order id
+The system SHALL persist the created order id and reuse it for continued shopping-to-checkout transitions until cleared.
+
+#### Scenario: Continued shopping keeps same order
+- **WHEN** user starts checkout, returns to shopping, then proceeds again
+- **THEN** the flow reuses the stored active order id for the in-progress order
+
 ### Requirement: Checkout continuation SHALL retain selected delivery point
 The system SHALL keep selected delivery point in checkout state for subsequent order continuation.
 
@@ -117,4 +124,3 @@ Cart and checkout summary calculations SHALL incorporate product-level fixed dis
 - **WHEN** cart contains products with fixed campaign discounts and products without discounts
 - **THEN** discounted subtotal and total are calculated using fixed discounted prices for matching products and original prices for others
 - **AND** summary display remains consistent with line-item displayed prices
-

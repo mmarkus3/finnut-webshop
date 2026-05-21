@@ -10,6 +10,13 @@ The system SHALL fetch payment methods from company-scoped payment-methods endpo
 - **WHEN** user navigates to payment-method checkout step
 - **THEN** system performs GET request to `/orders/company/${process.env.EXPO_PUBLIC_COMPANY}/paymentMethods` using `process.env.EXPO_PUBLIC_FIREBASE_API` base URL
 
+### Requirement: Payment-method fetch implementation SHALL use shared HTTP helper
+The system SHALL execute payment-method API requests through a shared HTTP helper module rather than direct axios usage inside payment-method hook.
+
+#### Scenario: Payment-method hook delegates request to shared helper
+- **WHEN** checkout payment step fetches payment methods
+- **THEN** payment-method hook uses shared helper to perform GET request and preserves existing endpoint behavior
+
 ### Requirement: Checkout payment step SHALL display payment methods with fetch states
 The system SHALL display payment methods list, include available payment method images, and handle loading, empty, and error states.
 

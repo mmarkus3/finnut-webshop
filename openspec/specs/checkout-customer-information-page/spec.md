@@ -49,3 +49,16 @@ The system SHALL enable navigation to payment-method step only when customer inf
 - **WHEN** customer fields are incomplete or delivery method is not selected
 - **THEN** payment-step navigation control is disabled and checkout remains on current step
 
+### Requirement: Customer information SHALL be persisted with delivery method selection
+The system SHALL use the current required checkout customer information as the customer payload when persisting delivery method selection.
+
+#### Scenario: Customer payload is sourced from checkout form
+- **WHEN** required customer fields are filled and user selects a delivery method
+- **THEN** the active order update includes the current first name, last name, email, phone number, street address, city, and zip code values
+
+### Requirement: Checkout entry SHALL support order resume by stored active order id
+The system SHALL allow checkout page to open in context of previously saved active order id.
+
+#### Scenario: Returning user resumes existing order
+- **WHEN** user re-enters checkout after navigating away and an active order id is stored
+- **THEN** checkout page continues with that same order context
