@@ -213,8 +213,8 @@ describe('CheckoutPage', () => {
       { id: 'dp1', name: 'Point A', addressLine: 'Street 1, 00100, City' },
     ]);
     mockFetchPaymentMethods.mockResolvedValue([
-      { id: 'pm1', name: 'Card' },
-      { id: 'pm2', name: 'MobilePay' },
+      { id: 'pm1', name: 'Card', img: 'https://example.com/card.png' },
+      { id: 'pm2', name: 'MobilePay', img: '' },
     ]);
 
     let tree: renderer.ReactTestRenderer | null = null;
@@ -263,6 +263,10 @@ describe('CheckoutPage', () => {
     expect(textNodes.some((node) => node.props.children === 'Payment methods')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'Card')).toBe(true);
     expect(textNodes.some((node) => node.props.children === 'MobilePay')).toBe(true);
+    const paymentMethodImages = tree!.root.findAll(
+      (node) => node.props.source?.uri === 'https://example.com/card.png'
+    );
+    expect(paymentMethodImages.length).toBeGreaterThan(0);
     expect(textNodes.some((node) => node.props.children === 'Order summary')).toBe(true);
   });
 

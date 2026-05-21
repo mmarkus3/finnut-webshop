@@ -11,7 +11,7 @@ import { fetchPaymentMethods, PaymentMethod } from '@/hooks/paymentMethods';
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
 
 const isDesktopWidth = (width: number): boolean => width >= DESKTOP_MIN_WIDTH;
 const getCheckoutSectionsLayoutClass = (isDesktop: boolean): string => (isDesktop ? 'flex-row items-start' : 'flex-col');
@@ -193,10 +193,18 @@ export function CheckoutPage() {
                     <Pressable
                       key={method.id}
                       onPress={() => setSelectedPaymentMethodId(method.id)}
-                      className={`rounded-lg border px-3 py-3 ${isSelected ? 'border-primary-600 bg-primary-50' : 'border-neutral-300'}`}
+                      className={`flex-row items-center gap-3 rounded-lg border px-3 py-3 ${isSelected ? 'border-primary-600 bg-primary-50' : 'border-neutral-300'}`}
                       accessibilityRole="button"
                       accessibilityLabel={t('checkout.paymentMethodOptionA11yLabel', { method: method.name })}
                     >
+                      {method.img ? (
+                        <Image
+                          source={{ uri: method.img }}
+                          resizeMode="contain"
+                          className="h-8 w-12"
+                          accessibilityIgnoresInvertColors
+                        />
+                      ) : null}
                       <Text className={`text-sm font-medium ${isSelected ? 'text-primary-700' : 'text-neutral-900'}`}>{method.name}</Text>
                     </Pressable>
                   );

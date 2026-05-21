@@ -1,11 +1,9 @@
 import { getJson, HttpRequester } from '@/hooks/httpFetch';
 
 interface RawPaymentMethod {
-  id?: string;
-  code?: string;
+  selected_value?: string;
   name?: string;
-  title?: string;
-  label?: string;
+  img?: string;
 }
 
 interface PaymentMethodsResponse {
@@ -16,12 +14,14 @@ interface PaymentMethodsResponse {
 interface PaymentMethod {
   id: string;
   name: string;
+  img: string;
 }
 
-const normalizePaymentMethod = (method: RawPaymentMethod, index: number): PaymentMethod => {
-  const id = method.id?.trim() || method.code?.trim() || `${method.name ?? method.title ?? 'payment'}-${index}`;
-  const name = method.name?.trim() || method.title?.trim() || method.label?.trim() || `Payment method ${index + 1}`;
-  return { id, name };
+const normalizePaymentMethod = (method: RawPaymentMethod): PaymentMethod => {
+  const id = method.selected_value?.trim() ?? '';
+  const name = method.name?.trim() ?? '';
+  const img = method.img?.trim() ?? '';
+  return { id, name, img };
 };
 
 const fetchPaymentMethods = async (
@@ -41,7 +41,7 @@ const fetchPaymentMethods = async (
         ? data.methods
         : [];
 
-  return methods.map((method, index) => normalizePaymentMethod(method, index));
+  return methods.map((method) => normalizePaymentMethod(method));
 };
 
 export { fetchPaymentMethods, type PaymentMethod };

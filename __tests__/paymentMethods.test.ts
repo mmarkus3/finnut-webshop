@@ -5,8 +5,8 @@ describe('payment methods helper', () => {
     const request = jest.fn().mockResolvedValue({
       data: {
         paymentMethods: [
-          { id: 'pm1', name: 'Card' },
-          { code: 'mobilepay', title: 'MobilePay' },
+          { selected_value: ' pm1 ', name: ' Card ', img: ' https://example.com/card.png ' },
+          { selected_value: ' mobilepay ', name: ' MobilePay ' },
         ],
       },
     });
@@ -18,8 +18,8 @@ describe('payment methods helper', () => {
       url: `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}/paymentMethods`,
     });
     expect(methods).toEqual([
-      { id: 'pm1', name: 'Card' },
-      { id: 'mobilepay', name: 'MobilePay' },
+      { id: 'pm1', name: 'Card', img: 'https://example.com/card.png' },
+      { id: 'mobilepay', name: 'MobilePay', img: '' },
     ]);
   });
 
