@@ -130,7 +130,7 @@ export function CheckoutPage() {
     try {
       setDeliveryMethodError(null);
       setIsSavingDeliveryMethod(true);
-      await saveDeliveryMethodToOrder(orderId, pointId);
+      await saveDeliveryMethodToOrder(orderId, pointId, customer);
       setSelectedDeliveryPointId(pointId);
     } catch {
       setDeliveryMethodError(t('checkout.deliveryMethodSaveError'));

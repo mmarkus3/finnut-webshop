@@ -65,8 +65,8 @@ jest.mock('expo-router', () => ({
 }));
 
 jest.mock('@/hooks/deliveryMethodPersistence', () => ({
-  saveDeliveryMethodToOrder: (orderId: string, deliveryMethodId: string) =>
-    mockSaveDeliveryMethodToOrder(orderId, deliveryMethodId),
+  saveDeliveryMethodToOrder: (orderId: string, deliveryMethodId: string, customer: unknown) =>
+    mockSaveDeliveryMethodToOrder(orderId, deliveryMethodId, customer),
 }));
 
 jest.mock('@/hooks/paymentMethodPersistence', () => ({
@@ -216,6 +216,15 @@ describe('CheckoutPage', () => {
       await pointButton.props.onPress();
     });
 
+    expect(mockSaveDeliveryMethodToOrder).toHaveBeenCalledWith('order-1', 'dp1', {
+      firstname: 'John',
+      lastname: 'Doe',
+      email: 'john@example.com',
+      phone: '+358401234567',
+      address_street: 'Main street 1',
+      address_city: 'Helsinki',
+      address_zip: '00100',
+    });
     expect(nextButton().props.disabled).toBe(false);
   });
 
