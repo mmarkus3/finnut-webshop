@@ -146,7 +146,7 @@ describe('CategoryProductGrid helpers', () => {
     expect(getAvailabilityStatusMeta(20).bgClassName).toBe('bg-green-100');
   });
 
-  it('uses fixed description container size in grid cards', () => {
+  it('uses truncated description text in grid cards', () => {
     const { CategoryProductGrid } = require('@/components/category/CategoryProductGrid');
     const categories: Category[] = [{ id: 'fruits', name: 'Fruits', description: '' }];
     const products: Product[] = [
@@ -160,9 +160,9 @@ describe('CategoryProductGrid helpers', () => {
       );
     });
 
-    const fixedDescriptionContainers = tree!.root.findAll(
-      (node) => typeof node.props.className === 'string' && node.props.className.includes('min-h-[60px]')
+    const truncatedDescriptionNodes = tree!.root.findAll(
+      (node) => node.type === 'Text' && node.props.numberOfLines === 3
     );
-    expect(fixedDescriptionContainers.length).toBeGreaterThan(0);
+    expect(truncatedDescriptionNodes.length).toBeGreaterThan(0);
   });
 });

@@ -31,7 +31,7 @@ jest.mock('react-i18next', () => ({
     t: (key: string, options?: Record<string, string | number>) => {
       if (key === 'home.noCategoryProducts') return 'No products found for categories yet.';
       if (key === 'home.categoryCarouselA11yLabel') return `Product carousel for ${options?.category ?? ''}`;
-      if (key === 'home.productCardA11yLabel') return `View product ${options?.product ?? ''}`;
+      if (key === 'category.productCardA11yLabel') return `Product card for ${options?.product ?? ''}`;
       if (key === 'home.showAllButton') return 'Show all';
       if (key === 'home.showAllA11yLabel') return `Show all products in ${options?.category ?? ''}`;
       if (key === 'cart.addButton') return 'Add to cart';
@@ -161,10 +161,10 @@ describe('HomeCategoryProductSections rendering', () => {
         tree!.root
           .findAll((node) => typeof node.props.accessibilityLabel === 'string')
           .map((node) => node.props.accessibilityLabel as string)
-          .filter((label) => label.startsWith('View product '))
+          .filter((label) => label.startsWith('Product card for '))
       )
     );
-    expect(cardLabels).toEqual(['View product Apple', 'View product Milk', 'View product Bread']);
+    expect(cardLabels).toEqual(['Product card for Apple', 'Product card for Milk', 'Product card for Bread']);
 
     const imageUris = tree!.root
       .findAll((node) => node.props.source !== undefined)
@@ -200,11 +200,6 @@ describe('HomeCategoryProductSections rendering', () => {
       (node) => node.type === 'Text' && node.props.numberOfLines === 3
     );
     expect(truncatedDescriptionNodes.length).toBeGreaterThan(0);
-
-    const fixedDescriptionContainers = tree!.root.findAll(
-      (node) => typeof node.props.className === 'string' && node.props.className.includes('min-h-[60px]')
-    );
-    expect(fixedDescriptionContainers.length).toBeGreaterThan(0);
 
     const carouselNodes = tree!.root.findAll(
       (node) =>
@@ -252,7 +247,7 @@ describe('HomeCategoryProductSections rendering', () => {
       (node) =>
         typeof node.props.onPress === 'function' &&
         typeof node.props.accessibilityLabel === 'string' &&
-        node.props.accessibilityLabel.startsWith('View product ')
+        node.props.accessibilityLabel.startsWith('Product card for ')
     );
 
     renderer.act(() => {
