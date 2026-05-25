@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import { showPreferences } from 'vanilla-cookieconsent';
 
 interface TermsSection {
   heading?: string;
@@ -28,6 +29,14 @@ export function InformationPage() {
             </View>
           ))}
         </View>
+      </View>
+      <View className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 mt-2">
+        <Text className="mt-3 text-xl font-semibold text-neutral-900 mb-2">{t('information.cookiesTitle')}</Text>
+        <Pressable onPress={() => {
+          showPreferences();
+        }} accessibilityRole="button" accessibilityLabel={t('information.openCookiePreference')}>
+          <Text className="text-sm font-mediu">{t('information.openCookiePreference')}</Text>
+        </Pressable>
       </View>
     </ScrollView>
   );

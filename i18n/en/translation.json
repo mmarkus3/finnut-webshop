@@ -208,7 +208,9 @@
     "instagramLabel": "Instagram",
     "instagramA11yLabel": "Open Instagram page",
     "facebookLabel": "Facebook",
-    "facebookA11yLabel": "Open Facebook page"
+    "facebookA11yLabel": "Open Facebook page",
+    "cookiesTitle": "Cookie preferences",
+    "openCookiePreference": "Manage cookie preferences"
   },
   "delivery": {
     "bannerFreeOver": "Free delivery for orders over {{over}}",

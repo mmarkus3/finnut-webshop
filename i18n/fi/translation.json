@@ -208,7 +208,9 @@
     "instagramLabel": "Instagram",
     "instagramA11yLabel": "Avaa Instagram-sivu",
     "facebookLabel": "Facebook",
-    "facebookA11yLabel": "Avaa Facebook-sivu"
+    "facebookA11yLabel": "Avaa Facebook-sivu",
+    "cookiesTitle": "Evästeasetukset",
+    "openCookiePreference": "Avaa evästeasetukset"
   },
   "delivery": {
     "bannerFreeOver": "Ilmainen toimitus yli {{over}} tilauksille",

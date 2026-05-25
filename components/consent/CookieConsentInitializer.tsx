@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import * as CookieConsent from 'vanilla-cookieconsent';
+import CookieConsent, { run } from 'vanilla-cookieconsent';
 
 type ConsentLanguage = 'fi' | 'en' | 'sv';
 
@@ -75,32 +75,32 @@ const translations: Record<ConsentLanguage, CookieConsent.Translation> = {
   },
   sv: {
     consentModal: {
-      title: 'Vi använder kakor',
+      title: 'Vi använder cookies',
       description:
-        'Vi använder nödvändiga kakor för webbshopens funktion och valfria analyskakor för att utveckla tjänsten.',
+        'Vi använder nödvändiga cookies för webbshopens funktion och valfria analyscookies för att utveckla tjänsten.',
       acceptAllBtn: 'Godkänn alla',
       acceptNecessaryBtn: 'Godkänn endast nödvändiga',
       showPreferencesBtn: 'Hantera inställningar',
     },
     preferencesModal: {
-      title: 'Inställningar för kakor',
+      title: 'Inställningar för cookies',
       acceptAllBtn: 'Godkänn alla',
       acceptNecessaryBtn: 'Godkänn endast nödvändiga',
       savePreferencesBtn: 'Spara val',
       closeIconLabel: 'Stäng',
       sections: [
         {
-          title: 'Användning av kakor',
-          description: 'Välj vilka kakor vi får använda. Nödvändiga kakor krävs för att webbshoppen ska fungera.',
+          title: 'Användning av cookies',
+          description: 'Välj vilka cookies vi får använda. Nödvändiga cookies krävs för att webbshoppen ska fungera.',
         },
         {
-          title: 'Nödvändiga kakor',
-          description: 'Dessa kakor krävs för webbshopens grundläggande funktioner och kan inte inaktiveras.',
+          title: 'Nödvändiga cookies',
+          description: 'Dessa cookies krävs för webbshopens grundläggande funktioner och kan inte inaktiveras.',
           linkedCategory: 'necessary',
         },
         {
-          title: 'Analyskakor',
-          description: 'Dessa kakor hjälper oss att förstå hur webbshoppen används och att utveckla tjänsten.',
+          title: 'Analyscookies',
+          description: 'Dessa cookies hjälper oss att förstå hur webbshoppen används och att utveckla tjänsten.',
           linkedCategory: 'analytics',
         },
       ],
@@ -138,7 +138,7 @@ export function CookieConsentInitializer() {
     if (hasInitialized.current || typeof document === 'undefined') return;
 
     hasInitialized.current = true;
-    void CookieConsent.run(createCookieConsentConfig(i18n.language));
+    void run(createCookieConsentConfig(i18n.language));
   }, [i18n.language]);
 
   return null;
