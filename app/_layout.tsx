@@ -1,3 +1,4 @@
+import { CookieConsentInitializer } from '@/components/consent/CookieConsentInitializer';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { SearchModal } from '@/components/search/SearchModal';
 import { CartProvider, useCart } from '@/hooks/cart';
@@ -121,6 +122,7 @@ export default function RootLayout() {
   return (
     <DeliveryPricingProvider>
       <CartProvider>
+        <CookieConsentInitializer />
         <Head>
           <title>{t('common.title')}</title>
           <meta name="description" content={t('common.description')} />
