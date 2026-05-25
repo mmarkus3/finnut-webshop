@@ -3,6 +3,7 @@ export interface Order {
   status: 'draft' | 'pending' | 'placed' | 'sent';
   products: OrderProduct[];
   customer?: OrderCustomer;
+  amount?: number;
   deliveryMethod?: string;
   discount?: string;
   returnUrl?: string;
@@ -13,6 +14,7 @@ export interface OrderProduct {
   id: string;
   name: string;
   amount: number;
+  finalPrice?: number;
 }
 
 export interface OrderCustomer {

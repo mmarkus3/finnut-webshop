@@ -239,6 +239,42 @@
     },
     "homeButton": "Palaa etusivulle"
   },
+  "orderDetails": {
+    "title": "Tilauksen tiedot",
+    "orderIdLabel": "Tilausnumero: {{orderId}}",
+    "loading": "Ladataan tilausta...",
+    "missingTitle": "Tilausta ei voida näyttää",
+    "missingBody": "Tilauksen tunniste puuttuu linkistä.",
+    "errorTitle": "Tilauksen lataaminen epäonnistui",
+    "errorBody": "Tilauksen tietoja ei voitu hakea. Tarkista linkki tai yritä myöhemmin uudelleen.",
+    "statusTitle": "Tilauksen tila",
+    "unknownStatus": "Tilauksen nykyistä tilaa ei tunnistettu.",
+    "statusStepA11yLabel": "{{status}}, {{state}}",
+    "status": {
+      "draft": "Luonnos",
+      "pending": "Odottaa käsittelyä",
+      "placed": "Vastaanotettu",
+      "sent": "Lähetetty"
+    },
+    "statusState": {
+      "complete": "valmis",
+      "current": "nykyinen",
+      "future": "tuleva",
+      "unknown": "ei vahvistettu"
+    },
+    "productsTitle": "Tilatut tuotteet",
+    "amountLabel": "Määrä: {{amount}}",
+    "priceUnavailable": "Hinta ei saatavilla",
+    "summaryTitle": "Tilausyhteenveto",
+    "totalLabel": "Yhteensä",
+    "totalUnavailable": "Ei saatavilla",
+    "customerTitle": "Asiakastiedot",
+    "customerNameLabel": "Nimi",
+    "customerEmailLabel": "Sähköposti",
+    "customerPhoneLabel": "Puhelinnumero",
+    "customerAddressLabel": "Osoite",
+    "customerUnavailable": "Asiakastietoja ei ole saatavilla."
+  },
   "discount": {
     "codeLabel": "Alennuskoodi",
     "codePlaceholder": "Syötä alennuskoodi",

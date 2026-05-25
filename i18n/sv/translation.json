@@ -239,6 +239,42 @@
     },
     "homeButton": "Till startsidan"
   },
+  "orderDetails": {
+    "title": "Orderinformation",
+    "orderIdLabel": "Order-ID: {{orderId}}",
+    "loading": "Laddar order...",
+    "missingTitle": "Ordern kan inte visas",
+    "missingBody": "Order-ID saknas i länken.",
+    "errorTitle": "Ordern kunde inte laddas",
+    "errorBody": "Orderinformationen kunde inte hämtas. Kontrollera länken eller försök igen senare.",
+    "statusTitle": "Orderstatus",
+    "unknownStatus": "Orderns nuvarande status känns inte igen.",
+    "statusStepA11yLabel": "{{status}}, {{state}}",
+    "status": {
+      "draft": "Utkast",
+      "pending": "Väntar",
+      "placed": "Mottagen",
+      "sent": "Skickad"
+    },
+    "statusState": {
+      "complete": "klar",
+      "current": "nuvarande",
+      "future": "kommande",
+      "unknown": "inte bekräftad"
+    },
+    "productsTitle": "Beställda produkter",
+    "amountLabel": "Antal: {{amount}}",
+    "priceUnavailable": "Pris ej tillgängligt",
+    "summaryTitle": "Ordersammanfattning",
+    "totalLabel": "Totalt",
+    "totalUnavailable": "Ej tillgängligt",
+    "customerTitle": "Kundinformation",
+    "customerNameLabel": "Namn",
+    "customerEmailLabel": "E-post",
+    "customerPhoneLabel": "Telefonnummer",
+    "customerAddressLabel": "Adress",
+    "customerUnavailable": "Kundinformation är inte tillgänglig."
+  },
   "discount": {
     "codeLabel": "Rabattkod",
     "codePlaceholder": "Ange rabattkod",

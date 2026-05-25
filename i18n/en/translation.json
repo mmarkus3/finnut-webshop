@@ -239,6 +239,42 @@
     },
     "homeButton": "Back to home"
   },
+  "orderDetails": {
+    "title": "Order details",
+    "orderIdLabel": "Order ID: {{orderId}}",
+    "loading": "Loading order...",
+    "missingTitle": "Order cannot be shown",
+    "missingBody": "The order ID is missing from this link.",
+    "errorTitle": "Could not load order",
+    "errorBody": "The order details could not be retrieved. Check the link or try again later.",
+    "statusTitle": "Order status",
+    "unknownStatus": "The current order status is not recognized.",
+    "statusStepA11yLabel": "{{status}}, {{state}}",
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "placed": "Received",
+      "sent": "Sent"
+    },
+    "statusState": {
+      "complete": "completed",
+      "current": "current",
+      "future": "upcoming",
+      "unknown": "not confirmed"
+    },
+    "productsTitle": "Ordered products",
+    "amountLabel": "Amount: {{amount}}",
+    "priceUnavailable": "Price unavailable",
+    "summaryTitle": "Order summary",
+    "totalLabel": "Total",
+    "totalUnavailable": "Unavailable",
+    "customerTitle": "Customer information",
+    "customerNameLabel": "Name",
+    "customerEmailLabel": "Email",
+    "customerPhoneLabel": "Phone number",
+    "customerAddressLabel": "Address",
+    "customerUnavailable": "Customer information is unavailable."
+  },
   "discount": {
     "codeLabel": "Discount code",
     "codePlaceholder": "Enter discount code",
