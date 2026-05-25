@@ -1,3 +1,4 @@
+import { clearActiveOrderId } from '@/hooks/activeOrder';
 import { useCart } from '@/hooks/cart';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
@@ -45,6 +46,8 @@ export function PaymentSuccessPage() {
   useEffect(() => {
     if (returnCode === '0') {
       clearCart();
+    } else if (returnCode === '1') {
+      clearActiveOrderId();
     }
   }, [clearCart, returnCode]);
 
