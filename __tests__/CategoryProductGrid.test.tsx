@@ -55,14 +55,16 @@ jest.mock('react-i18next', () => ({
 
 describe('CategoryProductGrid helpers', () => {
   const categories: Category[] = [
-    { id: 'fruits', name: 'Fruits', description: '' },
-    { id: 'dairy', name: 'Dairy', description: '' },
+    { id: 'fruits', name_en: 'Fruits', name_fi: 'Hedelmät', name_sv: 'Fruits', description: '' },
+    { id: 'dairy', name_en: 'Dairy', name_fi: 'Maitotuotteet', name_sv: 'Mjölk products', description: '' },
   ];
 
   const products: Product[] = [
     {
       id: 'p-apple',
-      name: 'Apple',
+      name_fi: 'Omena',
+      name_en: 'Apple',
+      name_sv: 'Äpple',
       amount: 2,
       ean: '1',
       images: ['https://img/apple.jpg'],
@@ -70,17 +72,18 @@ describe('CategoryProductGrid helpers', () => {
       retailPrice: 1.99,
       discountPrice: 1.49,
       lowestRetailPriceLast30Days: 1.79,
+      unitPrice: 2,
     },
-    { name: 'Milk', amount: 5, ean: '2', images: [], category: 'dairy', unitPrice: 2.5 },
+    { name_en: 'Milk', name_sv: 'Mjölk', name_fi: 'Maito', amount: 5, ean: '2', images: [], category: 'dairy', unitPrice: 2.5, retailPrice: 2.5 },
   ];
 
   it('resolves category title and fallback', () => {
-    expect(getCategoryPageTitle(categories, 'fruits')).toBe('Fruits');
-    expect(getCategoryPageTitle(categories, 'unknown')).toBe('unknown');
+    expect(getCategoryPageTitle(categories, 'fruits', 'en')).toBe('Fruits');
+    expect(getCategoryPageTitle(categories, 'unknown', 'fi')).toBe('unknown');
   });
 
   it('filters products by category', () => {
-    expect(filterProductsByCategory(products, 'fruits').map((product) => product.name)).toEqual(['Apple']);
+    expect(filterProductsByCategory(products, 'fruits').map((product) => product.name_en)).toEqual(['Apple']);
   });
 
   it('computes responsive column count', () => {
@@ -90,12 +93,16 @@ describe('CategoryProductGrid helpers', () => {
 
   it('resolves localized description fallback', () => {
     const product: Product = {
-      name: 'Yogurt',
+      name_en: 'Yogurt',
+      name_fi: 'Jugurtti',
+      name_sv: 'Yogurt',
       amount: 1,
       ean: '3',
       images: [],
       description_en: 'English desc',
       description_fi: 'Finnish desc',
+      retailPrice: 3,
+      unitPrice: 5,
     };
 
     expect(getProductDescription(product, 'en')).toBe('English desc');
@@ -132,7 +139,7 @@ describe('CategoryProductGrid helpers', () => {
   it('resolves product identifiers for navigation', () => {
     expect(getProductIdentifier(products[0])).toBe('p-apple');
     expect(getProductIdentifier(products[1])).toBe('2');
-    expect(resolveProductByIdentifier(products, 'p-apple')?.name).toBe('Apple');
+    expect(resolveProductByIdentifier(products, 'p-apple')?.name_en).toBe('Apple');
     expect(resolveProductByIdentifier(products, 'missing')).toBeNull();
   });
 

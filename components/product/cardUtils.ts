@@ -14,6 +14,22 @@ const getFirstUsableProductImage = (product: Product): string | null => {
   return getUsableProductImages(product)[0] ?? null;
 };
 
+export const getItemName = (item?: { name_fi: string; name_sv: string; name_en: string }, language?: string): string | null => {
+  if (item == null) {
+    return null;
+  }
+
+  if (language === 'en') {
+    return item.name_en ?? item.name_fi ?? item.name_sv ?? '';
+  }
+
+  if (language === 'sv') {
+    return item.name_sv ?? item.name_fi ?? item.name_en ?? '';
+  }
+
+  return item.name_fi ?? item.name_en ?? item.name_sv ?? '';
+};
+
 const getProductDescription = (product: Product, language: string): string => {
   if (language === 'en') {
     return product.description_en ?? product.description_fi ?? product.description_sv ?? '';
@@ -64,11 +80,8 @@ const resolveProductByIdentifier = (products: Product[], productId: string): Pro
 };
 
 export {
-  getUsableProductImages,
   getFirstUsableProductImage,
-  getProductDescription,
-  getProductPrice,
-  getProductPriceDisplay,
-  getProductIdentifier,
-  resolveProductByIdentifier,
+  getProductDescription, getProductIdentifier, getProductPrice,
+  getProductPriceDisplay, getUsableProductImages, resolveProductByIdentifier
 };
+

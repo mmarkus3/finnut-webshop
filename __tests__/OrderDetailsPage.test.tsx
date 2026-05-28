@@ -96,8 +96,8 @@ describe('OrderDetailsPage', () => {
       status: 'placed',
       country: 'FI',
       products: [
-        { id: 'one', name: 'Snack one', amount: 2, finalPrice: 3.25 },
-        { id: 'two', name: 'Snack two', amount: 1, finalPrice: 1.5 },
+        { id: 'one', name: 'Snack one', amount: 2, finalPrice: 325 },
+        { id: 'two', name: 'Snack two', amount: 1, finalPrice: 150 },
       ],
       customer: {
         firstname: 'Aino',

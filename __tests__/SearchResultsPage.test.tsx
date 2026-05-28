@@ -26,8 +26,8 @@ jest.mock('react-i18next', () => ({
 
 describe('SearchResultsPage', () => {
   const products: Product[] = [
-    { id: 'p1', name: 'Apple', amount: 1, ean: '1', images: [], category: 'fruit' },
-    { id: 'p2', name: 'Milk', amount: 1, ean: '2', images: [], category: 'dairy' },
+    { id: 'p1', name_en: 'Apple', amount: 1, ean: '1', images: [], category: 'fruit' },
+    { id: 'p2', name_en: 'Milk', amount: 1, ean: '2', images: [], category: 'dairy' },
   ];
 
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe('SearchResultsPage', () => {
     expect(mockedCategoryProductGrid).toHaveBeenCalledTimes(1);
     const props = mockedCategoryProductGrid.mock.calls[0][0] as { products: Product[] };
     expect(props.products).toHaveLength(1);
-    expect(props.products[0].name).toBe('Apple');
+    expect(props.products[0].name_en).toBe('Apple');
   });
 
   it('renders localized empty state when query has no matches', () => {

@@ -2,6 +2,7 @@ import { Category } from '@/types/category';
 import { Link } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
+import { getItemName } from '../product/cardUtils';
 
 interface HomeCategoryLinksRowProps {
   categories: Category[];
@@ -10,7 +11,7 @@ interface HomeCategoryLinksRowProps {
 const getCategoryTranslationKey = (category: Category) => `categories.${category.id}.name`;
 
 export function HomeCategoryLinksRow({ categories }: HomeCategoryLinksRowProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   if (categories.length === 0) {
     return null;
@@ -32,12 +33,12 @@ export function HomeCategoryLinksRow({ categories }: HomeCategoryLinksRowProps) 
             }}
             accessibilityRole="link"
             accessibilityLabel={t('home.categoryLinkA11yLabel', {
-              category: t(getCategoryTranslationKey(category), { defaultValue: category.name }),
+              category: t(getCategoryTranslationKey(category), { defaultValue: getItemName(category, i18n.language) }),
             })}
             className="px-4 py-2"
           >
             <Text className="text-sm font-medium text-primary-600 bg-gray-100 p-6 rounded">
-              {t(getCategoryTranslationKey(category), { defaultValue: category.name })}
+              {t(getCategoryTranslationKey(category), { defaultValue: getItemName(category, i18n.language) })}
             </Text>
           </Link>
         ))}

@@ -1,19 +1,15 @@
 import { themeColors } from '@/constants/colors';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
-import { useCart } from '@/hooks/cart';
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
-import { Asset } from 'expo-asset';
-import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Text, useWindowDimensions, View } from 'react-native';
 import { ProductCard } from '../product/ProductCard';
+import { getItemName } from '../product/cardUtils';
 
-const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
-
-const getCategoryPageTitle = (categories: Category[], categoryId: string): string => {
-  return categories.find((category) => category.id === categoryId)?.name ?? categoryId;
+const getCategoryPageTitle = (categories: Category[], categoryId: string, language: string): string => {
+  return getItemName(categories.find((category) => category.id === categoryId), language) ?? categoryId;
 };
 
 const filterProductsByCategory = (products: Product[], categoryId: string): Product[] => {
@@ -33,12 +29,10 @@ interface CategoryProductGridProps {
 
 export function CategoryProductGrid({ categories, categoryId, products, isLoading }: CategoryProductGridProps) {
   const { t, i18n } = useTranslation();
-  const router = useRouter();
-  const { addItem, canAddItem } = useCart();
   const { width } = useWindowDimensions();
   const numColumns = getCategoryGridColumns(width);
 
-  const categoryTitle = useMemo(() => getCategoryPageTitle(categories, categoryId), [categories, categoryId]);
+  const categoryTitle = useMemo(() => getCategoryPageTitle(categories, categoryId, i18n.language), [categories, categoryId, i18n.language]);
   const filteredProducts = useMemo(
     () => filterProductsByCategory(products, categoryId),
     [categoryId, products]

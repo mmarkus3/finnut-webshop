@@ -1,4 +1,5 @@
 import {
+  getItemName,
   getProductIdentifier,
   getProductPrice,
 } from '@/components/product/cardUtils';
@@ -121,9 +122,9 @@ export function SearchModal({ isVisible, onClose, products, isLoadingProducts }:
                       onPress={() => openProduct(item)}
                       className="mt-2 rounded-lg border border-neutral-200 p-3"
                       accessibilityRole="button"
-                      accessibilityLabel={t('search.productResultA11yLabel', { product: item.name })}
+                      accessibilityLabel={t('search.productResultA11yLabel', { product: getItemName(item, i18n.language) })}
                     >
-                      <Text className="text-sm font-semibold text-neutral-900">{item.name}</Text>
+                      <Text className="text-sm font-semibold text-neutral-900">{getItemName(item, i18n.language)}</Text>
                       <Text className="text-xs text-neutral-600">
                         {t('search.priceLabel', {
                           price: price !== null ? formatPriceWithCurrency(price, i18n.language) : t('category.priceUnavailable'),

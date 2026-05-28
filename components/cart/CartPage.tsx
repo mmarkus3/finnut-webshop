@@ -1,4 +1,4 @@
-import { getFirstUsableProductImage, getProductIdentifier } from '@/components/product/cardUtils';
+import { getFirstUsableProductImage, getItemName, getProductIdentifier } from '@/components/product/cardUtils';
 import { formatPriceWithCurrency } from '@/components/product/priceFormatting';
 import { DESKTOP_MIN_WIDTH } from '@/constants/layout';
 import { clearActiveOrderId, getActiveOrderId, saveActiveOrderId } from '@/hooks/activeOrder';
@@ -50,11 +50,10 @@ export function CartPage() {
 
   const proceedToCheckout = async () => {
     const activeOrderId = getActiveOrderId();
-    // TODO: clearActiveOrderId should be called when order is completed or canceled in checkout flow.
     try {
       setCheckoutError(null);
       setIsCreatingOrder(true);
-      const order = await syncOrderForCheckout(items, activeOrderId, undefined, activeDiscountCode ?? undefined);
+      const order = await syncOrderForCheckout(items, activeOrderId, undefined, activeDiscountCode ?? undefined, i18n.language);
       if (!order.id) {
         throw new Error('Missing order id from backend response');
       }
@@ -110,11 +109,11 @@ export function CartPage() {
                       style={{ resizeMode: 'contain' }}
                       className="h-16 w-16 rounded-md bg-neutral-100"
                       accessibilityRole="image"
-                      accessibilityLabel={t('cart.imageA11yLabel', { product: item.product.name })}
+                      accessibilityLabel={t('cart.imageA11yLabel', { product: getItemName(item.product, i18n.language) })}
                     />
 
                     <View className="flex-1">
-                      <Text className="text-base font-semibold text-neutral-900" ellipsizeMode="tail">{item.product.name}</Text>
+                      <Text className="text-base font-semibold text-neutral-900" ellipsizeMode="tail">{getItemName(item.product, i18n.language)}</Text>
                       {hasActiveDiscount ? (
                         <View className="mt-1">
                           <Text className="text-sm font-semibold text-red-600">
@@ -139,7 +138,7 @@ export function CartPage() {
                       onPress={() => decrementItem(productId)}
                       className="rounded-md border border-neutral-300 px-3 py-1"
                       accessibilityRole="button"
-                      accessibilityLabel={t('cart.decreaseA11yLabel', { product: item.product.name })}
+                      accessibilityLabel={t('cart.decreaseA11yLabel', { product: getItemName(item.product, i18n.language) })}
                     >
                       <Text className="text-base text-neutral-900">-</Text>
                     </Pressable>
@@ -149,7 +148,7 @@ export function CartPage() {
                       disabled={!canIncrement}
                       className={`rounded-md px-3 py-1 ${canIncrement ? 'border border-neutral-300' : 'border border-neutral-200 bg-neutral-100'}`}
                       accessibilityRole="button"
-                      accessibilityLabel={t('cart.increaseA11yLabel', { product: item.product.name })}
+                      accessibilityLabel={t('cart.increaseA11yLabel', { product: getItemName(item.product, i18n.language) })}
                     >
                       <Text className={`text-base ${canIncrement ? 'text-neutral-900' : 'text-neutral-400'}`}>+</Text>
                     </Pressable>
@@ -157,7 +156,7 @@ export function CartPage() {
                       onPress={() => removeItem(productId)}
                       className="ml-2"
                       accessibilityRole="button"
-                      accessibilityLabel={t('cart.removeA11yLabel', { product: item.product.name })}
+                      accessibilityLabel={t('cart.removeA11yLabel', { product: getItemName(item.product, i18n.language) })}
                     >
                       <FontAwesome name="trash-o" size={24}></FontAwesome>
                     </Pressable>

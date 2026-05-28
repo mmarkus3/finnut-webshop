@@ -5,7 +5,7 @@ describe('productSearch helpers', () => {
   const products: Product[] = [
     {
       id: 'apple-1',
-      name: 'Green Apple',
+      name_fi: 'Green Apple',
       amount: 10,
       ean: '111',
       images: [],
@@ -14,7 +14,7 @@ describe('productSearch helpers', () => {
     },
     {
       id: 'milk-1',
-      name: 'Whole Milk',
+      name_fi: 'Whole Milk',
       amount: 4,
       ean: '222',
       images: [],

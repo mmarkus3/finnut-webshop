@@ -13,6 +13,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Image, Pressable, ScrollView, Text, TextInput, useWindowDimensions, View } from 'react-native';
+import { getItemName } from '../product/cardUtils';
 
 const isDesktopWidth = (width: number): boolean => width >= DESKTOP_MIN_WIDTH;
 const getCheckoutSectionsLayoutClass = (isDesktop: boolean): string => (isDesktop ? 'flex-row items-start' : 'flex-col');
@@ -156,7 +157,7 @@ export function CheckoutPage() {
 
     const nextDiscount = applied ? discountCodeInput.trim() : undefined;
     try {
-      await syncOrderForCheckout(items, orderId, undefined, nextDiscount);
+      await syncOrderForCheckout(items, orderId, undefined, nextDiscount, i18n.language);
     } catch {
       // Keep UI non-blocking: lookup result feedback is handled by hook error state.
     }
@@ -168,7 +169,7 @@ export function CheckoutPage() {
       return;
     }
     try {
-      await syncOrderForCheckout(items, orderId, undefined, undefined);
+      await syncOrderForCheckout(items, orderId, undefined, undefined, i18n.language);
     } catch {
       // Keep UI non-blocking for clear path as well.
     }
@@ -295,7 +296,7 @@ export function CheckoutPage() {
               const linePricing = getDiscountLinePricing(item, discountPercentagesByProduct);
               return (
                 <View key={`${item.product.id ?? item.product.ean}-${index}`} className="flex-row items-center justify-between">
-                  <Text className="text-sm text-neutral-800">{item.product.name} x {item.quantity}</Text>
+                  <Text className="text-sm text-neutral-800">{getItemName(item.product, i18n.language)} x {item.quantity}</Text>
                   <View className="items-end">
                     <Text className={`text-sm ${hasActiveDiscount ? 'text-red-600' : 'text-neutral-700'}`}>
                       {linePricing.lineDiscounted !== null ? formatPriceWithCurrency(linePricing.lineDiscounted, i18n.language) : t('category.priceUnavailable')}

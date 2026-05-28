@@ -1,8 +1,7 @@
-import { CartPage } from '@/components/cart/CartPage';
+import { CartPage, isDesktopWidth } from '@/components/cart/CartPage';
 import React from 'react';
-import renderer from 'react-test-renderer';
 import { Image } from 'react-native';
-import { isDesktopWidth } from '@/components/cart/CartPage';
+import renderer from 'react-test-renderer';
 
 jest.mock('@expo/vector-icons/FontAwesome', () => 'FontAwesome');
 
@@ -139,7 +138,7 @@ describe('CartPage', () => {
 
   it('renders line items and total', () => {
     mockCart.items = [
-      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 2 },
+      { product: { id: 'p1', name_en: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 2 },
     ];
     mockCart.totalPrice = 3;
     mockCart.vatAmount = 0.77;
@@ -167,7 +166,7 @@ describe('CartPage', () => {
 
   it('uses fallback image when product has no usable image', () => {
     mockCart.items = [
-      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: ['   '], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
+      { product: { id: 'p1', name_en: 'Apple', amount: 3, ean: '111', images: ['   '], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
     ];
 
     let tree: renderer.ReactTestRenderer | null = null;
@@ -186,7 +185,7 @@ describe('CartPage', () => {
   it('renders SEK currency when locale is Swedish', () => {
     mockI18n.language = 'sv';
     mockCart.items = [
-      { product: { id: 'p1', name: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
+      { product: { id: 'p1', name_en: 'Apple', amount: 3, ean: '111', images: [], retailPrice: 1.5, tax: 0.255 }, quantity: 1 },
     ];
     mockCart.totalPrice = 120;
     mockCart.vatAmount = 0.38;

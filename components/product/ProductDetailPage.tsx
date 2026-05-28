@@ -2,6 +2,7 @@ import {
   getAvailabilityStatusMeta,
 } from '@/components/product/availabilityStatus';
 import {
+  getItemName,
   getProductDescription,
   getProductPriceDisplay,
   getUsableProductImages,
@@ -222,7 +223,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
                     style={{ resizeMode: 'contain' }}
                     className={isDesktop ? 'h-[520px] w-full rounded-xl bg-neutral-100' : 'h-80 w-full rounded-xl bg-neutral-100'}
                     accessibilityRole="image"
-                    accessibilityLabel={t('product.imageA11yLabel', { product: product.name })}
+                    accessibilityLabel={t('product.imageA11yLabel', { product: getItemName(product, i18n.language) })}
                   />
                 </View>
               ))}
@@ -242,7 +243,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
         </View>
 
         <View className={isDesktop ? 'w-1/2 gap-2' : 'w-full gap-2'}>
-          <Text className="text-2xl font-semibold text-neutral-900">{product.name}</Text>
+          <Text className="text-2xl font-semibold text-neutral-900">{getItemName(product, i18n.language)}</Text>
           <View>
             {priceDisplay.hasDiscount && priceDisplay.discountPrice !== null ? (
               <>
@@ -282,7 +283,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
               disabled={!canDecreaseQuantity}
               className={`rounded-md px-3 py-1 ${canDecreaseQuantity ? 'border border-neutral-300' : 'border border-neutral-200 bg-neutral-100'}`}
               accessibilityRole="button"
-              accessibilityLabel={t('product.decreaseQuantityA11yLabel', { product: product.name })}
+              accessibilityLabel={t('product.decreaseQuantityA11yLabel', { product: getItemName(product, i18n.language) })}
             >
               <Text className={`${canDecreaseQuantity ? 'text-neutral-900' : 'text-neutral-400'}`}>-</Text>
             </Pressable>
@@ -292,7 +293,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
               disabled={!canIncreaseQuantity}
               className={`rounded-md px-3 py-1 ${canIncreaseQuantity ? 'border border-neutral-300' : 'border border-neutral-200 bg-neutral-100'}`}
               accessibilityRole="button"
-              accessibilityLabel={t('product.increaseQuantityA11yLabel', { product: product.name })}
+              accessibilityLabel={t('product.increaseQuantityA11yLabel', { product: getItemName(product, i18n.language) })}
             >
               <Text className={`${canIncreaseQuantity ? 'text-neutral-900' : 'text-neutral-400'}`}>+</Text>
             </Pressable>
@@ -303,7 +304,7 @@ export function ProductDetailPage({ productId, products, isLoading }: ProductDet
             disabled={!canAdd || maxAddableQuantity <= 0}
             className={`mt-3 w-52 items-center rounded-lg px-3 py-2 ${canAdd && maxAddableQuantity > 0 ? 'bg-primary-600' : 'bg-neutral-300'}`}
             accessibilityRole="button"
-            accessibilityLabel={t('cart.addA11yLabel', { product: product.name })}
+            accessibilityLabel={t('cart.addA11yLabel', { product: getItemName(product, i18n.language) })}
           >
             <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
           </Pressable>

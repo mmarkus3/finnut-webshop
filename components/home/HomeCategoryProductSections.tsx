@@ -1,10 +1,10 @@
 import { Category } from '@/types/category';
 import { Product } from '@/types/product';
-import { Asset } from 'expo-asset';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { ProductCard } from '../product/ProductCard';
+import { getItemName } from '../product/cardUtils';
 
 interface HomeCategoryProductSectionsProps {
   categories: Category[];
@@ -15,8 +15,6 @@ interface CategoryProductSection {
   category: Category;
   products: Product[];
 }
-
-const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
 
 const getCategoryTranslationKey = (categoryId: string) => `categories.${categoryId}.name`;
 
@@ -42,7 +40,7 @@ const groupProductsByCategory = (categories: Category[], products: Product[]): C
 };
 
 export function HomeCategoryProductSections({ categories, products }: HomeCategoryProductSectionsProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const sections = groupProductsByCategory(categories, products);
 
@@ -60,7 +58,7 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
         <View key={section.category.id} className="gap-3 mt-4">
           <View className="flex-row items-center justify-between">
             <Text className="text-lg font-semibold text-neutral-900">
-              {t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name })}
+              {t(getCategoryTranslationKey(section.category.id), { defaultValue: getItemName(section.category, i18n.language) })}
             </Text>
             <Pressable
               onPress={() =>
@@ -71,7 +69,7 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
               }
               accessibilityRole="button"
               accessibilityLabel={t('home.showAllA11yLabel', {
-                category: t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name }),
+                category: t(getCategoryTranslationKey(section.category.id), { defaultValue: getItemName(section.category, i18n.language) }),
               })}
             >
               <Text className="text-sm font-medium text-primary-700">{t('home.showAllButton')}</Text>
@@ -85,11 +83,11 @@ export function HomeCategoryProductSections({ categories, products }: HomeCatego
             showsHorizontalScrollIndicator={true}
             accessibilityRole="adjustable"
             accessibilityLabel={t('home.categoryCarouselA11yLabel', {
-              category: t(getCategoryTranslationKey(section.category.id), { defaultValue: section.category.name }),
+              category: t(getCategoryTranslationKey(section.category.id), { defaultValue: getItemName(section.category, i18n.language) }),
             })}
           >
             {section.products.map((product, index) => (
-              <ProductCard key={`${section.category.id}-${product.id ?? product.name}-${index}`} item={product} width={'w-64'} />
+              <ProductCard key={`${section.category.id}-${product.id}-${index}`} item={product} width={'w-64'} />
             ))}
           </ScrollView>
         </View>

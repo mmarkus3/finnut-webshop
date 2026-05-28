@@ -1,15 +1,15 @@
-import { buildCheckoutOrderPayload, createOrderForCheckout, syncOrderForCheckout } from '@/hooks/checkoutOrder';
+import { buildCheckoutOrderPayload, syncOrderForCheckout } from '@/hooks/checkoutOrder';
 import { CartItem } from '@/types/cart';
 import { OrderCustomer } from '@/types/order';
 
 describe('checkout order helpers', () => {
   const items: CartItem[] = [
     {
-      product: { id: 'p1', name: 'Apple', amount: 5, ean: '111', images: [] },
+      product: { id: 'p1', name_fi: 'Omena', name_sv: 'Äpple', name_en: 'Apple', amount: 5, ean: '111', images: [], retailPrice: 9, unitPrice: 19 },
       quantity: 2,
     },
     {
-      product: { name: 'Milk', amount: 3, ean: '222', images: [] },
+      product: { name_en: 'Milk', name_fi: 'Maito', name_sv: 'Mjölk', amount: 3, ean: '222', images: [], retailPrice: 9, unitPrice: 19 },
       quantity: 1,
     },
   ];
@@ -27,8 +27,8 @@ describe('checkout order helpers', () => {
     const payload = buildCheckoutOrderPayload(items);
     expect(payload.status).toBe('draft');
     expect(payload.products).toEqual([
-      { id: 'p1', name: 'Apple', amount: 2 },
-      { id: '222', name: 'Milk', amount: 1 },
+      { id: 'p1', name: 'Omena', amount: 2 },
+      { id: '222', name: 'Maito', amount: 1 },
     ]);
   });
 
@@ -42,25 +42,10 @@ describe('checkout order helpers', () => {
     expect(payload.discount).toBe('SAVE10');
   });
 
-  it('invokes service save with mapped payload', async () => {
-    const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
-
-    await createOrderForCheckout(items, undefined, undefined, { save });
-
-    expect(save).toHaveBeenCalledTimes(1);
-    expect(save.mock.calls[0][0]).toMatchObject({
-      status: 'draft',
-      products: [
-        { id: 'p1', name: 'Apple', amount: 2 },
-        { id: '222', name: 'Milk', amount: 1 },
-      ],
-    });
-  });
-
   it('updates existing active order when id exists', async () => {
     const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
 
-    await syncOrderForCheckout(items, 'order-1', undefined, undefined, { save });
+    await syncOrderForCheckout(items, 'order-1', undefined, undefined, 'en', { save });
 
     expect(save).toHaveBeenCalledTimes(1);
     expect(save.mock.calls[0][0]).toMatchObject({
@@ -79,7 +64,7 @@ describe('checkout order helpers', () => {
       .mockRejectedValueOnce({ response: { status: 404 } })
       .mockResolvedValueOnce({ id: 'new-order', status: 'draft', products: [] });
 
-    await syncOrderForCheckout(items, 'stale-order', undefined, undefined, { save });
+    await syncOrderForCheckout(items, 'stale-order', undefined, undefined, 'fi', { save });
 
     expect(save).toHaveBeenCalledTimes(2);
     expect(save.mock.calls[0][0]).toMatchObject({ id: 'stale-order' });
@@ -89,7 +74,7 @@ describe('checkout order helpers', () => {
   it('passes customer phone during sync payload mapping', async () => {
     const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
 
-    await syncOrderForCheckout(items, 'order-1', customer, undefined, { save });
+    await syncOrderForCheckout(items, 'order-1', customer, undefined, 'fi', { save });
 
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -101,7 +86,7 @@ describe('checkout order helpers', () => {
 
   it('passes discount code during sync payload mapping', async () => {
     const save = jest.fn().mockResolvedValue({ id: 'order-1', status: 'draft', products: [] });
-    await syncOrderForCheckout(items, 'order-1', undefined, 'VIP20', { save });
+    await syncOrderForCheckout(items, 'order-1', undefined, 'VIP20', 'fi', { save });
     expect(save).toHaveBeenCalledWith(
       expect.objectContaining({
         id: 'order-1',

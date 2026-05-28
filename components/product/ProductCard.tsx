@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { getAvailabilityStatusMeta } from './availabilityStatus';
-import { getFirstUsableProductImage, getProductDescription, getProductIdentifier, getProductPriceDisplay } from './cardUtils';
+import { getFirstUsableProductImage, getItemName, getProductDescription, getProductIdentifier, getProductPriceDisplay } from './cardUtils';
 import { formatPriceWithCurrency } from './priceFormatting';
 
 const placeholderImageSource = { uri: Asset.fromModule(require('../../assets/images/fallback.png')).uri };
@@ -40,7 +40,7 @@ export function ProductCard({ item, numColumns, width }: ProductCardProps) {
       <Pressable
         onPress={openProduct}
         accessibilityRole="button"
-        accessibilityLabel={t('category.productCardA11yLabel', { product: item.name })}
+        accessibilityLabel={t('category.productCardA11yLabel', { product: getItemName(item, i18n.language) })}
       >
         <Image
           source={firstImage ? { uri: firstImage } : placeholderImageSource}
@@ -48,7 +48,7 @@ export function ProductCard({ item, numColumns, width }: ProductCardProps) {
           style={{ resizeMode: 'contain' }}
           className="h-32 w-full rounded-lg bg-neutral-100"
         />
-        <Text className="mt-2 text-base font-semibold text-neutral-900">{item.name}</Text>
+        <Text className="mt-2 text-base font-semibold text-neutral-900">{getItemName(item, i18n.language)}</Text>
         <View className="mt-1">
           {priceDisplay.hasDiscount && priceDisplay.discountPrice !== null ? (
             <>
@@ -92,7 +92,7 @@ export function ProductCard({ item, numColumns, width }: ProductCardProps) {
         disabled={!canAdd}
         className={`mt-3 items-center rounded-lg px-3 py-2 ${canAdd ? 'bg-primary-600' : 'bg-neutral-300'}`}
         accessibilityRole="button"
-        accessibilityLabel={t('cart.addA11yLabel', { product: item.name })}
+        accessibilityLabel={t('cart.addA11yLabel', { product: getItemName(item, i18n.language) })}
       >
         <Text className="text-sm font-medium text-white">{t('cart.addButton')}</Text>
       </Pressable>

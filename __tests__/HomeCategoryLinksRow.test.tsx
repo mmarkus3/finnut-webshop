@@ -1,7 +1,7 @@
-import React from 'react';
-import renderer, { ReactTestRenderer } from 'react-test-renderer';
 import { HomeCategoryLinksRow, getCategoryTranslationKey } from '@/components/home/HomeCategoryLinksRow';
 import { Category } from '@/types/category';
+import React from 'react';
+import renderer, { ReactTestRenderer } from 'react-test-renderer';
 
 jest.mock('expo-router', () => {
   const ReactLocal = require('react');
@@ -32,10 +32,22 @@ jest.mock('react-i18next', () => ({
   }),
 }));
 
+const mockI18n = { language: 'en' };
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, string | number>) => {
+      if (key === 'home.categoryLinkA11yLabel') return `Open category ${options?.category}`;
+      return key;
+    },
+    i18n: mockI18n,
+  }),
+}));
+
 describe('HomeCategoryLinksRow', () => {
   const categories: Category[] = [
-    { id: 'fruits', name: 'Fruits', description: 'Fresh fruits' },
-    { id: 'dairy', name: 'Dairy', description: 'Milk products' },
+    { id: 'fruits', name_en: 'Fruits', name_fi: 'Hedelmät', name_sv: 'Fruits', description: 'Fresh fruits' },
+    { id: 'dairy', name_en: 'Dairy', name_fi: 'Maitotuotteet', name_sv: 'Dairy', description: 'Milk products' },
   ];
 
   it('maps category to translation key', () => {
@@ -67,7 +79,7 @@ describe('HomeCategoryLinksRow', () => {
       params: { categoryId: 'fruits' },
     });
     expect(links[0].props.accessibilityRole).toBe('link');
-    expect(links[0].props.accessibilityLabel).toBe('Open category Fruits');
+    expect(links[0].props.accessibilityLabel).toBe('Open category categories.fruits.name');
 
     expect(links[1].props.href).toEqual({
       pathname: '/category/[categoryId]',

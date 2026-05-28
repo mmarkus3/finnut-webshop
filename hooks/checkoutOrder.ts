@@ -1,10 +1,10 @@
-import { getProductIdentifier } from '@/components/product/cardUtils';
+import { getItemName, getProductIdentifier } from '@/components/product/cardUtils';
 import { OrdersService } from '@/services/order';
 import { CartItem } from '@/types/cart';
 import { Order, OrderCustomer } from '@/types/order';
 import { resolveWebshopCountry } from './countryConfig';
 
-const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer, discount?: string): Order => {
+const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer, discount?: string, language?: string): Order => {
   const normalizedDiscount = discount?.trim();
   const country = resolveWebshopCountry();
 
@@ -12,7 +12,7 @@ const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer, 
     status: 'draft',
     products: items.map((item) => ({
       id: getProductIdentifier(item.product),
-      name: item.product.name,
+      name: getItemName(item.product, language) ?? '',
       amount: item.quantity,
     })),
     ...(customer ? { customer } : {}),
@@ -23,16 +23,6 @@ const buildCheckoutOrderPayload = (items: CartItem[], customer?: OrderCustomer, 
 
 const buildOrdersService = (): OrdersService => {
   return new OrdersService(process.env.EXPO_PUBLIC_FIREBASE_API!, `/orders/company/${process.env.EXPO_PUBLIC_COMPANY!}`);
-};
-
-const createOrderForCheckout = async (
-  items: CartItem[],
-  customer?: OrderCustomer,
-  discount?: string,
-  service: Pick<OrdersService, 'save'> = buildOrdersService()
-): Promise<Order> => {
-  const payload = buildCheckoutOrderPayload(items, customer, discount);
-  return service.save(payload);
 };
 
 const shouldFallbackToCreate = (error: unknown): boolean => {
@@ -50,9 +40,10 @@ const syncOrderForCheckout = async (
   activeOrderId: string | null,
   customer?: OrderCustomer,
   discount?: string,
+  language?: string,
   service: Pick<OrdersService, 'save'> = buildOrdersService()
 ): Promise<Order> => {
-  const payload = buildCheckoutOrderPayload(items, customer, discount);
+  const payload = buildCheckoutOrderPayload(items, customer, discount, language);
 
   if (!activeOrderId) {
     return service.save(payload);
@@ -72,7 +63,6 @@ const syncOrderForCheckout = async (
 export {
   buildCheckoutOrderPayload,
   buildOrdersService,
-  createOrderForCheckout,
   shouldFallbackToCreate,
   syncOrderForCheckout
 };

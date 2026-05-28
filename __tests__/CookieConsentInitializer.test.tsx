@@ -75,7 +75,7 @@ describe('CookieConsentInitializer', () => {
   it.each([
     ['fi-FI', 'fi', 'Käytämme evästeitä'],
     ['en-US', 'en', 'We use cookies'],
-    ['sv-SE', 'sv', 'Vi använder kakor'],
+    ['sv-SE', 'sv', 'Vi använder cookies'],
   ])('selects %s consent content as %s', (language, expectedLanguage, expectedTitle) => {
     const config = createCookieConsentConfig(language);
     const selectedTranslation = config.language.translations[expectedLanguage] as CookieConsent.Translation;

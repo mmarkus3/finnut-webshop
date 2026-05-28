@@ -113,14 +113,14 @@ describe('HomeCategoryProductSections helpers', () => {
 
 describe('HomeCategoryProductSections rendering', () => {
   const categories: Category[] = [
-    { id: 'fruit', name: 'Fruit', description: '' },
-    { id: 'dairy', name: 'Dairy', description: '' },
+    { id: 'fruit', name_en: 'Fruit', description: '' },
+    { id: 'dairy', name_en: 'Dairy', description: '' },
   ];
 
   const products: Product[] = [
     {
       id: 'p-apple',
-      name: 'Apple',
+      name_en: 'Apple',
       amount: 1,
       ean: '1',
       images: ['https://img/apple.jpg'],
@@ -130,8 +130,8 @@ describe('HomeCategoryProductSections rendering', () => {
       lowestRetailPriceLast30Days: 4.1,
       description_en: 'Apple home card description',
     },
-    { name: 'Milk', amount: 0, ean: '2', images: [], category: 'dairy' },
-    { name: 'Bread', amount: 12, ean: '3', images: [], category: 'dairy' },
+    { name_en: 'Milk', amount: 0, ean: '2', images: [], category: 'dairy' },
+    { name_en: 'Bread', amount: 12, ean: '3', images: [], category: 'dairy' },
   ];
 
   beforeEach(() => {

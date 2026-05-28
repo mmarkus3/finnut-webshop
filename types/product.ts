@@ -1,7 +1,9 @@
 export interface Product {
   id?: string;
   amount: number;
-  name: string;
+  name_fi: string;
+  name_sv: string;
+  name_en: string;
   ean: string;
   retailPrice: number;
   discountPrice?: number;
